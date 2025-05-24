@@ -109,6 +109,7 @@ const DesktopProductCard = memo(({ product, mntRate, replaceText, index }: Deskt
                         src={productImageUrl}
                         alt={replaceText(productName)}
                         fill
+                        unoptimized
                         sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
                         priority={priority}
                         loading={priority ? 'eager' : 'lazy'}
@@ -175,6 +176,7 @@ const MobileProductCard = memo(({ product, mntRate, replaceText, index }: Mobile
                         src={productImageUrl}
                         alt={replaceText(productName)}
                         fill
+                        unoptimized
                         sizes="(max-width: 640px) 60vw, 50vw" // Adjust sizes based on actual layout needs
                         priority={priority}
                         loading={priority ? 'eager' : 'lazy'}
