@@ -483,6 +483,7 @@ function Page() {
                       style={{ objectFit: 'contain' }}
                       priority={selectedImageIndex === 0}
                       sizes="(max-width: 768px) 90vw, (max-width: 1024px) 50vw, 40vw"
+                      unoptimized
                       className="w-full h-full pointer-events-none"
                       onError={(e) => e.currentTarget.src = '/placeholder.png'}
                     />
@@ -532,6 +533,7 @@ function Page() {
                       src={img}
                       alt={`Thumbnail ${index + 1}`}
                       width={60}
+                      unoptimized
                       height={60}
                       className="rounded object-cover bg-white"
                       onError={(e) => e.currentTarget.src = '/placeholder.png'}
@@ -675,6 +677,7 @@ function Page() {
                           src={recProduct.mainPictureUrl || '/placeholder.png'}
                           alt={recProduct.name}
                           fill
+                          unoptimized
                           sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                           onError={(e) => e.currentTarget.src = '/placeholder.png'}
                         />
