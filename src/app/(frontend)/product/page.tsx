@@ -152,6 +152,7 @@ const DesktopItem = memo(({ item, renderPrice, replaceText, priority }: DesktopI
             src={item.data.image_url}
             alt={replaceText(item.value)}
             fill
+            unoptimized
             sizes="(max-width:768px) 50vw, (max-width:1200px) 25vw, 20vw"
             priority={priority}
             loading={priority ? 'eager' : 'lazy'}
@@ -211,6 +212,7 @@ const MobileItem = memo(({ item, renderPrice, replaceText, priority }: MobileIte
             src={item.data.image_url}
             alt={replaceText(item.value)}
             fill
+            unoptimized
             sizes="60vw"
             priority={priority}
             loading={priority ? 'eager' : 'lazy'}
@@ -266,6 +268,7 @@ const CategoryCard = memo(({ label, items, replaceText, priority }: CategoryCard
                   src={firstItem.data.image_url}
                   alt={`${label} product 1`}
                   fill
+                  unoptimized
                   sizes="(max-width: 768px) 30vw, 15vw"
                   priority={priority}
                   loading={priority ? "eager" : "lazy"}
@@ -282,6 +285,7 @@ const CategoryCard = memo(({ label, items, replaceText, priority }: CategoryCard
                   src={secondItem.data.image_url}
                   alt={`${label} product 2`}
                   fill
+                  unoptimized
                   sizes="(max-width: 768px) 40vw, 20vw"
                   priority={priority}
                   loading={priority ? "eager" : "lazy"}
@@ -298,6 +302,7 @@ const CategoryCard = memo(({ label, items, replaceText, priority }: CategoryCard
                   src={thirdItem.data.image_url}
                   alt={`${label} product 3`}
                   fill
+                  unoptimized
                   sizes="(max-width: 768px) 30vw, 15vw"
                   priority={priority}
                   loading={priority ? "eager" : "lazy"}
