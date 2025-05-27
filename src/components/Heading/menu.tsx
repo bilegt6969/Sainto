@@ -7,7 +7,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from './Navbar/navigation-menu'
+} from './Navbar/navigation-menu' // Assuming this NavigationMenuLink supports asChild
 import { CalendarRangeIcon, CircleHelp, HashIcon, Newspaper, ShoppingBag, TrendingUp, UsersIcon } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -21,9 +21,8 @@ type Props = {
   children: React.ReactNode
   icon?: React.ReactNode
   logo?: string
-  className?: string // Add specific prop types instead of [key: string]: any
+  className?: string
   style?: React.CSSProperties
-  // Add any other specific props you need
 }
 
 const Menu = () => {
@@ -43,19 +42,22 @@ const Menu = () => {
   return (
     <NavigationMenu className="relative z-10">
       <NavigationMenuList className="space-x-1">
+        {/* For You Section - Corrected */}
         <NavigationMenuItem>
-          <Link href="/for-you" legacyBehavior passHref>
-            <NavigationMenuLink className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
+          <NavigationMenuLink asChild>
+            <Link
+              href="/for-you"
+              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200"
+            >
               <TrendingUp className="w-4 h-4 mr-2" />
               For You
-            </NavigationMenuLink>
-          </Link>
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
 
         {/* Categories Section */}
         <NavigationMenuItem>
           <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
-
             Categories
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -77,9 +79,21 @@ const Menu = () => {
                       Explore all categories and collections.
                     </p>
                     <div className="mt-4 text-sm font-medium flex items-center">
-                      Browse now 
-                      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
-                        <path d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                      Browse now{' '}
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 15 15"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="ml-1"
+                      >
+                        <path
+                          d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z"
+                          fill="currentColor"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                        ></path>
                       </svg>
                     </div>
                   </Link>
@@ -87,36 +101,32 @@ const Menu = () => {
               </li>
               {[
                 {
-                  title: "Sneakers",
-                  href: "/categories/sneakers",
+                  title: 'Sneakers',
+                  href: '/categories/sneakers',
                   icon: <HashIcon className="w-5 h-5" />,
-                  description: "Discover the latest sneaker drops."
+                  description: 'Discover the latest sneaker drops.',
                 },
                 {
-                  title: "Apparel",
-                  href: "/categories/apparel",
+                  title: 'Apparel',
+                  href: '/categories/apparel',
                   icon: <UsersIcon className="w-5 h-5" />,
-                  description: "Shop trendy apparel and streetwear."
+                  description: 'Shop trendy apparel and streetwear.',
                 },
                 {
-                  title: "Accessories",
-                  href: "/categories/accessories",
+                  title: 'Accessories',
+                  href: '/categories/accessories',
                   icon: <CalendarRangeIcon className="w-5 h-5" />,
-                  description: "Complete your look with accessories."
-                }
+                  description: 'Complete your look with accessories.',
+                },
               ].map((item, i) => (
-                <motion.div 
+                <motion.div
                   key={item.title}
                   custom={i}
                   initial="hidden"
                   animate="visible"
                   variants={menuItemVariants}
                 >
-                  <Item
-                    title={item.title}
-                    href={item.href}
-                    icon={item.icon}
-                  >
+                  <Item title={item.title} href={item.href} icon={item.icon}>
                     {item.description}
                   </Item>
                 </motion.div>
@@ -127,7 +137,7 @@ const Menu = () => {
 
         {/* Brands Section */}
         <NavigationMenuItem>
-        <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
+          <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
             Brands
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -149,7 +159,10 @@ const Menu = () => {
                     </p>
                     <div className="flex flex-wrap gap-3">
                       {['Nike', 'Adidas', 'Supreme', 'Stüssy', 'Bape'].map((brand) => (
-                        <span key={brand} className="px-3 py-1 text-xs font-medium bg-background rounded-full border border-border/40">
+                        <span
+                          key={brand}
+                          className="px-3 py-1 text-xs font-medium bg-background rounded-full border border-border/40"
+                        >
                           {brand}
                         </span>
                       ))}
@@ -160,203 +173,157 @@ const Menu = () => {
                   </Link>
                 </NavigationMenuLink>
               </li>
-              
+
               {[
                 {
-                  title: "Nike",
-                  href: "/brands/nike",
-                  logo: "/logos/nike.svg",
-                  description: "Shop the latest Nike sneakers and apparel."
+                  title: 'Nike',
+                  href: '/brands/nike',
+                  logo: '/logos/nike.svg', // Ensure these logo paths are correct
+                  description: 'Shop the latest Nike sneakers and apparel.',
                 },
                 {
-                  title: "Adidas", 
-                  href: "/brands/adidas",
-                  logo: "/logos/adidas.svg",
-                  description: "Find Adidas sneakers and apparel."
+                  title: 'Adidas',
+                  href: '/brands/adidas',
+                  logo: '/logos/adidas.svg',
+                  description: 'Find Adidas sneakers and apparel.',
                 },
                 {
-                  title: "Stüssy",
-                  href: "/brands/stussy",
-                  logo: "/logos/stussy.svg", 
-                  description: "Discover Stüssy's iconic streetwear."
+                  title: 'Stüssy',
+                  href: '/brands/stussy',
+                  logo: '/logos/stussy.svg',
+                  description: "Discover Stüssy's iconic streetwear.",
                 },
                 {
-                  title: "Bape",
-                  href: "/brands/bape",
-                  logo: "/logos/bape.svg",
-                  description: "Explore Bape's unique designs."
+                  title: 'Bape',
+                  href: '/brands/bape',
+                  logo: '/logos/bape.svg',
+                  description: "Explore Bape's unique designs.",
                 },
                 {
-                  title: "Air Jordan",
-                  href: "/brands/air-jordan",
-                  logo: "/logos/air-jordan.svg",
-                  description: "Shop Air Jordan's iconic sneakers."
+                  title: 'Air Jordan',
+                  href: '/brands/air-jordan',
+                  logo: '/logos/air-jordan.svg',
+                  description: "Shop Air Jordan's iconic sneakers.",
                 },
                 {
-                  title: "Supreme",
-                  href: "/brands/supreme",
-                  logo: "/logos/supreme.svg",
-                  description: "Explore Supreme's streetwear collections."
-                }
+                  title: 'Supreme',
+                  href: '/brands/supreme',
+                  logo: '/logos/supreme.svg',
+                  description: "Explore Supreme's streetwear collections.",
+                },
               ].map((brand, i) => (
-                <motion.div 
+                <motion.div
                   key={brand.title}
                   custom={i}
                   initial="hidden"
                   animate="visible"
                   variants={menuItemVariants}
                 >
-                  <BrandItem
-                    title={brand.title}
-                    href={brand.href}
-                    logo={brand.logo}
-                  >
+                  <BrandItem title={brand.title} href={brand.href} logo={brand.logo}>
                     {brand.description}
                   </BrandItem>
                 </motion.div>
               ))}
-              
-              <li className="col-span-2 mt-2">
+
+              <li className="col-span-2 mt-2 flex justify-center">
                 <Link
                   href="/brands"
-                  className="flex items-center justify-center w-full py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-md text-accent hover:text-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
                 >
-                  View all brands
-                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
-                    <path d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                  </svg>
+                  See all brands
                 </Link>
               </li>
             </motion.ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        {/* Resources Section */}
+        {/* About Section - Corrected */}
         <NavigationMenuItem>
-        <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
-            Resources
-          </NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <motion.ul
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="grid w-[400px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px] xl:w-[500px]"
+          <NavigationMenuLink asChild>
+            <Link
+              href="/about"
+              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200"
             >
-              <Item title="Blog" href="/resources/blog" icon={<Newspaper className="w-5 h-5" />}>
-                Read our latest articles and updates on streetwear trends.
-              </Item>
-              <Item
-                title="Support"
-                href="/resources/support"
-                icon={<CircleHelp className="w-5 h-5" />}
-              >
-                Get help with orders, returns, and product information.
-              </Item>
-              <Item
-                title="Style Guide" 
-                href="/resources/style-guide"
-                icon={<TrendingUp className="w-5 h-5" />}
-              >
-                Fashion tips and outfit inspiration from our experts.
-              </Item>
-              <Item
-                title="Size Charts"
-                href="/resources/size-guide"
-                icon={<CalendarRangeIcon className="w-5 h-5" />}
-              >
-                Detailed sizing guides for all brands and products.
-              </Item>
-            </motion.ul>
-          </NavigationMenuContent>
+              <CircleHelp className="w-4 h-4 mr-2" />
+              About
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
 
-        {/* Help Section */}
+        {/* News Section - Corrected */}
         <NavigationMenuItem>
-          <Link href="/HelpPage" legacyBehavior passHref>
-          <NavigationMenuLink className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
-              <CircleHelp className="w-4 h-4 mr-2" />
-              Help
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink asChild>
+            <Link
+              href="/news"
+              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200"
+            >
+              <Newspaper className="w-4 h-4 mr-2" />
+              News
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
-        
-        {/* Search button */}
-        
       </NavigationMenuList>
     </NavigationMenu>
   )
 }
 
-// Reusable Item Component
-const Item = ({ title, href, children, icon, ...props }: Props) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          passHref
-          href={href}
-          {...props}
-          className="grid grid-cols-[.15fr_1fr] select-none space-y-1 rounded-lg p-3 leading-none no-underline outline-none transition-colors hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground group"
-        >
-          <div className="flex items-center justify-center p-1.5 w-9 h-9 rounded-md border border-border/80 bg-background/80 group-hover:border-accent/50 transition-colors duration-200">
-            {icon}
-          </div>
-          <div className="text-start ml-3">
-            <span className="text-sm font-medium group-hover:text-foreground leading-none">
-              {title}
-            </span>
-            <p className="text-sm mt-1 line-clamp-2 text-muted-foreground">{children}</p>
-          </div>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  )
-}
-
-// Brand Item Component with Logo
-const BrandItem = ({ title, href, children, logo, ...props }: Props) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          passHref
-          href={href}
-          {...props}
-          className="flex items-start p-3 rounded-lg no-underline outline-none transition-all hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground group"
-        >
-          <div className="flex items-center justify-center p-1.5 w-10 h-10 mr-3 rounded-md border border-border/80 bg-background/80 group-hover:border-accent/50 transition-colors">
-            {logo ? (
-              <div className="relative w-6 h-6">
-                <Image
-                  src={logo}
-                  alt={`${title} logo`}
-                  fill
-                  sizes="24px"
-                  className="object-contain"
-                />
-              </div>
-            ) : (
-              <div className="flex items-center justify-center w-6 h-6 font-bold">
-                {title.charAt(0)}
-              </div>
-            )}
-          </div>
-          <div className="flex-1">
-            <div className="text-sm font-medium group-hover:text-foreground">
-              {title}
+// Item component for categories menu
+const Item = React.forwardRef<HTMLAnchorElement, Props>(
+  ({ className, title, children, href, icon, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <Link
+            href={href}
+            ref={ref}
+            className={`flex items-center p-3 rounded-md hover:bg-accent/50 focus:bg-accent/70 focus:outline-none transition-colors duration-200 ${className || ''}`}
+            {...props}
+          >
+            {icon && <div className="mr-3">{icon}</div>}
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">{title}</span>
+              <p className="text-xs text-muted-foreground">{children}</p>
             </div>
-            <p className="text-xs mt-1 line-clamp-2 text-muted-foreground">
-              {children}
-            </p>
-          </div>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  )
-}
-
+          </Link>
+        </NavigationMenuLink>
+      </li>
+    )
+  }
+)
 Item.displayName = 'Item'
+
+// BrandItem component for brands menu
+const BrandItem = React.forwardRef<HTMLAnchorElement, Props>(
+  ({ className, title, children, href, logo, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <Link
+            href={href}
+            ref={ref}
+            className={`flex items-center p-3 rounded-md hover:bg-accent/50 focus:bg-accent/70 focus:outline-none transition-colors duration-200 ${className || ''}`}
+            {...props}
+          >
+            {logo && (
+              <Image
+                src={logo}
+                alt={`${title} logo`}
+                width={24}
+                height={24}
+                className="mr-3"
+                unoptimized // Consider if unoptimized is truly needed. If logos are static and optimized at build time, this might not be necessary.
+              />
+            )}
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">{title}</span>
+              <p className="text-xs text-muted-foreground">{children}</p>
+            </div>
+          </Link>
+        </NavigationMenuLink>
+      </li>
+    )
+  }
+)
 BrandItem.displayName = 'BrandItem'
 
 export default Menu

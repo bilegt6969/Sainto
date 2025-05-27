@@ -93,7 +93,7 @@ const AccountPage = () => {
   if (!user) return null
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-black min-h-screen">
+    <div className="relative rounded-[2rem] border border-neutral-700 inset-0 overflow-y-auto bg-black min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-20">
         {/* Header section with clean typography */}
         <div className="mb-8">
