@@ -15,7 +15,7 @@
     }, [clearOrder])
 
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <div className="min-h-screen bg-black border border-neutral-700 rounded-[2rem] flex items-center justify-center p-4">
         {/* Main Content Card */}
         <div className="w-full max-w-md bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
           <div className="p-6 sm:p-8 text-center">

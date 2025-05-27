@@ -9,8 +9,9 @@ const DEFAULT_HERO = {
     text: 'Shop Now',
     link: '/products',
   },
-  backgroundImage: {
+  backgroundImageDesktop: {
     asset: {
+      _id: 'default',
       url: '/default-hero.jpg',
     },
   },
@@ -22,25 +23,85 @@ export default function HeroSection({ heroData = DEFAULT_HERO }) {
     subtitle,
     description,
     primaryButton,
-    backgroundImage,
+    backgroundImageDesktop,
+    backgroundImageTablet,
+    backgroundImageMobile,
   } = heroData;
 
-  const imageUrl = backgroundImage?.asset?.url
-    ? urlFor(backgroundImage).url()
-    : '/default-hero.jpg';
+  // Helper function to get image URL from Sanity image object
+  const getImageUrl = (imageObj, fallback = '/default-hero.jpg') => {
+    if (!imageObj?.asset) return fallback;
+    
+    try {
+      // Use urlFor for Sanity image optimization
+      return urlFor(imageObj).url();
+    } catch  {
+      // Fallback to direct asset URL if urlFor fails
+      return imageObj.asset.url || fallback;
+    }
+  };
+
+  // Get URLs for all breakpoints with proper fallbacks
+  const desktopImageUrl = getImageUrl(backgroundImageDesktop);
+  const tabletImageUrl = getImageUrl(backgroundImageTablet, desktopImageUrl);
+  const mobileImageUrl = getImageUrl(backgroundImageMobile, tabletImageUrl);
 
   return (
     <section className="relative h-[80vh] max-h-[800px] mx-2 md:mx-2 w-full overflow-hidden rounded-[2rem] border border-neutral-700 md:h-[75vh] sm:h-[70vh] xs:h-[60vh]">
-      {/* Background Image */}
-      <div className="absolute inset-0 -z-10">
+      {/* Desktop Background Image */}
+      <div className="absolute inset-0 -z-10 hidden lg:block">
         <Image
-          src={imageUrl}
-          alt="Hero background"
+          src={desktopImageUrl}
+          alt="Hero background desktop"
           fill
           priority
-          unoptimized
           sizes="100vw"
           className="object-cover"
+          style={{
+            objectPosition: backgroundImageDesktop?.hotspot 
+              ? `${backgroundImageDesktop.hotspot.x * 100}% ${backgroundImageDesktop.hotspot.y * 100}%`
+              : 'center',
+          }}
+        />
+      </div>
+
+      {/* Tablet Background Image */}
+      <div className="absolute inset-0 -z-10 hidden md:block lg:hidden">
+        <Image
+          src={tabletImageUrl}
+          alt="Hero background tablet"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+          style={{
+            objectPosition: backgroundImageTablet?.hotspot 
+              ? `${backgroundImageTablet.hotspot.x * 100}% ${backgroundImageTablet.hotspot.y * 100}%`
+              : backgroundImageDesktop?.hotspot 
+                ? `${backgroundImageDesktop.hotspot.x * 100}% ${backgroundImageDesktop.hotspot.y * 100}%`
+                : 'center',
+          }}
+        />
+      </div>
+
+      {/* Mobile Background Image */}
+      <div className="absolute inset-0 -z-10 block md:hidden">
+        <Image
+          src={mobileImageUrl}
+          alt="Hero background mobile"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+          style={{
+            objectPosition: backgroundImageMobile?.hotspot 
+              ? `${backgroundImageMobile.hotspot.x * 100}% ${backgroundImageMobile.hotspot.y * 100}%`
+              : backgroundImageTablet?.hotspot 
+                ? `${backgroundImageTablet.hotspot.x * 100}% ${backgroundImageTablet.hotspot.y * 100}%`
+                : backgroundImageDesktop?.hotspot 
+                  ? `${backgroundImageDesktop.hotspot.x * 100}% ${backgroundImageDesktop.hotspot.y * 100}%`
+                  : 'center',
+          }}
         />
       </div>
 

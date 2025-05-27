@@ -11,8 +11,6 @@ import { toast, Toaster } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-
-// Firebase Auth Imports
 import { auth } from '@/firebaseConfig';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
@@ -21,6 +19,7 @@ interface CartItem {
     id: string;
     name: string;
     image_url?: string;
+    mainPictureUrl?: string;
   };
   size: string;
   quantity: number;
@@ -104,9 +103,10 @@ export default function BagPage() {
       });
     }
   };
+  console.log(cart)
 
   return (
-    <div className="min-h-screen bg-neutral-950 rounded-[2rem] border border-neutral-700 text-neutral-100 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-neutral-950 rounded-[2rem] border border-neutral-700 text-neutral-100 pt-24 pb-12 px-4 sm:px-6 lg:px-8 ">
       <Toaster position="bottom-right" className="z-[100]" />
 
       <div className="max-w-6xl mx-auto">
@@ -164,37 +164,54 @@ export default function BagPage() {
                   >
                     <div className="flex items-start gap-4 sm:gap-5 flex-1">
                       {/* Product Image */}
-                      <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-neutral-800 flex-shrink-0 border border-neutral-700">
-                        {item.product.image_url ? (
-                          <Image
-                            src={item.product.image_url}
-                            alt={item.product.name}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 96px, 112px"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="flex items-center justify-center h-full w-full text-neutral-600">
-                            <ShoppingBag className="h-8 w-8" />
-                          </div>
-                        )}
-                      </div>
+                      <Link href={`/product/${item.product.id}`}>
+                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-white flex-shrink-0 border border-neutral-700">
+                          {item.product.mainPictureUrl ? (
+                            <Image
+                              src={item.product.mainPictureUrl}
+                              alt={item.product.name}
+                              fill
+                              className="object-cover"
+                              unoptimized
+                              sizes="(max-width: 640px) 96px, 112px"
+                              loading="lazy"
+                              onError={() => console.error(`Failed to load image for ${item.product.name}: ${item.product.image_url}`)}
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full w-full text-neutral-600">
+                              <ShoppingBag className="h-8 w-8" />
+                            </div>
+                          )}
+                        </div>
+                      </Link>
 
                       {/* Product Details */}
                       <div className="flex flex-col justify-between h-full flex-1 mt-0 sm:mt-1 space-y-1.5 sm:space-y-2">
-                        <h2 className="text-base sm:text-lg font-medium text-neutral-100 leading-tight">
-                          {item.product.name}
-                        </h2>
+                      <Link href={`/product/${item.product.id}`}>
+  <h2 className="relative inline-block text-base sm:text-lg font-medium text-neutral-100 leading-tight
+    transition-all duration-600 ease-[cubic-bezier(0.23,1,0.32,1)]
+    before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full
+    before:bg-white before:origin-left before:transform before:scale-x-0
+    before:transition-transform before:duration-600 before:ease-[cubic-bezier(0.23,1,0.32,1)]
+    hover:before:scale-x-100 hover:transform hover:translate-y-[-1px]
+    hover:text-white/90">
+    {item.product.name}
+  </h2>
+</Link>
+
                         {/* Details container */}
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                           <Badge variant="secondary" className="bg-neutral-800 text-neutral-300 border-neutral-700 rounded-md px-2.5 py-0.5 text-xs self-start">
+                          <Badge variant="secondary" className="bg-neutral-800 text-neutral-300 border-neutral-700 rounded-md px-2.5 py-0.5 text-xs self-start">
                             Хэмжээ: {item.size}
-                           </Badge>
+                          </Badge>
                           {/* Quantity Controls */}
                           <div className="flex items-center border border-neutral-700 rounded-full overflow-hidden h-8 self-start">
                             <button
-                              onClick={() => handleQuantityChange(item.product.id, item.size, item.quantity - 1)}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleQuantityChange(item.product.id, item.size, item.quantity - 1);
+                              }}
                               className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               disabled={item.quantity <= 1}
                               aria-label="Decrease quantity"
@@ -205,7 +222,11 @@ export default function BagPage() {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => handleQuantityChange(item.product.id, item.size, item.quantity + 1)}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleQuantityChange(item.product.id, item.size, item.quantity + 1);
+                              }}
                               className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100 transition-colors"
                               aria-label="Increase quantity"
                             >
@@ -214,9 +235,9 @@ export default function BagPage() {
                           </div>
                         </div>
                         {/* Price */}
-                         <p className="text-base sm:text-lg font-semibold text-neutral-100 pt-1">
-                            {(item.price * item.quantity).toLocaleString()}₮
-                         </p>
+                        <p className="text-base sm:text-lg font-semibold text-neutral-100 pt-1">
+                          {(item.price * item.quantity).toLocaleString()}₮
+                        </p>
                       </div>
                     </div>
 
@@ -260,7 +281,7 @@ export default function BagPage() {
                     <span className="font-medium text-neutral-100">{subtotal.toLocaleString()}₮</span>
                   </div>
                   <div className="flex justify-between text-neutral-300">
-                    <span>Комисс (15%):</span>
+                    <span>Үйлчилгээний төлбөр (15%):</span>
                     <span className="font-medium text-neutral-100">{commission.toLocaleString()}₮</span>
                   </div>
                   <div className="flex justify-between text-neutral-300">
