@@ -3,7 +3,7 @@ import { createClient } from '@sanity/client';
 
 // Configure Sanity client
 const sanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "c7bxnoyq",
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2023-05-03',
   token: process.env.SANITY_API_WRITE_TOKEN,
