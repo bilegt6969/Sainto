@@ -12,7 +12,11 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
   fetchSignInMethodsForEmail,
-  linkWithCredential
+  linkWithCredential,
+  AuthError,
+  UserCredential,
+  AuthProvider,
+  OAuthCredential,
 } from '../../../../firebaseConfig' // IMPORTANT: Adjust this path to your firebaseConfig.js file
 
 const LoginPage = () => {
@@ -24,7 +28,7 @@ const LoginPage = () => {
   const [focusedField, setFocusedField] = useState('')
   const [showLinkingModal, setShowLinkingModal] = useState(false)
   const [linkingData, setLinkingData] = useState<{
-    pendingCred: any,
+    pendingCred: OAuthCredential,
     email: string,
     existingMethods: string[]
   } | null>(null)
@@ -35,21 +39,22 @@ const LoginPage = () => {
       toast.error('И-мэйл болон нууц үгээ оруулна уу.')
       return
     }
-    
+
     setIsLoading(true)
     setLoadingProvider('email');
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log('Email/Password login successful:', user);
       toast.success('Амжилттай нэвтэрлээ!');
       router.push('/'); // Or your desired page after login
-    } catch (error: any) {
-      console.error('Email/Password login error:', error);
-      if (error.code === 'auth/user-not-found' || 
-          error.code === 'auth/wrong-password' || 
-          error.code === 'auth/invalid-credential' || // More general error for invalid email/password
-          error.code === 'auth/invalid-email') {
+    } catch (error) {
+      const authError = error as AuthError;
+      console.error('Email/Password login error:', authError);
+      if (authError.code === 'auth/user-not-found' ||
+          authError.code === 'auth/wrong-password' ||
+          authError.code === 'auth/invalid-credential' || // More general error for invalid email/password
+          authError.code === 'auth/invalid-email') {
         toast.error('И-мэйл эсвэл нууц үг буруу байна.');
       } else {
         toast.error('Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.');
@@ -69,13 +74,13 @@ const LoginPage = () => {
         // Sign in with Google first
         const googleProvider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth, googleProvider);
-        
+
         // Then link the Facebook credential
         await linkWithCredential(result.user, linkingData.pendingCred);
-        
+
         toast.success('Амжилттай! Та одоо Google болон Facebook хоёуланг ашиглан нэвтэрч болно.');
         router.push('/');
-        
+
       } else if (existingMethod === 'password') {
         // User needs to sign in with email/password first, then we can link
         toast.info('Та эхлээд и-мэйл/нууц үгээрээ нэвтэрч, дараа нь тохиргоогоос бусад аргуудыг холбоно уу.');
@@ -83,13 +88,14 @@ const LoginPage = () => {
         setLinkingData(null);
         return;
       }
-      
-    } catch (error: any) {
-      console.error('Account linking error:', error);
-      
+
+    } catch (error) {
+        const authError = error as AuthError;
+        console.error('Account linking error:', authError);
+
       // Better user-friendly error messages
       let errorMessage = '';
-      switch (error.code) {
+      switch (authError.code) {
         case 'auth/popup-closed-by-user':
           errorMessage = 'Нэвтрэх цонхыг хаасан байна. Дахин оролдоно уу.';
           break;
@@ -119,7 +125,7 @@ const LoginPage = () => {
   const handleSocialLogin = async (providerName: 'google' | 'facebook') => {
     setIsLoading(true);
     setLoadingProvider(providerName);
-    let provider;
+    let provider: AuthProvider;
 
     if (providerName === 'google') {
       provider = new GoogleAuthProvider();
@@ -133,38 +139,40 @@ const LoginPage = () => {
     }
 
     try {
-      const result = await signInWithPopup(auth, provider);
+      const result: UserCredential = await signInWithPopup(auth, provider);
       const user = result.user;
       console.log(`${providerName} login successful:`, user);
       toast.success(`${providerName === 'google' ? 'Google' : 'Facebook'}-ээр амжилттай нэвтэрлээ!`);
       router.push('/'); // Or your desired page after login
-    } catch (error: any) {
-      console.error(`${providerName} login error:`, error);
-      
-      if (error.code === 'auth/account-exists-with-different-credential') {
+    } catch (error) {
+        const authError = error as AuthError & { customData?: { email?: string } };
+        console.error(`${providerName} login error:`, authError);
+
+      if (authError.code === 'auth/account-exists-with-different-credential') {
         // Handle account linking
-        const email = error.customData?.email;
-        const credential = FacebookAuthProvider.credentialFromError(error) || 
-                          GoogleAuthProvider.credentialFromError(error);
-        
+        const email = authError.customData?.email;
+        const credential = FacebookAuthProvider.credentialFromError(authError) ||
+                          GoogleAuthProvider.credentialFromError(authError);
+
         if (email && credential) {
           try {
             // Fetch existing sign-in methods for this email
             const existingMethods = await fetchSignInMethodsForEmail(auth, email);
-            
+
             setLinkingData({
               pendingCred: credential,
               email: email,
               existingMethods: existingMethods
             });
             setShowLinkingModal(true);
-            
-          } catch (fetchError: any) {
-            console.error('Error fetching sign-in methods:', fetchError);
-            
+
+          } catch (fetchError) {
+              const fetchAuthError = fetchError as AuthError;
+              console.error('Error fetching sign-in methods:', fetchAuthError);
+
             // Better error handling for fetching sign-in methods
             let errorMessage = '';
-            switch (fetchError.code) {
+            switch (fetchAuthError.code) {
               case 'auth/invalid-email':
                 errorMessage = 'И-мэйл хаяг буруу байна.';
                 break;
@@ -179,18 +187,18 @@ const LoginPage = () => {
         } else {
           toast.error('Энэ и-мэйл хаяг өөр нэвтрэх аргаар бүртгэлтэй байна. Тухайн аргаар нэвтэрч орно уу.');
         }
-        
-      } else if (error.code === 'auth/popup-closed-by-user') {
+
+      } else if (authError.code === 'auth/popup-closed-by-user') {
         toast.info('Нэвтрэх цонхыг хаасан байна.');
-      } else if (error.code === 'auth/cancelled-popup-request') {
+      } else if (authError.code === 'auth/cancelled-popup-request') {
         toast.info('Нэвтрэх хүсэлтийг цуцалсан байна.');
-      } else if (error.code === 'auth/popup-blocked') {
+      } else if (authError.code === 'auth/popup-blocked') {
         toast.error('Хөтөч нэвтрэх цонхыг хаасан байна. Pop-up цонхыг зөвшөөрч дахин оролдоно уу.');
-      } else if (error.code === 'auth/network-request-failed') {
+      } else if (authError.code === 'auth/network-request-failed') {
         toast.error('Интернэт холболтоо шалгаад дахин оролдоно уу.');
-      } else if (error.code === 'auth/too-many-requests') {
+      } else if (authError.code === 'auth/too-many-requests') {
         toast.error('Хэт олон удаа оролдсон байна. Хэсэг хүлээгээд дахин оролдоно уу.');
-      } else if (error.code === 'auth/user-disabled') {
+      } else if (authError.code === 'auth/user-disabled') {
         toast.error('Энэ хэрэглэгчийн эрх хязгаарлагдсан байна.');
       } else {
         const friendlyProviderName = providerName === 'google' ? 'Google' : 'Facebook';
@@ -213,7 +221,7 @@ const LoginPage = () => {
 
   return (
     <div className="relative my-10 inset-0 flex overflow-hidden bg-gradient-to-br from-neutral-900 via-black to-neutral-800 rounded-[2rem] border border-neutral-700">
-      
+
       {/* Account Linking Modal */}
       {showLinkingModal && linkingData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
@@ -222,12 +230,12 @@ const LoginPage = () => {
               <AlertCircle className="w-6 h-6 text-amber-500" />
               <h3 className="text-xl font-semibold text-neutral-900">Бүртгэл холбох</h3>
             </div>
-            
+
             <p className="text-neutral-600 mb-6">
-              <strong>{linkingData.email}</strong> хаяг өөр нэвтрэх аргаар бүртгэлтэй байна. 
+              <strong>{linkingData.email}</strong> хаяг өөр нэвтрэх аргаар бүртгэлтэй байна.
               Та бүртгэлүүдээ холбож нэг данс болгохыг хүсэж байна уу?
             </p>
-            
+
             <div className="space-y-3 mb-6">
               <p className="text-sm font-semibold text-neutral-700">Одоо байгаа нэвтрэх аргууд:</p>
               {linkingData.existingMethods.map((method, index) => (
@@ -237,7 +245,7 @@ const LoginPage = () => {
                 </div>
               ))}
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={() => {
@@ -248,7 +256,7 @@ const LoginPage = () => {
               >
                 Цуцлах
               </button>
-              
+
               {linkingData.existingMethods.includes('google.com') && (
                 <button
                   onClick={() => handleAccountLinking('google.com')}
@@ -258,7 +266,7 @@ const LoginPage = () => {
                   {isLoading ? 'Холбож байна...' : 'Google-тэй холбох'}
                 </button>
               )}
-              
+
               {linkingData.existingMethods.includes('password') && (
                 <button
                   onClick={() => handleAccountLinking('password')}
@@ -283,12 +291,12 @@ const LoginPage = () => {
       {/* Left Side - Enhanced Branding */}
       <div className="hidden lg:flex w-1/2 flex-col justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/90 to-black/95"></div>
-        
+
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
           backgroundSize: '50px 50px'
         }}></div>
-        
+
         <div className="relative z-10 max-w-lg flex flex-col items-center text-center">
           <div className="relative mb-12">
             <div className="absolute inset-0 bg-white/10 rounded-3xl blur-xl scale-110"></div>
@@ -296,27 +304,27 @@ const LoginPage = () => {
               <Image alt='logo' width={60} height={60} src="/images/logo.svg" onError={(e) => (e.currentTarget.src = 'https://placehold.co/60x60/FFFFFF/000000?text=LOGO')} className="p-1"/>
             </div>
           </div>
-          
+
           <h1 className="text-6xl font-extralight text-white tracking-tight mb-6 leading-none">
             Simple.<br />
             <span className="text-neutral-300">Secure.</span><br />
             <span className="text-neutral-400">Seamless.</span>
           </h1>
-          
+
           <p className="text-neutral-400 text-lg leading-relaxed max-w-md">
             Аюулгүй нэвтрэх системээр дамжуулан хэрэглэгчийн дансандаа нэвтрэн орно уу.
           </p>
-          
+
           <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-white/30 to-transparent mt-8"></div>
         </div>
-        
+
         <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
         <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-neutral-700/50 to-transparent"></div>
       </div>
 
       {/* Right Side - Enhanced Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative">
-        
+
         <div className="absolute top-8 left-1/2 transform -translate-x-1/2 lg:hidden">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl border border-neutral-700/50 shadow-xl">
              <Image alt='logo icon' width={32} height={32} src="/images/logo.svg" onError={(e) => (e.currentTarget.src = 'https://placehold.co/32x32/FFFFFF/000000?text=S')} className="p-1"/>
@@ -325,9 +333,9 @@ const LoginPage = () => {
 
         <div className="w-full max-w-md">
           <div className="relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10">
-            
+
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 rounded-3xl pointer-events-none"></div>
-            
+
             <div className="relative z-10">
               <div className="mb-8 pt-4 lg:pt-0">
                 <h2 className="text-3xl font-semibold text-neutral-900 mb-2 tracking-tight">Нэвтрэх</h2>
@@ -444,7 +452,7 @@ const LoginPage = () => {
                   )}
                   <span>Google-ээр нэвтрэх</span>
                 </button>
-                
+
                 <button
                   type="button"
                   onClick={() => handleSocialLogin('facebook')}

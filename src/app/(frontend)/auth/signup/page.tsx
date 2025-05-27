@@ -1,28 +1,31 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, AlertTriangle } from 'lucide-react'
-import Image from 'next/image' // Or use <img> if not using Next.js Image optimization
-import { useRouter } from 'next/navigation' // For Next.js App Router
-import { toast } from 'sonner' // Assuming 'sonner' is installed and configured
-import type { AuthCredential } from 'firebase/auth';
-
-// Firebase imports - Adjust path if your firebaseConfig.js is elsewhere
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import {
-  auth,
-  FacebookAuthProvider,
+  auth, // <--- IMPORT THE AUTH INSTANCE HERE
+  AuthError,
+  AuthCredential,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
   updateProfile,
-  signInWithEmailAndPassword, // Ensure this is correctly imported
+  signInWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   linkWithCredential,
+  UserCredential,
+  AuthProvider,
 } from '../../../../firebaseConfig' // IMPORTANT: Ensure this path is correct
+ 
+
 
 // Type definitions
 type SocialProvider = 'google' | 'facebook'
-type SignInMethod = 'password' | 'google.com' | 'facebook.com' // Add other providers if you use them
+type SignInMethod = 'password' | 'google.com' | 'facebook.com'
 
 const SignUpPage = () => {
   const [name, setName] = useState('')
@@ -36,6 +39,7 @@ const SignUpPage = () => {
   const [focusedField, setFocusedField] = useState('')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const router = useRouter()
+  // const auth = getAuth(); // <--- REMOVE THIS LINE. 'auth' is now imported.
 
   // State for account linking flow
   const [showAccountLinkPrompt, setShowAccountLinkPrompt] = useState(false)
@@ -66,143 +70,148 @@ const SignUpPage = () => {
 
     setIsLoading(true)
     setLoadingProvider('email')
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       await updateProfile(userCredential.user, { displayName: name })
       console.log('User created with email/password:', userCredential.user)
-      setIsLoading(false)
-      setLoadingProvider(null)
       toast.success('Амжилттай бүртгүүллээ!')
       router.push('/') // Or your desired page after signup
-    } catch (error: any) {
-      setIsLoading(false)
-      setLoadingProvider(null)
-      console.error("Email/Password SignUp Error:", error)
-      if (error.code === 'auth/email-already-in-use') {
+    } catch (error) {
+      const authError = error as AuthError;
+      console.error("Email/Password SignUp Error:", authError)
+      if (authError.code === 'auth/email-already-in-use') {
         toast.error('Энэ и-мэйл хаяг бүртгэлтэй байна.')
-      } else if (error.code === 'auth/weak-password') {
+      } else if (authError.code === 'auth/weak-password') {
         toast.error('Нууц үг сул байна. Илүү хүчтэй нууц үг сонгоно уу.')
       } else {
         toast.error('Бүртгүүлэхэд алдаа гарлаа. Дахин оролдоно уу.')
       }
+    } finally {
+      setIsLoading(false)
+      setLoadingProvider(null)
     }
   }
 
   // --- Social SignUp (Google, Facebook) ---
-// --- Social SignUp (Google, Facebook) ---
-const handleSocialSignUp = async (providerName: SocialProvider) => {
-  setIsLoading(true)
-  setLoadingProvider(providerName)
-  let provider
-  if (providerName === 'google') {
-    provider = new GoogleAuthProvider()
-  } else if (providerName === 'facebook') {
-    provider = new FacebookAuthProvider()
-  } else {
-    setIsLoading(false)
-    setLoadingProvider(null)
-    toast.error("Unsupported social provider")
-    return
-  }
+  const handleSocialSignUp = async (providerName: SocialProvider) => {
+    setIsLoading(true)
+    setLoadingProvider(providerName)
+    let provider: AuthProvider;
 
-  try {
-    const result = await signInWithPopup(auth, provider)
-    const user = result.user
-    console.log(`${providerName} User:`, user)
-    setIsLoading(false)
-    setLoadingProvider(null)
-    toast.success(`${providerName}-ээр амжилттай нэвтэрлээ!`)
-    router.push('/')
-  } catch (error: any) {
-    setIsLoading(false)
-    setLoadingProvider(null)
-    console.error(`${providerName} SignUp Error:`, error)
-    if (error.code === 'auth/account-exists-with-different-credential') {
-      const email = error.customData?.email;
-      
-      toast.error('Энэ имэйл хаяг өөр нэвтрэх аргаар бүртгэгдсэн байна', {
-        description: 'Та өмнө нь ашигласан нэвтрэх аргаар нэвтэрнэ үү',
-        action: {
-          label: 'Нэвтрэх хуудас руу шилжих',
-          onClick: () => router.push('/auth/login')
-        },
-        duration: 10000
-      });
-      
-      // Automatically redirect to login page after showing the notification
-      setTimeout(() => {
-        router.push('/auth/login');
-      }, 2000);
-    }  else if (error.code === 'auth/popup-closed-by-user') {
-      toast.info('Нэвтрэх цонхыг хаалаа.')
-    } else if (error.code === 'auth/auth-domain-config-required') {
-      toast.error('Facebook нэвтрэлтийн тохиргоо дутуу байна (authDomain).')
-    } else if (error.code === 'auth/cancelled-popup-request') {
-      toast.info('Нэвтрэх хүсэлтийг цуцалсан.')
-    } else if (error.code === 'auth/operation-not-allowed') {
-      toast.error(`${providerName} нэвтрэлтийг Firebase дээр идэвхжүүлээгүй байна.`)
-    } else if (error.code === 'auth/popup-blocked') {
-      toast.error('Нэвтрэх цонхыг хөтөч хаасан байна. Pop-up-г зөвшөөрнө үү.')
+    if (providerName === 'google') {
+      provider = new GoogleAuthProvider()
+    } else if (providerName === 'facebook') {
+      provider = new FacebookAuthProvider()
     } else {
-      toast.error(`${providerName}-ээр нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.`)
+      setIsLoading(false)
+      setLoadingProvider(null)
+      toast.error("Unsupported social provider")
+      return
+    }
+
+    try {
+      const result = await signInWithPopup(auth, provider)
+      const user = result.user
+      console.log(`${providerName} User:`, user)
+      toast.success(`${providerName}-ээр амжилттай нэвтэрлээ!`)
+      router.push('/')
+    } catch (error) {
+      const authError = error as AuthError & { customData?: { email?: string }, credential?: AuthCredential };
+      console.error(`${providerName} SignUp Error:`, authError)
+
+      if (authError.code === 'auth/account-exists-with-different-credential') {
+        const email = authError.customData?.email;
+        const credential = authError.credential;
+
+        if (email && credential) {
+          try {
+            const methods = await fetchSignInMethodsForEmail(auth, email);
+            setLinkingEmail(email);
+            setPendingCredential(credential);
+            setExistingSignInMethods(methods as string[]); // Cast to string[]
+            setShowAccountLinkPrompt(true);
+          } catch (fetchError) {
+            console.error("Fetch methods error:", fetchError);
+            toast.error("Бүртгэл шалгахад алдаа гарлаа. Нэвтрэх хуудас руу шилжиж оролдоно уу.");
+            setTimeout(() => router.push('/auth/login'), 2000);
+          }
+        } else {
+          toast.error('Энэ имэйл хаяг өөр нэвтрэх аргаар бүртгэгдсэн байна.', {
+            description: 'Та өмнө нь ашигласан нэвтрэх аргаар нэвтэрнэ үү.',
+            action: { label: 'Нэвтрэх хуудас руу шилжих', onClick: () => router.push('/auth/login') },
+            duration: 10000
+          });
+        }
+      } else if (authError.code === 'auth/popup-closed-by-user') {
+        toast.info('Нэвтрэх цонхыг хаалаа.')
+      } else if (authError.code === 'auth/auth-domain-config-required') {
+        toast.error('Facebook нэвтрэлтийн тохиргоо дутуу байна (authDomain).')
+      } else if (authError.code === 'auth/cancelled-popup-request') {
+        toast.info('Нэвтрэх хүсэлтийг цуцалсан.')
+      } else if (authError.code === 'auth/operation-not-allowed') {
+        toast.error(`${providerName} нэвтрэлтийг Firebase дээр идэвхжүүлээгүй байна.`)
+      } else if (authError.code === 'auth/popup-blocked') {
+        toast.error('Нэвтрэх цонхыг хөтөч хаасан байна. Pop-up-г зөвшөөрнө үү.')
+      } else {
+        toast.error(`${providerName}-ээр нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.`)
+      }
+    } finally {
+      setIsLoading(false)
+      setLoadingProvider(null)
     }
   }
-}
 
   // --- Account Linking Logic ---
   const handleSignInToLink = async (method: SignInMethod) => {
-    if (!linkingEmail) {
-      toast.error("Холбох и-мэйл олдсонгүй.");
+    if (!linkingEmail || !pendingCredential) {
+      toast.error("Холбох мэдээлэл дутуу байна.");
+      setShowAccountLinkPrompt(false);
       return;
     }
     setIsLinking(true);
-    try {
-      let userToLink = auth.currentUser;
 
-      if (!userToLink) {
-        // If not already signed in, sign in with the chosen existing method
-        if (method === 'password') {
-          // User needs to sign in with password first to link.
-          // We will redirect them to the login page.
-          toast.info("Бүртгэлээ холбохын тулд эхлээд нэвтэрнэ үү. Таныг нэвтрэх хуудас руу шилжүүлж байна.");
-          setIsLinking(false); // Reset linking state
-          setShowAccountLinkPrompt(false); // Hide the prompt
-          setPendingCredential(null); // Clear pending credential
-          setLinkingEmail(''); // Clear linking email
-          router.push('/auth/login'); // Redirect to login page
-          return; // Stop further execution in this function
-        } else if (method === 'google.com' || method === 'facebook.com') {
-          const provider = method === 'google.com' ? new GoogleAuthProvider() : new FacebookAuthProvider();
-          provider.setCustomParameters({ login_hint: linkingEmail }); // Pre-fill email
-          const result = await signInWithPopup(auth, provider);
-          userToLink = result.user;
+    try {
+      let userCredential: UserCredential | null = null;
+
+      if (method === 'password') {
+        if (!passwordForLinking) {
+          toast.error("Нууц үгээ оруулна уу.");
+          setIsLinking(false);
+          return;
         }
+        userCredential = await signInWithEmailAndPassword(auth, linkingEmail, passwordForLinking);
+      } else if (method === 'google.com' || method === 'facebook.com') {
+        const provider = method === 'google.com' ? new GoogleAuthProvider() : new FacebookAuthProvider();
+        provider.setCustomParameters({ login_hint: linkingEmail });
+        userCredential = await signInWithPopup(auth, provider);
       }
 
-      if (userToLink && pendingCredential) {
-        await linkWithCredential(userToLink, pendingCredential);
+      if (userCredential && userCredential.user && pendingCredential) {
+        await linkWithCredential(userCredential.user, pendingCredential);
         toast.success("Бүртгэлийг амжилттай холболоо!");
         setShowAccountLinkPrompt(false);
         setPendingCredential(null);
         setLinkingEmail('');
         setExistingSignInMethods([]);
+        setPasswordForLinking('');
         router.push('/');
-      } else if (!userToLink) {
-        // This case should ideally be handled by the logic above if method was 'password'
-        // or if signInWithPopup failed for social providers.
-        toast.error("Холбохын тулд эхлээд нэвтэрнэ үү.");
+      } else {
+        throw new Error("Нэвтрэх эсвэл хэрэглэгчийн мэдээлэл авахад алдаа гарлаа.");
       }
-    } catch (error: any) {
-      console.error("Account Linking Error:", error);
-      if (error.code === 'auth/credential-already-in-use') {
+    } catch (error) {
+      const authError = error as AuthError;
+      console.error("Account Linking Error:", authError);
+      if (authError.code === 'auth/credential-already-in-use') {
         toast.error("Энэ нэвтрэх арга таны өөр бүртгэлд холбогдсон байна.");
-      } else if (error.code === 'auth/provider-already-linked') {
+      } else if (authError.code === 'auth/provider-already-linked') {
         toast.info("Энэ нэвтрэх арга аль хэдийн холбогдсон байна.");
-        setShowAccountLinkPrompt(false); // Already linked, proceed
+        setShowAccountLinkPrompt(false);
         router.push('/');
-      } else if (error.code === 'auth/requires-recent-login') {
+      } else if (authError.code === 'auth/requires-recent-login') {
         toast.error("Аюулгүй байдлын үүднээс дахин нэвтэрнэ үү.");
-        // Handle re-authentication if needed
+      } else if (authError.code === 'auth/wrong-password' || authError.code === 'auth/invalid-credential') {
+        toast.error("Нууц үг буруу байна.");
       } else {
         toast.error("Бүртгэлийг холбоход алдаа гарлаа.");
       }
@@ -211,6 +220,7 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
     }
   };
 
+
   const getProviderName = (methodId: string): string => {
     if (methodId === 'password') return 'Нууц үг';
     if (methodId === 'google.com') return 'Google';
@@ -218,7 +228,7 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
     return methodId;
   }
 
-  // --- Account Linking Prompt Modal ---
+  // --- AccountLinkingPromptModal ---
   const AccountLinkPromptModal = () => {
     if (!showAccountLinkPrompt) return null;
 
@@ -235,7 +245,7 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
               className="bg-neutral-700 hover:bg-neutral-800 text-white rounded-full p-2 shadow-md transition-colors"
               aria-label="Хаах"
             >
-              <EyeOff className="w-5 h-5" /> {/* Using EyeOff as a close icon example */}
+              <EyeOff className="w-5 h-5" />
             </button>
           </div>
           <div className="text-center">
@@ -249,77 +259,60 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
             </p>
           </div>
           <div className="space-y-3">
-            {existingSignInMethods.map((method) => (
+            {existingSignInMethods.filter(method => method !== 'password').map((method) => (
               <button
                 key={method}
                 onClick={() => handleSignInToLink(method as SignInMethod)}
                 disabled={isLinking}
                 className={`w-full font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 group transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60
-                  ${method === 'google.com' ? 'bg-white border-2 border-neutral-200 text-neutral-800 hover:border-neutral-300 hover:bg-neutral-50' : ''}
-                  ${method === 'facebook.com' ? 'bg-blue-600 text-white hover:bg-blue-700' : ''}
-                  ${method === 'password' ? 'bg-neutral-800 text-white hover:bg-neutral-900' : ''}
-                `}
+                                ${method === 'google.com' ? 'bg-white border-2 border-neutral-200 text-neutral-800 hover:border-neutral-300 hover:bg-neutral-50' : ''}
+                                ${method === 'facebook.com' ? 'bg-blue-600 text-white hover:bg-blue-700' : ''}`}
               >
                 {isLinking ? (
                   <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
-                    {method === 'google.com' && <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.72 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.72 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>}
+                    {method === 'google.com' && <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>}
                     {method === 'facebook.com' && <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>}
-                    {method === 'password' && <Lock className="w-5 h-5" />}
                     <span>{getProviderName(method)}-ээр нэвтэрч холбох</span>
                   </>
                 )}
               </button>
             ))}
-            {/* Simple password input for linking - ideally this would be more robust or a separate modal */}
-            {existingSignInMethods.includes('password') && (
-              <div className="mt-4 p-3 border border-neutral-200 rounded-lg">
-                <p className="text-sm text-neutral-600 mb-2">Эсвэл нууц үгээр нэвтэрч холбоно уу:</p>
-                <input
-                  type="password"
-                  value={passwordForLinking}
-                  onChange={(e) => setPasswordForLinking(e.target.value)}
-                  placeholder="Одоогийн нууц үгээ оруулна уу"
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:ring-neutral-900 focus:border-neutral-900"
-                />
-                <button
-                  onClick={async () => {
-                    // This is a simplified direct sign-in and link.
-                    // In a real app, you might want to separate sign-in from linking calls.
-                    setIsLinking(true);
-                    try {
-                      // IMPORTANT: User must be signed in to link.
-                      // If auth.currentUser is null, this signInWithEmailAndPassword call
-                      // will sign them in. Then linkWithCredential can be called.
-                      const userCredential = await signInWithEmailAndPassword(auth, linkingEmail, passwordForLinking); // CORRECTED LINE
-                      const signedInUser = userCredential.user; // Get user from userCredential
 
-                      if (signedInUser && pendingCredential) {
-                        await linkWithCredential(signedInUser, pendingCredential);
-                        toast.success("Бүртгэлийг амжилттай холболоо!");
-                        setShowAccountLinkPrompt(false);
-                        setPendingCredential(null);
-                        router.push('/');
-                      } else {
-                        toast.error("Нэвтрэлт амжилтгүй эсвэл холбох мэдээлэл дутуу.");
-                      }
-                    } catch (linkPassError: any) {
-                      console.error("Password link error:", linkPassError);
-                      if (linkPassError.code === 'auth/wrong-password' || linkPassError.code === 'auth/user-not-found' || linkPassError.code === 'auth/invalid-credential' || linkPassError.code === 'auth/invalid-email') {
-                        toast.error("И-мэйл эсвэл нууц үг буруу байна.");
-                      } else {
-                        toast.error("Нууц үгээр холбоход алдаа гарлаа.");
-                      }
-                    } finally {
-                      setIsLinking(false);
-                      setPasswordForLinking('');
-                    }
-                  }}
+            {existingSignInMethods.includes('password') && (
+              <div className="mt-4 p-4 border border-neutral-200 rounded-lg bg-neutral-50">
+                <p className="text-sm text-neutral-600 mb-3 text-center">Эсвэл нууц үгээр нэвтэрч холбоно уу:</p>
+                <div className="relative group">
+                  <label htmlFor="linkPassword" className="text-xs font-semibold text-neutral-600 mb-1 block">Нууц үг</label>
+                  <div className="flex items-center px-4 py-3 bg-white rounded-lg border border-neutral-300 focus-within:ring-1 focus-within:ring-neutral-900 focus-within:border-neutral-900">
+                    <Lock className="w-4 h-4 mr-3 text-neutral-400" />
+                    <input
+                      id="linkPassword"
+                      type="password"
+                      value={passwordForLinking}
+                      onChange={(e) => setPasswordForLinking(e.target.value)}
+                      placeholder="Одоогийн нууц үгээ оруулна уу"
+                      className="w-full bg-transparent outline-none text-neutral-900 placeholder-neutral-400 text-sm"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleSignInToLink('password')}
                   disabled={isLinking || !passwordForLinking}
-                  className="mt-2 w-full bg-neutral-800 text-white font-semibold py-2.5 rounded-lg hover:bg-neutral-900 transition-colors disabled:opacity-60"
+                  className="mt-3 w-full bg-neutral-800 text-white font-semibold py-2.5 rounded-lg hover:bg-neutral-900 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
                 >
-                  {isLinking && loadingProvider !== 'email' ? 'Холбож байна...' : 'Нууц үгээр холбох'}
+                  {isLinking ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Холбож байна...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      <span>Нууц үгээр холбох</span>
+                    </>
+                  )}
                 </button>
               </div>
             )}
@@ -328,8 +321,11 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
             onClick={() => {
               setShowAccountLinkPrompt(false);
               setPendingCredential(null);
+              setLinkingEmail('');
+              setExistingSignInMethods([]);
+              setPasswordForLinking('');
             }}
-            className="w-full mt-6 text-center text-neutral-600 hover:text-neutral-800 font-medium py-2 rounded-lg transition-colors"
+            className="w-full mt-6 text-center text-neutral-600 hover:text-neutral-800 font-medium py-2 rounded-lg transition-colors text-sm"
           >
             Цуцлах
           </button>
@@ -337,7 +333,6 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
       </div>
     )
   }
-
 
   return (
     <>
@@ -358,8 +353,7 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
             <div className="relative mb-12">
               <div className="absolute inset-0 bg-white/10 rounded-3xl blur-xl scale-110"></div>
               <div className="relative inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-3xl border border-neutral-700/50 shadow-2xl">
-              <Image alt='logo' width="400" height="400" src="/images/logo.svg"             
-/>
+                <Image alt='logo' width={60} height={60} src="/images/logo.svg" onError={(e) => { e.currentTarget.src = 'https://placehold.co/60x60/FFFFFF/000000?text=LOGO' }} className="p-1" />
               </div>
             </div>
             <h1 className="text-6xl font-extralight text-white tracking-tight mb-6 leading-none">
@@ -380,10 +374,10 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative">
           <div className="absolute top-8 left-1/2 transform -translate-x-1/2 lg:hidden">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl border border-neutral-700/50 shadow-xl">
-            <Image alt='logo' width="400" height="400" src="/images/logo.svg"             
-/>
+              <Image alt='logo icon' width={32} height={32} src="/images/logo.svg" onError={(e) => { e.currentTarget.src = 'https://placehold.co/32x32/FFFFFF/000000?text=S' }} className="p-1" />
             </div>
           </div>
+
           <div className="w-full max-w-md">
             <div className="relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10">
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 rounded-3xl pointer-events-none"></div>
@@ -392,106 +386,56 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
                   <h2 className="text-3xl font-semibold text-neutral-900 mb-2 tracking-tight">Бүртгүүлэх</h2>
                   <p className="text-neutral-600 font-medium">Шинэ данс үүсгэнэ үү</p>
                 </div>
-                <form onSubmit={(e) => { e.preventDefault(); handleSignUp(); }} className="space-y-6">
+                <form onSubmit={(e) => { e.preventDefault(); handleSignUp(); }} className="space-y-5">
                   {/* Name Field */}
                   <div className="relative group">
                     <label htmlFor="name" className="text-sm font-semibold text-neutral-700 mb-2 block">Бүтэн нэр</label>
                     <div className={`relative bg-neutral-50/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 overflow-hidden group-hover:bg-neutral-50 ${focusedField === 'name' ? 'border-neutral-900 bg-white shadow-lg shadow-neutral-900/10' : 'border-neutral-200 hover:border-neutral-300'}`}>
                       <div className="flex items-center px-5 py-4">
                         <User className={`w-5 h-5 mr-4 transition-all duration-300 ${focusedField === 'name' ? 'text-neutral-900 scale-110' : 'text-neutral-400 group-hover:text-neutral-600'}`} />
-                        <input
-                          id="name"
-                          type="text"
-                          placeholder="Жон Доу"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          onFocus={() => setFocusedField('name')}
-                          onBlur={() => setFocusedField('')}
-                          className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base"
-                          aria-required="true"
-                          required
-                        />
+                        <input id="name" type="text" placeholder="Жон Доу" value={name} onChange={(e) => setName(e.target.value)} onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField('')} className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base" aria-required="true" required />
                       </div>
                     </div>
                   </div>
-
                   {/* Email Field */}
                   <div className="relative group">
                     <label htmlFor="email" className="text-sm font-semibold text-neutral-700 mb-2 block">И-мэйл</label>
                     <div className={`relative bg-neutral-50/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 overflow-hidden group-hover:bg-neutral-50 ${focusedField === 'email' ? 'border-neutral-900 bg-white shadow-lg shadow-neutral-900/10' : 'border-neutral-200 hover:border-neutral-300'}`}>
                       <div className="flex items-center px-5 py-4">
                         <Mail className={`w-5 h-5 mr-4 transition-all duration-300 ${focusedField === 'email' ? 'text-neutral-900 scale-110' : 'text-neutral-400 group-hover:text-neutral-600'}`} />
-                        <input
-                          id="email"
-                          type="email"
-                          placeholder="example@mail.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          onFocus={() => setFocusedField('email')}
-                          onBlur={() => setFocusedField('')}
-                          className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base"
-                          aria-required="true"
-                          required
-                        />
+                        <input id="email" type="email" placeholder="example@mail.com" value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField('')} className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base" aria-required="true" required />
                       </div>
                     </div>
                   </div>
-
                   {/* Password Field */}
                   <div className="relative group">
                     <label htmlFor="password" className="text-sm font-semibold text-neutral-700 mb-2 block">Нууц үг</label>
                     <div className={`relative bg-neutral-50/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 overflow-hidden group-hover:bg-neutral-50 ${focusedField === 'password' ? 'border-neutral-900 bg-white shadow-lg shadow-neutral-900/10' : 'border-neutral-200 hover:border-neutral-300'}`}>
                       <div className="flex items-center px-5 py-4">
                         <Lock className={`w-5 h-5 mr-4 transition-all duration-300 ${focusedField === 'password' ? 'text-neutral-900 scale-110' : 'text-neutral-400 group-hover:text-neutral-600'}`} />
-                        <input
-                          id="password"
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          onFocus={() => setFocusedField('password')}
-                          onBlur={() => setFocusedField('')}
-                          className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base"
-                          aria-required="true"
-                          minLength={8}
-                          required
-                        />
+                        <input id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField('')} className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base" aria-required="true" minLength={8} required />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="ml-4 text-neutral-400 hover:text-neutral-900 transition-all transform hover:scale-110" aria-label={showPassword ? 'Hide password' : 'Show password'}>
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
                     </div>
-                    <p className="mt-2 text-xs text-neutral-500">Хамгийн багадаа 8 тэмдэгт агуулсан байх</p>
+                    <p className="mt-1 text-xs text-neutral-500">Хамгийн багадаа 8 тэмдэгт агуулсан байх</p>
                   </div>
-
                   {/* Confirm Password Field */}
                   <div className="relative group">
                     <label htmlFor="confirmPassword" className="text-sm font-semibold text-neutral-700 mb-2 block">Нууц үг давтах</label>
                     <div className={`relative bg-neutral-50/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 overflow-hidden group-hover:bg-neutral-50 ${focusedField === 'confirmPassword' ? 'border-neutral-900 bg-white shadow-lg shadow-neutral-900/10' : 'border-neutral-200 hover:border-neutral-300'}`}>
                       <div className="flex items-center px-5 py-4">
                         <Lock className={`w-5 h-5 mr-4 transition-all duration-300 ${focusedField === 'confirmPassword' ? 'text-neutral-900 scale-110' : 'text-neutral-400 group-hover:text-neutral-600'}`} />
-                        <input
-                          id="confirmPassword"
-                          type={showConfirmPassword ? 'text' : 'password'}
-                          placeholder="••••••••"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          onFocus={() => setFocusedField('confirmPassword')}
-                          onBlur={() => setFocusedField('')}
-                          className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base"
-                          aria-required="true"
-                          minLength={8}
-                          required
-                        />
+                        <input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onFocus={() => setFocusedField('confirmPassword')} onBlur={() => setFocusedField('')} className="flex-1 bg-transparent outline-none text-neutral-900 placeholder-neutral-400 font-medium text-base" aria-required="true" minLength={8} required />
                         <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="ml-4 text-neutral-400 hover:text-neutral-900 transition-all transform hover:scale-110" aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}>
                           {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
                     </div>
                   </div>
-
                   {/* Terms Checkbox */}
-                  <div className="flex items-start">
+                  <div className="flex items-start pt-2">
                     <div className="flex items-center h-5">
                       <input
                         id="terms"
@@ -499,18 +443,17 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
                         type="checkbox"
                         checked={acceptedTerms}
                         onChange={(e) => setAcceptedTerms(e.target.checked)}
-                        className="focus:ring-neutral-900 h-4 w-4 text-neutral-900 border-neutral-300 rounded"
+                        className="focus:ring-neutral-900 h-4 w-4 text-neutral-900 border-neutral-300 rounded cursor-pointer"
                         required
                       />
                     </div>
                     <div className="ml-3 text-sm">
-                      <label htmlFor="terms" className="font-medium text-neutral-700">
-                        Би <a href="/terms" className="text-neutral-900 font-semibold hover:underline">Үйлчилгээний нөхцөл</a> болон{''}
-                        <a href="/privacy" className="text-neutral-900 font-semibold hover:underline">Нууцлалын бодлого</a>-ыг зөвшөөрч байна
+                      <label htmlFor="terms" className="font-medium text-neutral-700 cursor-pointer">
+                        Би <a href="/terms" className="text-neutral-900 font-semibold hover:underline" target="_blank" rel="noopener noreferrer">Үйлчилгээний нөхцөл</a> болон{' '}
+                        <a href="/privacy" className="text-neutral-900 font-semibold hover:underline" target="_blank" rel="noopener noreferrer">Нууцлалын бодлого</a>-ыг зөвшөөрч байна
                       </label>
                     </div>
                   </div>
-
                   {/* SignUp Button */}
                   <button
                     type="submit"
@@ -531,7 +474,6 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
                     )}
                   </button>
                 </form>
-
                 {/* Divider */}
                 <div className="relative my-8">
                   <div className="absolute inset-0 flex items-center">
@@ -541,7 +483,6 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
                     <span className="px-6 bg-white/90 text-neutral-500 font-semibold backdrop-blur-sm rounded-full">эсвэл</span>
                   </div>
                 </div>
-
                 {/* Social SignUp Buttons */}
                 <div className="space-y-4">
                   <button
@@ -554,7 +495,7 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
                     {isLoading && loadingProvider === 'google' ? (
                       <div className="w-5 h-5 border-2 border-neutral-400/30 border-t-neutral-600 rounded-full animate-spin"></div>
                     ) : (
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.72 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.72 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
                     )}
                     <span>Google-ээр бүртгүүлэх</span>
                   </button>
@@ -575,11 +516,10 @@ const handleSocialSignUp = async (providerName: SocialProvider) => {
                 </div>
               </div>
             </div>
-
             {/* Login Link */}
             <div className="text-center mt-8">
               <p className="text-neutral-300 font-medium">
-                Аль хэдийн бүртгүүлсэн үү? {''}
+                Аль хэдийн бүртгүүлсэн үү?{' '}
                 <a href="/auth/login" className="text-white hover:text-neutral-200 font-semibold hover:underline transition-all">
                   Энд нэвтрэнэ үү
                 </a>

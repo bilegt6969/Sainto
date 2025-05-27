@@ -20,8 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'; // Assuming this path is correct
-import { Badge } from '@/components/ui/badge'; // Assuming this path is correct
-import { Separator } from '@/components/ui/separator'; // Assuming this path is correct
+ import { Separator } from '@/components/ui/separator'; // Assuming this path is correct
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Interfaces
@@ -184,11 +183,7 @@ export default function PaymentPage() {
   }, [transferCode]);
 
   // Helper to show warning toasts (already existed, kept for consistency if needed elsewhere)
-  const showToastWarning = (message: string) => {
-    toast.warning(message, {
-      style: { background: '#f97316', color: 'white', border: 'none', borderRadius: '12px' },
-    });
-  };
+ 
 
   // Helper to show error toasts using Sonner
   const showToastError = (message: string) => {

@@ -3,8 +3,7 @@ import Product from './product/page';
 import { client } from '../../../lib/sanity';
 import { heroQuery } from '../../../lib/queries';
 import HeroSection from '../../components/HeroSection';
-import { HeroData } from '../../../types/hero';
-
+ 
   
 export default async function HomePage() {
   let heroData;

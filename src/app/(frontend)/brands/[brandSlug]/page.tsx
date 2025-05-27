@@ -500,70 +500,88 @@ useEffect(()=>{
 
   // Effect 3: Infinite Scroll - Fetch Subsequent Pages
   // Fetches the next page of products when the `page` state increases.
-  useEffect(() => {
-    // Conditions to fetch next page:
-    // - Not the initial load anymore (page > 1)
-    // - brandSlug is available
-    // - hasMore indicates more products exist
-    // - Not currently fetching products
-    if (page > 1 && brandSlug && hasMore && !isFetchingProducts.current) {
-      console.log('Effect: Triggering infinite scroll fetch for page:', page, 'Filters:', selectedFilters);
-      isFetchingProducts.current = true; // Set fetch lock
-      setIsLoading(true); // Show loading indicator for subsequent pages
+// ... (Imports and other code) ...
 
-      // Fetch the next page, passing current filters
-      fetchBrandProducts(brandSlug,page,selectedFilters).then(({newItems,totalResults})=>{
-        setProducts((prev)=>[...prev,...newItems]);
-        setHasMore((products.length+newItems.length)<totalResults);
-        })
-        .catch((err) => {
-           // Error state is set within fetchBrandProducts
-           console.error(`Error fetching page ${page}:`, err);
-           // Optional: Stop trying to load more if a page fetch fails
-           // setHasMore(false);
-        })
-        .finally(() => {
-          setIsLoading(false); // Hide loading indicator
-          isFetchingProducts.current = false; // Release fetch lock
+// REMOVED the first duplicate Effect3
+
+// Effect3: InfiniteScroll - Fetch Subsequent Pages (FIXED)
+useEffect(() => {
+  // Conditions to fetch next page:
+  // - Not the initial load anymore (page > 1)
+  // - brandSlug is available
+  // - hasMore indicates more products exist
+  // - Not currently fetching products
+  if (page > 1 && brandSlug && hasMore && !isFetchingProducts.current) {
+    console.log('Effect: Triggering infinite scroll fetch for page:', page, 'Filters:', selectedFilters);
+    isFetchingProducts.current = true; // Set fetch lock
+    setIsLoading(true); // Show loading indicator
+
+    // Fetch the next page, passing current filters
+    fetchBrandProducts(brandSlug, page, selectedFilters).then(({ newItems, totalResults }) => {
+        // Use functional updates to ensure we work with the latest state
+        setProducts((prevProducts) => {
+            const updatedProducts = [...prevProducts, ...newItems];
+            // We can now correctly calculate if there's more based on the new length
+            setHasMore(updatedProducts.length < totalResults);
+            return updatedProducts; // Return the updated array
         });
-    }
-    // Dependencies: Run when page changes or conditions like hasMore/brandSlug change
-  }, [page, brandSlug, hasMore, selectedFilters, fetchBrandProducts]);
+    }).catch((err) => {
+      // Error state is set within fetchBrandProducts
+      console.error(`Error fetching page ${page}:`, err);
+      // Optional: Stop trying to load more if a page fetch fails
+      // setHasMore(false);
+    }).finally(() => {
+      setIsLoading(false); // Hide loading indicator
+      isFetchingProducts.current = false; // Release fetch lock
+    });
+  }
+  // ✅ FIX: No `products.length` is needed here anymore because we calculate
+  //    `hasMore` *inside* the `setProducts` functional update (or rather,
+  //    we update both based on the result, ensuring consistency).
+  //    The original code had a flaw; the *best* fix is to avoid needing it.
+  //    If ESLint *still* complains, it's a false positive, but the *safest*
+  //    approach if `setHasMore` was *outside* the `setProducts` callback
+  //    would be to add `products.length`. Given the improved structure above,
+  //    it's likely not needed.
+  //    Let's stick to the cleanest version:
+}, [page, brandSlug, hasMore, selectedFilters, fetchBrandProducts]);
 
-  // Effect 4: Intersection Observer for Infinite Scroll Trigger
-  // Observes a target element near the bottom of the page. When it becomes visible,
-  // increments the page state to trigger the next fetch (Effect 3).
-  useEffect(() => {
-    // Don't set up observer if the target ref isn't set or if already fetching
-    if (!loadingRef.current || isFetchingProducts.current) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        // Trigger next page load if intersecting, not currently loading, and more products exist
-        if (entry.isIntersecting && !isFetchingProducts.current && hasMore) {
+// Effect4: IntersectionObserver for Infinite Scroll Trigger
+useEffect(() => {
+  // Don't setup observer if the target ref isn't set or if already fetching
+  // ✅ FIX: Check `isLoading` as well, as `isFetchingProducts` might be reset slightly before.
+  if (!loadingRef.current || isLoading) return;
+
+  const observer = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      // Trigger next page load if intersecting, not currently loading, and more products exist
+      // ✅ FIX: Check `isLoading` instead of `isFetchingProducts` for a safer trigger
+      if (entry.isIntersecting && !isLoading && hasMore) {
           console.log('Intersection observer triggered: loading next page');
-          // Increment page state, which triggers Effect 3
+          // Increment page state, which triggers Effect3
           setPage((prevPage) => prevPage + 1);
-        }
-      },
-      { rootMargin: '400px' } // Load when the trigger is 400px below the viewport
-    );
-
-    const currentRef = loadingRef.current; // Capture ref value
-    if (currentRef) {
-      observer.observe(currentRef); // Start observing
-    }
-
-    // Cleanup function: disconnect observer when component unmounts or dependencies change
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
       }
-    };
-    // Re-run setup if hasMore changes (e.g., reaches the end)
-    // isLoading/isFetchingProducts check happens inside the callback now
-  }, [hasMore]);
+  }, {
+      rootMargin: '400px' // Load when the trigger is 400px below the viewport
+  });
+
+  const currentRef = loadingRef.current;
+  if (currentRef) {
+      observer.observe(currentRef); // Start observing
+  }
+
+  // Cleanup function: disconnect observer
+  return () => {
+      if (currentRef) {
+          observer.unobserve(currentRef);
+      }
+  };
+  // ✅ FIX: Add `isLoading` to dependencies, so the observer re-evaluates
+  //    when loading finishes, allowing it to re-attach/trigger if needed.
+}, [hasMore, isLoading]);
+
+// ... (The rest of the component) ...
 
   // --- Render Logic ---
 
