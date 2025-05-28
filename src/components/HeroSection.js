@@ -28,27 +28,23 @@ export default function HeroSection({ heroData = DEFAULT_HERO }) {
     backgroundImageMobile,
   } = heroData;
 
-  // Helper function to get image URL from Sanity image object
   const getImageUrl = (imageObj, fallback = '/default-hero.jpg') => {
     if (!imageObj?.asset) return fallback;
-    
+
     try {
-      // Use urlFor for Sanity image optimization
       return urlFor(imageObj).url();
-    } catch  {
-      // Fallback to direct asset URL if urlFor fails
+    } catch {
       return imageObj.asset.url || fallback;
     }
   };
 
-  // Get URLs for all breakpoints with proper fallbacks
   const desktopImageUrl = getImageUrl(backgroundImageDesktop);
   const tabletImageUrl = getImageUrl(backgroundImageTablet, desktopImageUrl);
   const mobileImageUrl = getImageUrl(backgroundImageMobile, tabletImageUrl);
 
   return (
-    <section className="relative h-[80vh] max-h-[800px] mx-0 md:mx-0 w-full overflow-hidden rounded-[2rem] border border-neutral-700 md:h-[75vh] sm:h-[70vh] xs:h-[60vh]">
-      {/* Desktop Background Image */}
+    <section className="relative h-[80vh] max-h-[800px] w-full overflow-hidden rounded-[2rem] border border-neutral-700 px-5 md:h-[75vh] sm:h-[70vh] xs:h-[60vh]">
+      {/* Background Images */}
       <div className="absolute inset-0 -z-10 hidden lg:block">
         <Image
           src={desktopImageUrl}
@@ -58,14 +54,13 @@ export default function HeroSection({ heroData = DEFAULT_HERO }) {
           sizes="100vw"
           className="object-cover"
           style={{
-            objectPosition: backgroundImageDesktop?.hotspot 
+            objectPosition: backgroundImageDesktop?.hotspot
               ? `${backgroundImageDesktop.hotspot.x * 100}% ${backgroundImageDesktop.hotspot.y * 100}%`
               : 'center',
           }}
         />
       </div>
 
-      {/* Tablet Background Image */}
       <div className="absolute inset-0 -z-10 hidden md:block lg:hidden">
         <Image
           src={tabletImageUrl}
@@ -75,16 +70,15 @@ export default function HeroSection({ heroData = DEFAULT_HERO }) {
           sizes="100vw"
           className="object-cover"
           style={{
-            objectPosition: backgroundImageTablet?.hotspot 
+            objectPosition: backgroundImageTablet?.hotspot
               ? `${backgroundImageTablet.hotspot.x * 100}% ${backgroundImageTablet.hotspot.y * 100}%`
-              : backgroundImageDesktop?.hotspot 
+              : backgroundImageDesktop?.hotspot
                 ? `${backgroundImageDesktop.hotspot.x * 100}% ${backgroundImageDesktop.hotspot.y * 100}%`
                 : 'center',
           }}
         />
       </div>
 
-      {/* Mobile Background Image */}
       <div className="absolute inset-0 -z-10 block md:hidden">
         <Image
           src={mobileImageUrl}
@@ -94,21 +88,21 @@ export default function HeroSection({ heroData = DEFAULT_HERO }) {
           sizes="100vw"
           className="object-cover"
           style={{
-            objectPosition: backgroundImageMobile?.hotspot 
+            objectPosition: backgroundImageMobile?.hotspot
               ? `${backgroundImageMobile.hotspot.x * 100}% ${backgroundImageMobile.hotspot.y * 100}%`
-              : backgroundImageTablet?.hotspot 
+              : backgroundImageTablet?.hotspot
                 ? `${backgroundImageTablet.hotspot.x * 100}% ${backgroundImageTablet.hotspot.y * 100}%`
-                : backgroundImageDesktop?.hotspot 
+                : backgroundImageDesktop?.hotspot
                   ? `${backgroundImageDesktop.hotspot.x * 100}% ${backgroundImageDesktop.hotspot.y * 100}%`
                   : 'center',
           }}
         />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex h-full items-center">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 text-white">
-          <div className="max-w-2xl">
+      {/* Content Container */}
+      <div className="relative z-10 flex h-full items-center justify-center">
+        <div className="w-full max-w-screen-xl mx-auto">
+          <div className="max-w-2xl text-white">
             <h1 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
               {title}
             </h1>

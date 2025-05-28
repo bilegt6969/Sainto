@@ -746,7 +746,7 @@ const Home = () => {
           </Swiper>
         </div>
       </div>
-    );
+  );
   }, [categoryData, replaceText]);
 
   if (isLoading && Object.keys(data).length === 0) {
@@ -764,8 +764,8 @@ const Home = () => {
               {[...Array(itemLimit > 6 ? itemLimit/2 : 6)].map((_, i) => <SkeletonCard key={`skeleton-prod-card-${index}-${i}`} />)}
             </div>
             {/* Skeleton Grid for Mobile Products (2-column) */}
-            <div className="block lg:hidden px-1">
-              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="block lg:hidden px-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 {[...Array(4)].map((_, i) => ( // Show 4 skeleton cards for mobile (2 rows)
                   <div key={`skeleton-mobile-prod-card-${index}-${i}`} className="w-full">
                     <SkeletonCard />
@@ -879,9 +879,9 @@ const Home = () => {
                   )}
                 </header>
                 {/* Mobile: Product Grid */}
-                <div className="block lg:hidden mb-8 px-1">
+                <div className="block lg:hidden mb-8 px-3">
                   {items.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-4">
                       {items.map((item, idx) => (
                         <MobileItem
                           key={`${item.data.id}-mobile-${idx}`}
@@ -897,7 +897,7 @@ const Home = () => {
                   )}
                 </div>
                 {/* Desktop: Product Grid */}
-                <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 px-4 md:px-0">
+                <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 px-2 md:px-0">
                   {items.length > 0 ? (
                     items.slice(0, itemLimit).map((item, idx) => (
                       <DesktopItem
