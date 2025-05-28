@@ -47,7 +47,7 @@ export default function HeroSection({ heroData = DEFAULT_HERO }) {
   const mobileImageUrl = getImageUrl(backgroundImageMobile, tabletImageUrl);
 
   return (
-    <section className="relative h-[80vh] max-h-[800px] mx-2 md:mx-2 w-full overflow-hidden rounded-[2rem] border border-neutral-700 md:h-[75vh] sm:h-[70vh] xs:h-[60vh]">
+    <section className="relative h-[80vh] max-h-[800px] mx-0 md:mx-0 w-full overflow-hidden rounded-[2rem] border border-neutral-700 md:h-[75vh] sm:h-[70vh] xs:h-[60vh]">
       {/* Desktop Background Image */}
       <div className="absolute inset-0 -z-10 hidden lg:block">
         <Image

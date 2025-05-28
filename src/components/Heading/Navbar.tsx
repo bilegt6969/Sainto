@@ -756,7 +756,7 @@ const Navbar = () => {
         <Wrapper className="relative backdrop-blur-lg backdrop-brightness-75 rounded-xl lg:rounded-3xl border border-[rgba(124,124,124,0.2)] px-1 md:px-2 flex items-center justify-start h-full">
           {/* Header Content Row - Adjusted vertical alignment */}
           {/* Added sticky and margin auto for vertical centering within the dynamic header height */}
-          <div className="flex items-center justify-between w-full sticky mt-[7px] lg:mt-auto mb-auto inset-x-0">
+          <div className="flex items-center justify-between w-full sticky mt-auto mb-auto inset-x-0">
             {/* Left side: Logo and Desktop Menu */}
             <div className="flex items-center gap-4 flex-shrink-0 pl-0"> {/* Ensure no extra padding */}
               {/* Logo - Adjusted Size */}

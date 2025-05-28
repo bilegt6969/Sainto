@@ -1,12 +1,12 @@
 import React from 'react';
-import './styles.css'; // Assuming this path is correct relative to the layout file
+import './(frontend)/styles.css'; // Assuming this path is correct relative to the layout file
 import Navbar from '@/components/Heading/Navbar';
 // Corrected Footer import based on assumption (PascalCase component name)
 // Verify this path matches your actual file structure and casing!
 import Footer from '@/components/Footer';
 import { Analytics } from "@vercel/analytics/next"
 
-import { ProductProvider } from '../context/ProductContext'; // Check relative path
+import { ProductProvider } from './context/ProductContext'; // Check relative path
 import NextTopLoader from 'nextjs-toploader';
 
 // Metadata remains the same
