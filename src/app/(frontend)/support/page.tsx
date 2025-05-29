@@ -2,6 +2,7 @@
 
 import React from 'react'; // Import ReactNode
 import { motion } from 'framer-motion';
+import Link from "next/link"
 
 // --- Define Interface for ContactOption Props ---
 interface ContactOptionProps {
@@ -162,8 +163,8 @@ const SupportPage = () => {
           Copyright © {new Date().getFullYear()} Saint Mongolia LLC. All rights reserved.
         </p>
         <div className="mt-4 space-x-6">
-          <a href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300">Privacy Policy</a>
-          <a href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300">Terms of Service</a>
+          <Link href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300">Privacy Policy</Link>
+          <Link href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300">Terms of Service</Link>
         </div>
       </footer>
 

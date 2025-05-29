@@ -5,6 +5,7 @@ import { Eye, EyeOff, Mail, Lock, User, ArrowRight, AlertTriangle } from 'lucide
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import Link from 'next/link'
 import {
   auth, // <--- IMPORT THE AUTH INSTANCE HERE
   AuthError,
@@ -520,9 +521,9 @@ const SignUpPage = () => {
             <div className="text-center mt-8">
               <p className="text-neutral-300 font-medium">
                 Аль хэдийн бүртгүүлсэн үү?{' '}
-                <a href="/auth/login" className="text-white hover:text-neutral-200 font-semibold hover:underline transition-all">
+                <Link href="/auth/login" className="text-white hover:text-neutral-200 font-semibold hover:underline transition-all">
                   Энд нэвтрэнэ үү
-                </a>
+                </Link>
               </p>
             </div>
           </div>

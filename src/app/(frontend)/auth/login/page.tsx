@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle, Link } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -370,9 +370,9 @@ const LoginPage = () => {
                 <div className="relative group">
                   <div className="flex justify-between items-center mb-2">
                     <label htmlFor="password" className="text-sm font-semibold text-neutral-700">Нууц үг</label>
-                    <a href="/auth/forgot-password" className="text-sm text-neutral-900 hover:text-black font-semibold hover:underline transition-all">
+                    <Link href="/auth/forgot-password" className="text-sm text-neutral-900 hover:text-black font-semibold hover:underline transition-all">
                       Нууц үг мартсан?
-                    </a>
+                    </Link>
                   </div>
                   <div className={`
                     relative bg-neutral-50/80 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 overflow-hidden group-hover:bg-neutral-50
@@ -476,9 +476,9 @@ const LoginPage = () => {
           <div className="text-center mt-8">
             <p className="text-neutral-300 font-medium">
               Шинэ хэрэглэгч?{' '}
-              <a href="/auth/signup" className="text-white hover:text-neutral-200 font-semibold hover:underline transition-all">
+              <Link href="/auth/signup" className="text-white hover:text-neutral-200 font-semibold hover:underline transition-all">
                 Энд бүртгүүлнэ үү
-              </a>
+              </Link>
             </p>
           </div>
         </div>

@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
+import Link from 'next/link'
+
+
 // Props for the ContactOption component
 type ContactOptionProps = {
   icon: React.ReactNode;
@@ -411,12 +414,12 @@ const ContactPage = () => {
           Copyright © {new Date().getFullYear()} Saint Mongolia LLC. All rights reserved.
         </p>
         <div className="mt-4 space-x-6">
-          <a href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
+          <Link href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
             Privacy Policy
-          </a>
-          <a href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
+          </Link>
+          <Link href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
             Terms of Service
-          </a>
+          </Link>
         </div>
       </footer>
 
