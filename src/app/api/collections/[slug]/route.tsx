@@ -6,8 +6,8 @@ import { type NextRequest, NextResponse } from 'next/server.js'; // Import NextR
 // CONSTRUCT_API_KEY=key_XT7bjdbvjgECO5d8
 // CONSTRUCT_CLIENT_ID=c1a92cc3-02a4-4244-8e70-bee6178e8209
 
-const apiKey = process.env.CONSTRUCT_API_KEY;
-const clientId = process.env.CONSTRUCT_CLIENT_ID;
+const apiKey = process.env.CONSTRUCT_API_KEY || "key_XT7bjdbvjgECO5d8";
+const clientId = process.env.CONSTRUCT_CLIENT_ID || "c1a92cc3-02a4-4244-8e70-bee6178e8209";
 
 // --- Interfaces ---
 
