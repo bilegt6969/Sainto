@@ -23,7 +23,7 @@ export const metadata = {
     siteName: 'SAINT MONGOLIA',
     images: [
       {
-        url: '/og-banner.jpg',
+        url: 'https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg',
         width: 1200,
         height: 630,
         alt: 'SAINT Mongolia - Black background with minimalist gold logo and curated product display',
@@ -38,7 +38,7 @@ export const metadata = {
     title: 'SAINT | The Art of Wearable Distinction',
     description: 'We don\'t sell products — we offer entry into an exclusive world where every stitch tells a story. Your journey into elevated style begins here.',
     creator: '@saintmongolia',
-    images: ['/twitter-banner.jpg'],
+    images: ['https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg'],
   },
   robots: {
     index: true,
