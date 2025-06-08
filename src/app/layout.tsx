@@ -11,8 +11,12 @@ import NextTopLoader from 'nextjs-toploader';
 
 // Metadata remains the same
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Saint. 2025.',
+     title: 'Saint | Mongolia’s First & Finest Premium Fashion & Sneaker Retailer',
+    description:
+      'Saint is Mongolia’s first and finest platform offering authentic streetwear, luxury sneakers, and designer brands including Yeezy, Jordan, Bape, Maison Margiela, Birkin, and more — exclusively sold by us.',
+    keywords:
+      'Saint Mongolia, first fashion retailer Mongolia, finest sneaker shop Mongolia, streetwear Mongolia, luxury fashion Mongolia, Bape Mongolia, Maison Margiela Mongolia, Birkin Mongolia, exclusive sneaker retailer, designer clothing Mongolia',
+   
   icons: {
     icon: [
       '/favico/favicon-32x32.png?v=4',

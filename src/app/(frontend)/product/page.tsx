@@ -416,7 +416,7 @@ const Home = () => {
         const collectionInfo = res.response.collection;
         const originalCollectionDoc = sortedCollections[index];
         let categoryName = collectionInfo.display_name;
-        if (!categoryName && currentSanityNameMap) {
+        if (categoryName && currentSanityNameMap) {  //herwee          if (!categoryName && currentSanityNameMap) { baiwal ajilna shuuu!!!!!
           const sanityMappedName = currentSanityNameMap.get(originalCollectionDoc.url.trim());
           if (sanityMappedName) categoryName = sanityMappedName;
         }
@@ -760,9 +760,12 @@ const Home = () => {
     );
   }
 
+
   return (
     <div className="p-0 md:p-0">
       {Object.entries(data).map(([title, items], index) => {
+  console.log(replaceText(title))
+
         const sectionId = `section-${index}`;
         if (!sectionRefs.current[sectionId]) {
           sectionRefs.current[sectionId] = React.createRef<HTMLDivElement>();
