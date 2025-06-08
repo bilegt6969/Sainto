@@ -11,21 +11,35 @@ import NextTopLoader from 'nextjs-toploader';
 
 // Metadata remains the same
 export const metadata = {
-     title: 'Saint | Mongolia’s First & Finest Premium Fashion & Sneaker Retailer',
+  title: 'Saint | Mongolia’s First & Finest Premium Fashion & Sneaker Retailer',
+  description:
+    'Saint is Mongolia’s first and finest platform offering authentic streetwear, luxury sneakers, and designer brands including Yeezy, Jordan, Bape, Maison Margiela, Birkin, and more — exclusively sold by us.',
+  openGraph: {
+    title: 'Saint | Mongolia’s First & Finest Premium Fashion & Sneaker Retailer',
     description:
-      'Saint is Mongolia’s first and finest platform offering authentic streetwear, luxury sneakers, and designer brands including Yeezy, Jordan, Bape, Maison Margiela, Birkin, and more — exclusively sold by us.',
-    keywords:
-      'Saint Mongolia, first fashion retailer Mongolia, finest sneaker shop Mongolia, streetwear Mongolia, luxury fashion Mongolia, Bape Mongolia, Maison Margiela Mongolia, Birkin Mongolia, exclusive sneaker retailer, designer clothing Mongolia',
-   
-  icons: {
-    icon: [
-      '/favico/favicon-32x32.png?v=4',
-      '/favico/favicon-16x16.png?v=4',
-      '/favico/favicon.ico?v=4',
+    'Saint is Mongolia’s first premium platform for authentic streetwear, sneakers, and designer fashion.',
+  
+    url: 'https://sainto.vercel.app', // <-- your site URL
+    siteName: 'Saint Mongolia',
+    images: [
+      {
+        url: 'https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg', // <-- must be absolute URL
+        width: 1200,
+        height: 630,
+        alt: 'Saint Mongolia Logo or Banner',
+      },
     ],
-    apple: ['/icons/favico/apple-touch-icon.png?v=4'],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Saint | Mongolia’s First & Finest Premium Fashion & Sneaker Retailer',
+    description:
+      'Saint is Mongolia’s first and finest platform offering authentic streetwear and luxury sneakers.',
+    images: ['https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg'], // same image as Open Graph
   },
 };
+
 
 // RootLayout component definition
 export default async function RootLayout(props: { children: React.ReactNode }) {
