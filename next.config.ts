@@ -10,6 +10,10 @@
           protocol: 'https',
           hostname: 'cdn.sanity.io',
         },
+        {
+          protocol: 'https',
+          hostname: "cdn2.thecatapi.com"
+        }
       ],
     },
   };

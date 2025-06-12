@@ -1,3 +1,5 @@
+// web/src/app/(frontend)/page.tsx
+
 import React from 'react';
 import Product from './product/page';
 import { client } from '../../../lib/sanity';
@@ -8,14 +10,26 @@ export default async function HomePage() {
   let heroData;
   
   try {
-    // heroQuery is a string, so we pass it directly to client.fetch()
-    heroData = await client.fetch(heroQuery); // No parentheses - it's a string constant
+    // Fetch the data from Sanity
+    const fetchedData = await client.fetch(heroQuery);
     
-    // Log the data to debug (remove in production)
-    console.log('Hero data fetched:', heroData);
+    // Log the raw data for debugging
+    console.log('Raw data fetched from Sanity:', fetchedData);
+    
+    // THE FIX: Ensure heroData has a valid structure, even if the fetch returns nulls.
+    // This creates a clean, predictable object to pass to the client component.
+    heroData = {
+      slides: fetchedData?.slides || [],
+      carouselSettings: fetchedData?.carouselSettings || {}
+    };
+
   } catch (error) {
     console.error('Failed to fetch hero data:', error);
-    heroData = null;
+    // If the entire fetch fails, provide a default structure to prevent crashes.
+    heroData = {
+      slides: [],
+      carouselSettings: {}
+    };
   }
 
   return (
@@ -31,4 +45,5 @@ export default async function HomePage() {
   );
 }
 
-export const dynamic = 'force-dynamic'; // Optional: for real-time updates
+// Using force-dynamic is good for ensuring the data is fresh on each request.
+export const dynamic = 'force-dynamic';

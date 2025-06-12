@@ -53,25 +53,25 @@ export const metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      '/favico/favicon.ico?v=4',
+      { url: '/favico/favicon-16x16.png?v=4', sizes: '16x16', type: 'image/png' },
+      { url: '/favico/favicon-32x32.png?v=4', sizes: '32x32', type: 'image/png' },
     ],
     apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/favico/apple-touch-icon.png?v=4', sizes: '180x180', type: 'image/png' },
     ],
     other: [
       {
         rel: 'icon',
         type: 'image/png',
         sizes: '192x192',
-        url: '/android-chrome-192x192.png'
+        url: '/favico/android-chrome-192x192.png?v=4'
       },
       {
         rel: 'icon',
         type: 'image/png',
         sizes: '512x512',
-        url: '/android-chrome-512x512.png'
+        url: '/favico/android-chrome-512x512.png?v=4'
       }
     ]
   },

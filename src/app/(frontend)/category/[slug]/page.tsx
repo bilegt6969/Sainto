@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 // Import the response types defined in the API route - FIXED PATH
-import type { ApiResponse, ApiProduct } from '../../api/collections/[slug]/route';
+import type { ApiResponse, ApiProduct } from '../../../api/collections/[slug]/route';
 
 // --- Interface Definitions ---
 
