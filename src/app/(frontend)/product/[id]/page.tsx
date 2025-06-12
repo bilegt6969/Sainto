@@ -81,7 +81,7 @@ type PageProps = {
 async function getProductData(slug: string) {
     // Construct the full URL for server-side fetching
     const host = process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
+        ? `https://sainto.vercel.app`
         : 'http://localhost:3000';
     
     try {
