@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 // Your Discord Webhook URL from environment variables
 const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-// --- TypeScript Interfaces ---
+// --- TypeScript Interfaces ---s
 
 interface ErrorWithMessage {
   message: string;
