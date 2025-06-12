@@ -1,14 +1,56 @@
-//web/src/app/api/createOrder/route.ts
+// /src/app/api/createOrder/route.ts
 
 import { NextResponse } from 'next/server';
 
-// Your Discord Webhook URL
-const webhookUrl = process.env.DISCORD_WEBHOOK_URL || "https://discord.com/api/webhooks/1382680453835657237/uTlQfIFGK7BhX5ErU2dq3VV16SJe1_FQeqLK0mZB-9bx0Fqtz5Rj54_hBr1v9g6EZU0P";
+// Your Discord Webhook URL from environment variables
+const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+
+// --- TypeScript Interfaces ---
 
 interface ErrorWithMessage {
   message: string;
 }
 
+/**
+ * Interface for a single item within an order.
+ * The imageUrl is optional as some products might not have one.
+ */
+interface OrderItem {
+  name: string;
+  size: string;
+  quantity: number;
+  price: number;
+  imageUrl?: string; // The image URL for the product
+}
+
+/**
+ * Interface for the entire order data payload received from the frontend.
+ */
+interface OrderData {
+  orderNumber: string;
+  transferCode: string;
+  customerName: string;
+  phone: string;
+  email: string;
+  province: string;
+  district: string;
+  address: string;
+  bankName: string;
+  totalAmount: number;
+  subtotal: number;
+  deliveryFee: number;
+  commissionFee: number;
+  orderStatus: string;
+  items: OrderItem[];
+}
+
+// --- Helper Functions ---
+
+/**
+ * Type guard to check if an unknown error is an object with a message property.
+ * @param error - The unknown value to check.
+ * @returns True if the error has a message property, false otherwise.
+ */
 function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
   return (
     typeof error === 'object' &&
@@ -18,27 +60,51 @@ function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
   );
 }
 
+/**
+ * Converts an unknown error type into an object with a message property.
+ * @param maybeError - The potential error.
+ * @returns An object with a message property.
+ */
 function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
   if (isErrorWithMessage(maybeError)) return maybeError;
 
   try {
     return new Error(JSON.stringify(maybeError));
   } catch {
-    // fallback in case there's an error stringifying the maybeError
+    // Fallback in case stringifying the error fails
     return new Error(String(maybeError));
   }
 }
 
-// Helper to format currency
-const formatCurrency = (amount: number) => {
+/**
+ * Formats a number into Mongolian Tugrik (₮) currency format.
+ * @param amount - The number to format.
+ * @returns A string representing the amount in currency format.
+ */
+const formatCurrency = (amount: number): string => {
     return `${amount.toLocaleString()}₮`;
 }
 
-export async function POST(request: Request) {
-  try {
-    const orderData = await request.json();
+// --- API Route Handler ---
 
-    // Basic validation (remains the same)
+export async function POST(request: Request) {
+  // First, check if the webhook URL is configured.
+  if (!webhookUrl) {
+    console.error("DISCORD_WEBHOOK_URL is not set in environment variables.");
+    // Return an error response as we cannot notify about the order.
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Server configuration error: Notification service is unavailable.",
+      },
+      { status: 500 }
+    );
+  }
+
+  try {
+    const orderData: OrderData = await request.json();
+
+    // --- Basic Validation ---
     if (!orderData.orderNumber || !orderData.transferCode) {
       return NextResponse.json(
         { success: false, message: 'Order number and transfer code are required' },
@@ -53,23 +119,28 @@ export async function POST(request: Request) {
       );
     }
 
-    // --- Start of Discord Integration ---
+    // --- Discord Integration ---
 
-    // 1. Format the items into a readable string for the Discord embed
-    const itemsDescription = orderData.items.map((item: any) => {
+    // 1. Format the order items into a readable string for the Discord embed.
+    const itemsDescription = orderData.items.map((item: OrderItem) => {
       const itemTotal = formatCurrency(item.price * item.quantity);
       return `**${item.name}**\n- Хэмжээ: ${item.size}\n- Тоо: ${item.quantity}\n- Үнэ: ${itemTotal}`;
     }).join('\n\n');
 
-    // 2. Construct the Discord embed payload
+    // 2. Get the image URL from the *first item* to use as a thumbnail.
+    const firstItemImageUrl = orderData.items[0]?.imageUrl;
+
+    // 3. Construct the rich embed payload for the Discord message.
     const discordPayload = {
       username: "Tsuifu Order Bot",
-      avatar_url: "https://i.imgur.com/gA3v3cW.png", // You can change this to your shop's logo
+      avatar_url: "https://i.imgur.com/gA3v3cW.png", // A generic bot avatar
       embeds: [
         {
           title: `Шинэ захиалга: #${orderData.orderNumber}`,
-          color: 3447003, // A nice blue color
+          color: 3447003, // A nice blue color (#3498db)
           timestamp: new Date().toISOString(),
+          // Add the thumbnail property if an image URL is available.
+          thumbnail: firstItemImageUrl ? { url: firstItemImageUrl } : undefined,
           fields: [
             // Customer and Address Info
             {
@@ -82,7 +153,7 @@ export async function POST(request: Request) {
               value: `${orderData.province}, ${orderData.district}, ${orderData.address}`,
               inline: false,
             },
-            // Divider
+            // Divider for visual separation
             { name: '\u200B', value: '\u200B' },
             // Payment Info
             {
@@ -97,7 +168,7 @@ export async function POST(request: Request) {
             },
              // Divider
             { name: '\u200B', value: '\u200B' },
-            // Items
+            // Items list
             {
               name: "🛒 Бараанууд",
               value: itemsDescription,
@@ -117,7 +188,7 @@ export async function POST(request: Request) {
       ],
     };
 
-    // 3. Send the data to your Discord webhook
+    // 4. Send the data to your Discord webhook.
     const discordResponse = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
@@ -126,22 +197,19 @@ export async function POST(request: Request) {
       body: JSON.stringify(discordPayload),
     });
 
-    // Check if the webhook post was successful
+    // 5. Check if the webhook post was successful.
     if (!discordResponse.ok) {
+      // Log the error for debugging but don't block the user's flow.
       console.error('Failed to send order to Discord:', discordResponse.status, await discordResponse.text());
-      // Even if Discord fails, we can still proceed to not break the user flow
-      // Or you could return an error:
-      // throw new Error('Could not post order to notification channel.');
     }
 
     // --- End of Discord Integration ---
 
-    // Return a success response to the frontend, maintaining the original format.
-    // The frontend expects `orderId` and `orderNumber`. We'll use the orderNumber for both.
+    // Finally, return a success response to the frontend client.
     return NextResponse.json(
       {
         success: true,
-        orderId: orderData.orderNumber, // Or generate a unique ID if you need one
+        orderId: orderData.orderNumber,
         orderNumber: orderData.orderNumber
       },
       { status: 201 }
@@ -150,6 +218,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating order:', error);
     const errorWithMessage = toErrorWithMessage(error);
+    // Return a generic server error response.
     return NextResponse.json(
       {
         success: false,
