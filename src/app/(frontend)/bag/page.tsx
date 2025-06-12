@@ -103,8 +103,7 @@ export default function BagPage() {
       });
     }
   };
-  console.log(cart)
-
+ 
   return (
     <div className="min-h-screen bg-neutral-950 rounded-[2rem] border border-neutral-700 text-neutral-100 pt-24 pb-12 px-4 sm:px-6 lg:px-8 ">
       <Toaster position="bottom-right" className="z-[100]" />

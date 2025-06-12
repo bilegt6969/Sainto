@@ -14,8 +14,7 @@ export default async function HomePage() {
     const fetchedData = await client.fetch(heroQuery);
     
     // Log the raw data for debugging
-    console.log('Raw data fetched from Sanity:', fetchedData);
-    
+     
     // THE FIX: Ensure heroData has a valid structure, even if the fetch returns nulls.
     // This creates a clean, predictable object to pass to the client component.
     heroData = {
