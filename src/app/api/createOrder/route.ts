@@ -13,7 +13,7 @@ interface ErrorWithMessage {
 
 /**
  * Interface for a single item within an order.
- * The imageUrl is optional as some products might not have one.
+ * The imageUrl is optional as some products might not have one.f
  */
 interface OrderItem {
   name: string;
