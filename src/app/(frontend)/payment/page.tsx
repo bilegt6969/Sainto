@@ -244,7 +244,7 @@ export default function PaymentPage() {
         })),
         createdAt: new Date().toISOString(),
       };
-      const response = await fetch('/api/createOrder', {
+      const response = await fetch('/api/createorder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload),
