@@ -1,21 +1,24 @@
-  /** @type {import('next').NextConfig} */
-  const nextConfig = {
-    images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'image.goat.com',
-        },
-        {
-          protocol: 'https',
-          hostname: 'cdn.sanity.io',
-        },
-        {
-          protocol: 'https',
-          hostname: "cdn2.thecatapi.com"
-        }
-      ],
-    },
-  };
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'image.goat.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+      },
+      {
+        protocol: 'https',
+        hostname: "cdn2.thecatapi.com"
+      }
+    ],
+  },
+  experimental: {
+    appDir: true, // Ensure App Router is enabled
+  },
+};
 
-  export default nextConfig;
+export default nextConfig;

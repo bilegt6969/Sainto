@@ -1,11 +1,9 @@
-// /src/app/api/createOrder/route.ts
-
 import { NextResponse } from 'next/server';
 
 // Your Discord Webhook URL from environment variables
 const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-// --- TypeScript Interfaces ---s
+// --- TypeScript Interfaces ---
 
 interface ErrorWithMessage {
   message: string;
@@ -13,7 +11,7 @@ interface ErrorWithMessage {
 
 /**
  * Interface for a single item within an order.
- * The imageUrl is optional as some products might not have one.f
+ * The imageUrl is optional as some products might not have one.
  */
 interface OrderItem {
   name: string;
@@ -85,13 +83,21 @@ const formatCurrency = (amount: number): string => {
     return `${amount.toLocaleString()}₮`;
 }
 
-// --- API Route Handler ---
+// --- Debug GET Method ---
+export async function GET() {
+  return NextResponse.json({ 
+    message: "CreateOrder API route is working",
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV,
+    hasWebhook: !!process.env.DISCORD_WEBHOOK_URL
+  });
+}
 
+// --- API Route Handler ---
 export async function POST(request: Request) {
   // First, check if the webhook URL is configured.
   if (!webhookUrl) {
     console.error("DISCORD_WEBHOOK_URL is not set in environment variables.");
-    // Return an error response as we cannot notify about the order.
     return NextResponse.json(
       {
         success: false,
@@ -100,6 +106,7 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+  
 
   try {
     const orderData: OrderData = await request.json();
