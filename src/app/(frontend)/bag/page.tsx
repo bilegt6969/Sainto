@@ -105,7 +105,7 @@ export default function BagPage() {
   };
  
   return (
-    <div className="min-h-screen bg-neutral-950 rounded-[2rem] border border-neutral-700 text-neutral-100 pt-24 pb-12 px-4 sm:px-6 lg:px-8 ">
+    <div className="min-h-screen bg-black text-neutral-100 pt-24 pb-12 px-4 sm:px-6 lg:px-8 ">
       <Toaster position="bottom-right" className="z-[100]" />
 
       <div className="max-w-6xl mx-auto">
@@ -187,13 +187,15 @@ export default function BagPage() {
                       {/* Product Details */}
                       <div className="flex flex-col justify-between h-full flex-1 mt-0 sm:mt-1 space-y-1.5 sm:space-y-2">
                       <Link href={`/product/${item.product.id}`}>
-  <h2 className="relative inline-block text-base sm:text-lg font-medium text-neutral-100 leading-tight
+  <h2 className={`
+    relative inline-block text-base sm:text-lg font-medium text-neutral-100 leading-tight
     transition-all duration-600 ease-[cubic-bezier(0.23,1,0.32,1)]
     before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full
     before:bg-white before:origin-left before:transform before:scale-x-0
     before:transition-transform before:duration-600 before:ease-[cubic-bezier(0.23,1,0.32,1)]
     hover:before:scale-x-100 hover:transform hover:translate-y-[-1px]
-    hover:text-white/90">
+    hover:text-white/90
+  `}>
     {item.product.name}
   </h2>
 </Link>
@@ -317,6 +319,38 @@ export default function BagPage() {
           </div>
         )}
       </div>
+      <style jsx global>{`
+        body {
+          background-color: black;
+        }
+        .bg-grid-pattern {
+          background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        /* Improve font rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
     </div>
   );
 }

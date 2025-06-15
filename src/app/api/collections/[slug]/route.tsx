@@ -74,7 +74,7 @@ const CLIENT_VERSION = 'ciojs-client-2.54.0';
  * Constructs the external API URL with proper parameters
  */
 function buildApiUrl(slug: string, page: number): string {
-    const baseUrl = 'https://ac.cnstrc.com/browse/group_id';
+    const baseUrl = 'https://ac.cnstrc.com/browse/collection_id';
     
     // URL parameters extracted from your original API call
     const params = new URLSearchParams({
@@ -133,6 +133,7 @@ function buildApiUrl(slug: string, page: number): string {
     params.append('fmt_options[hidden_facets]', 'gp_instant_ship_lowest_price_cents_223');
 
     return `${baseUrl}/${slug}?${params.toString()}`;
+    console.log(baseUrl + slug + params.toString())
 }
 
 /**
@@ -222,6 +223,7 @@ export async function GET(
 
         // 4. Build API URL
         const apiUrl = buildApiUrl(slug, pageNum);
+        console.log(apiUrl)
         console.log(`Fetching collection "${slug}", page ${pageNum}...`);
 
         // 5. Fetch from External API

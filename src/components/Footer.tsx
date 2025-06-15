@@ -1,7 +1,8 @@
 'use client';
-import React, { useRef, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+
+import React, { useState } from 'react';
+// Removed 'next/image' and 'next/link' as they are Next.js specific and caused an error.
+// We will use standard `<img>` and `<a>` tags instead.
 import {
   CircleHelp,
   Newspaper,
@@ -14,11 +15,11 @@ import {
   Instagram,
   Facebook,
   ArrowUpRight,
-  Mail
+  Mail,
+  Link,
 } from 'lucide-react';
-import { useHorizontalDragScroll } from './hooks/useHorizontalDragScroll';
 
-// --- Data Definitions ---
+// --- Data Definitions (Translated to Mongolian) ---
 
 interface LinkItem {
   name: string;
@@ -35,35 +36,35 @@ interface FooterSection {
 
 const footerLinks: FooterSection[] = [
   {
-    id: "shop-links",
-    title: "Shop",
+    id: 'shop-links',
+    title: 'Дэлгүүр',
     links: [
-      { name: "For You", href: "/for-you", icon: <TrendingUp size={16} /> },
-      { name: "New Arrivals", href: "/new", icon: <ShoppingBag size={16} /> },
-      { name: "Sale", href: "/sale", icon: <TrendingUp size={16} /> },
-      { name: "Collections", href: "/collections" }
-    ]
+      { name: 'Танд санал болгох', href: '/for-you', icon: <TrendingUp size={16} /> },
+      { name: 'Шинэ бараа', href: '/new', icon: <ShoppingBag size={16} /> },
+      { name: 'Хямдрал', href: '/sale', icon: <TrendingUp size={16} /> },
+      { name: 'Коллекц', href: '/collections' },
+    ],
   },
   {
-    id: "help-links",
-    title: "Support",
+    id: 'help-links',
+    title: 'Тусламж',
     links: [
-      { name: "FAQ", href: "/faq", icon: <CircleHelp size={16} /> },
-      { name: "Shipping Info", href: "/shipping", icon: <Ship size={16} /> },
-      { name: "Returns", href: "/returns", icon: <RotateCcw size={16} /> },
-      { name: "Contact Us", href: "/contact", icon: <Mail size={16} /> }
-    ]
+      { name: 'Түгээмэл асуултууд', href: '/faq', icon: <CircleHelp size={16} /> },
+      { name: 'Хүргэлтийн мэдээлэл', href: '/shipping', icon: <Ship size={16} /> },
+      { name: 'Буцаалт', href: '/returns', icon: <RotateCcw size={16} /> },
+      { name: 'Бидэнтэй холбогдох', href: '/contact', icon: <Mail size={16} /> },
+    ],
   },
   {
-    id: "company-links",
-    title: "Company",
+    id: 'company-links',
+    title: 'Компани',
     links: [
-      { name: "About Saint", href: "/about" },
-      { name: "Careers", href: "/careers" },
-      { name: "Press", href: "/press", icon: <Newspaper size={16} /> },
-      { name: "Wholesale", href: "/wholesale" }
-    ]
-  }
+      { name: 'Saint-ийн тухай', href: '/about-us' },
+      { name: 'Ажлын байр', href: '/careers' },
+      { name: 'Хэвлэл мэдээлэл', href: '/press', icon: <Newspaper size={16} /> },
+      { name: 'Бөөний худалдаа', href: '/wholesale' },
+    ],
+  },
 ];
 
 // --- Component Props ---
@@ -74,196 +75,224 @@ interface FooterProps {
 
 // --- Component ---
 
-const Footer: React.FC<FooterProps> = ({ className = '' }) => {
+const App: React.FC<FooterProps> = ({ className = '' }) => {
   const currentYear = new Date().getFullYear();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  useHorizontalDragScroll(scrollContainerRef);
 
   const toggleSection = (id: string) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: !prev[id],
     }));
   };
 
   return (
-    <footer className={`bg-black text-white relative overflow-hidden ${className}`}>
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 opacity-50"></div>
-      
-      <div className="relative z-10">
-        {/* Newsletter Section */}
-        <div className="border-b border-zinc-800">
-          <div className="container mx-auto px-4 sm:px-6 py-16">
-            <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
-                Stay in the Loop
-              </h2>
-              <p className="text-zinc-400 mb-8 text-lg">
-                Get exclusive drops, early access, and insider updates delivered to your inbox.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all duration-300"
-                />
-                <button className="px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-zinc-200 transition-all duration-300 flex items-center justify-center gap-2 group">
-                  Subscribe
-                  <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Footer Content */}
-        <div className="container mx-auto px-4 sm:px-6 py-16">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 mb-16">
-            
-            {/* Brand Section */}
-            <div className="lg:col-span-2">
-              <Link href="/" className="inline-block mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-lg p-2 -m-2">
-                <span className="sr-only">Saint Home</span>
-                <Image
-                  width={200}
-                  height={50}
-                  alt="Saint logo"
-                  src="/images/logo-white.svg" // You'll need a white version of your logo
-                  className="h-12 w-auto brightness-0 invert" // This converts your logo to white if it's black
-                  priority
-                />
-              </Link>
-              <p className="text-zinc-400 leading-relaxed max-w-sm mb-8 text-lg">
-                Your digital plug for curated fashion and streetwear essentials. 
-                Discover the latest trends and timeless pieces.
-              </p>
-              
-              {/* Social Links */}
-              <div className="flex space-x-4">
-                {[
-                  { href: "https://twitter.com/saint", label: "Saint on Twitter", icon: Twitter },
-                  { href: "https://instagram.com/saint", label: "Saint on Instagram", icon: Instagram },
-                  { href: "https://facebook.com/saint", label: "Saint on Facebook", icon: Facebook },
-                ].map((social) => (
-                  <a
-                    key={social.href}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    className="w-10 h-10 bg-zinc-800 hover:bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white transition-all duration-300 group"
-                  >
-                    <social.icon size={18} className="group-hover:scale-110 transition-transform duration-300" />
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Link Columns */}
-            {footerLinks.map((section) => (
-              <div key={section.id} className="lg:col-span-1">
-                {/* Mobile Accordion */}
-                <button
-                  className="flex items-center justify-between w-full lg:hidden py-3 text-left focus:outline-none group"
-                  onClick={() => toggleSection(section.id)}
-                  aria-expanded={expandedSections[section.id] || false}
-                  aria-controls={`footer-section-${section.id}`}
+    // The parent element needs a background color for the effect to be visible.
+    <div className='bg-black'>
+<div className="w-full py-12 rounded-b-[2rem] sm:rounded-b-[2.5rem] md:rounded-b-[3rem] lg:rounded-b-[4rem] xl:rounded-b-[5rem] 2xl:rounded-b-[5rem] bg-[#252525] text-center">
+ </div>
+    <footer className={`relative overflow-visible bg-white dark:bg-zinc-900 ${className} animate-fade-in-up`}>
+      {/* The main footer background.
+          - `pt-12` creates space at the top for the curves.
+          - `inverted-corners-top` is our custom class that applies the mask.
+      */}
+      <div className="relative bg-black text-white pt-12 md:pt-16 inverted-corners-top">
+ 
+        <div className="relative z-10">
+          <div className="container mx-auto px-6 sm:px-8 pb-12 pt-8">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 mb-16">
+              {/* Brand Section */}
+              <div className="lg:col-span-2">
+                <Link
+                  href="/"
+                  className="inline-block mb-6 focus:outline-none focus-visible:ring-2 justify-center focus-visible:ring-white rounded-lg p-2 -m-2"
                 >
-                  <h3 className="text-lg font-semibold text-white group-focus-visible:text-zinc-300">
+                  <span className="sr-only">Saint Нүүр</span>
+                  {/* Replaced Next.js Image with standard <img> tag */}
+                  <img
+                     width={150}
+                     height={50}
+                     alt="Saint лого"
+                     src="/images/Logo.svg"
+                     className="h-20 w-auto"
+                  />
+                </Link>
+                <p className="text-zinc-400 leading-relaxed max-w-sm mb-8 text-base">
+                Загварыг хялбар болгосон дижитал шийдэл. FIRST SAINT FINEST
+                </p>
+
+                {/* Social Links */}
+                <div className="flex space-x-4">
+                  {[
+                    { href: 'https://twitter.com/saint', label: 'Saint on Twitter', icon: Twitter },
+                    { href: 'https://instagram.com/saint', label: 'Saint on Instagram', icon: Instagram },
+                    { href: 'https://facebook.com/saint', label: 'Saint on Facebook', icon: Facebook },
+                  ].map((social) => (
+                    <a
+                      key={social.href}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      className="w-10 h-10 bg-zinc-800 hover:bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white transition-all duration-300 group"
+                    >
+                      <social.icon
+                        size={18}
+                        className="group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Link Columns */}
+              {footerLinks.map((section) => (
+                <div key={section.id} className="lg:col-span-1">
+                  {/* Mobile Accordion */}
+                  <button
+                    className="flex items-center justify-between w-full lg:hidden py-3 text-left focus:outline-none group"
+                    onClick={() => toggleSection(section.id)}
+                    aria-expanded={expandedSections[section.id] || false}
+                    aria-controls={`footer-section-${section.id}`}
+                  >
+                    <h3 className="text-lg font-semibold text-white group-focus-visible:text-zinc-300">
+                      {section.title}
+                    </h3>
+                    <ChevronDown
+                      size={20}
+                      className={`text-zinc-400 transition-all duration-300 ${
+                        expandedSections[section.id] ? 'rotate-180 text-white' : ''
+                      }`}
+                    />
+                  </button>
+
+                  {/* Desktop Title */}
+                  <h3 className="hidden lg:block text-lg font-semibold text-white mb-6">
                     {section.title}
                   </h3>
-                  <ChevronDown
-                    size={20}
-                    className={`text-zinc-400 transition-all duration-300 ${expandedSections[section.id] ? 'rotate-180 text-white' : ''}`}
-                  />
-                </button>
 
-                {/* Desktop Title */}
-                <h3 className="hidden lg:block text-lg font-semibold text-white mb-6">
-                  {section.title}
-                </h3>
-
-                {/* Links */}
-                <nav
-                  id={`footer-section-${section.id}`}
-                  className={`
-                    mt-4 lg:mt-0 space-y-4 transition-all duration-300 ease-in-out overflow-hidden
-                    ${expandedSections[section.id] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
-                    lg:block lg:max-h-none lg:opacity-100 lg:overflow-visible
-                  `}
-                >
-                  {section.links.map((link, linkIdx) => (
-                    <Link
-                      key={linkIdx}
-                      href={link.href}
-                      target={link.external ? '_blank' : undefined}
-                      rel={link.external ? 'noopener noreferrer' : undefined}
-                      className="flex items-center text-zinc-400 hover:text-white transition-colors duration-300 group focus:outline-none focus-visible:text-white"
-                    >
-                      {link.icon && (
-                        <span className="flex-shrink-0 w-4 h-4 mr-3 text-zinc-500 group-hover:text-zinc-300 transition-colors duration-300">
-                          {link.icon}
-                        </span>
-                      )}
-                      <span className="group-hover:translate-x-1 transition-transform duration-300">
-                        {link.name}
-                      </span>
-                      {link.external && (
-                        <ArrowUpRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      )}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-            ))}
-          </div>
-
-          {/* Bottom Section */}
-          <div className="border-t border-zinc-800 pt-8">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-              
-              {/* Copyright */}
-              <p className="text-zinc-500 text-sm order-2 lg:order-1">
-                © {currentYear} Saint. All rights reserved.
-              </p>
-
-              {/* Legal Links */}
-              <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 order-1 lg:order-2">
-                {[
-                  { href: "/privacy", name: "Privacy Policy" },
-                  { href: "/terms", name: "Terms of Service" },
-                  { href: "/cookies", name: "Cookie Policy" },
-                ].map(link => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-sm text-zinc-500 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:underline focus-visible:text-white"
+                  {/* Links: Replaced Next.js Link with standard <a> tag */}
+                  <nav
+                    id={`footer-section-${section.id}`}
+                    className={`
+                      mt-4 lg:mt-0 space-y-4 transition-all duration-500 ease-in-out overflow-hidden
+                      ${expandedSections[section.id] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+                      lg:block lg:max-h-none lg:opacity-100 lg:overflow-visible
+                    `}
                   >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
+                    {section.links.map((link, linkIdx) => (
+                      <a
+                        key={linkIdx}
+                        href={link.href}
+                        target={link.external ? '_blank' : undefined}
+                        rel={link.external ? 'noopener noreferrer' : undefined}
+                        className="flex items-center text-zinc-400 hover:text-white transition-colors duration-300 group focus:outline-none focus-visible:text-white"
+                      >
+                        {link.icon && (
+                          <span className="flex-shrink-0 w-4 h-4 mr-3 text-zinc-500 group-hover:text-zinc-300 transition-colors duration-300">
+                            {link.icon}
+                          </span>
+                        )}
+                        <span className="group-hover:translate-x-1 transition-transform duration-300">
+                          {link.name}
+                        </span>
+                        {link.external && (
+                          <ArrowUpRight
+                            size={14}
+                            className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          />
+                        )}
+                      </a>
+                    ))}
+                  </nav>
+                </div>
+              ))}
+            </div>
 
-              {/* Attribution */}
-              <p className="text-sm text-zinc-600 order-3">
-                Crafted by{' '}
-                <a 
-                  href="https://bytecode.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-zinc-400 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:underline"
-                >
-                  bytecode
-                </a>
-              </p>
+            {/* Bottom Section */}
+            <div className="border-t border-zinc-800 pt-8">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+                {/* Copyright */}
+                <p className="text-zinc-500 text-sm order-2 lg:order-1">
+                  © {currentYear} Saint. Бүх эрх хуулиар хамгаалагдсан.
+                </p>
+
+                {/* Legal Links: Replaced Next.js Link with standard <a> tag */}
+                <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 order-1 lg:order-2">
+                  {[
+                    { href: '/privacy', name: 'Нууцлалын бодлого' },
+                    { href: '/terms', name: 'Үйлчилгээний нөхцөл' },
+                    { href: '/cookies', name: 'Күүкийн бодлого' },
+                  ].map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      className="text-sm text-zinc-500 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:underline focus-visible:text-white"
+                    >
+                      {link.name}
+                    </a>
+                  ))}
+                </div>
+
+                {/* Attribution */}
+                <p className="text-sm text-zinc-600 order-3">
+                © Saint.mn 2025. Made with 🤍 by {' '}
+                  <a
+                    href="https://bytecode-smoky.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-zinc-400 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:underline"
+                  >
+                    bytecode studio
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* This style tag contains the magic for the inverted corners and animations. */}
+      {/* It's included here to make the component self-contained. */}
+      <style jsx global>{`
+        /* This is the custom class for the inverted corner effect.
+          It uses CSS masks to "cut out" the corners.
+          - The radius (47px/48px) should match the desired curve size. 
+          - We use multiple gradients: two radial gradients for the corners and one
+            linear gradient for the rest of the shape.
+        */
+        .inverted-corners-top {
+          -webkit-mask-image: 
+            radial-gradient(circle at top left, transparent 0, transparent 47px, black 48px),
+            radial-gradient(circle at top right, transparent 0, transparent 47px, black 48px),
+            linear-gradient(to top, black, black);
+          mask-image: 
+            radial-gradient(circle at top left, transparent 0, transparent 47px, black 48px),
+            radial-gradient(circle at top right, transparent 0, transparent 47px, black 48px),
+            linear-gradient(to top, black, black);
+            
+          /* The 'add' composite operation is needed for some browsers to combine the masks correctly. */
+          -webkit-mask-composite: add;
+          mask-composite: add;
+        }
+
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+        }
+      `}</style>
     </footer>
+    </div>
   );
 };
 
-export default Footer;
+export default App;

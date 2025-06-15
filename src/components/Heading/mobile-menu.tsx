@@ -17,7 +17,6 @@ import {
   CircleHelp,
   ChevronRight,
   X,
-  Newspaper,
   Ruler,
   BookOpen,
   Hash,
@@ -25,7 +24,6 @@ import {
   Calendar,
 } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
 import React from 'react'
 
 interface Props {
@@ -34,23 +32,20 @@ interface Props {
   authButton?: React.ReactNode
 }
 
-// Define specific item types
 interface MenuItemWithIcon {
   title: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
-interface MenuItemWithLogo {
+interface MenuItemLink {
   title: string;
   href: string;
-  logo: string;
 }
 
-// Menu data structure with more specific types (optional but good practice)
 interface MenuData {
   categories: MenuItemWithIcon[];
-  brands: MenuItemWithLogo[];
+  brands: MenuItemLink[];
   resources: MenuItemWithIcon[];
 }
 
@@ -62,15 +57,14 @@ const menuItems: MenuData = {
     { title: "Accessories", href: "/categories/accessories", icon: Calendar },
   ],
   brands: [
-    { title: "Nike", href: "/brands/nike", logo: "/logos/nike.svg" },
-    { title: "Adidas", href: "/brands/adidas", logo: "/logos/adidas.svg" },
-    { title: "Stüssy", href: "/brands/stussy", logo: "/logos/stussy.svg" },
-    { title: "Bape", href: "/brands/bape", logo: "/logos/bape.svg" },
-    { title: "Air Jordan", href: "/brands/air-jordan", logo: "/logos/air-jordan.svg" },
-    { title: "Supreme", href: "/brands/supreme", logo: "/logos/supreme.svg" },
+    { title: "Nike", href: "/brands/nike" },
+    { title: "Adidas", href: "/brands/adidas" },
+    { title: "Stüssy", href: "/brands/stussy" },
+    { title: "Bape", href: "/brands/bape" },
+    { title: "Air Jordan", href: "/brands/air-jordan" },
+    { title: "Supreme", href: "/brands/supreme" },
   ],
   resources: [
-    { title: "Blog", href: "/resources/blog", icon: Newspaper },
     { title: "Support", href: "/resources/support", icon: CircleHelp },
     { title: "Style Guide", href: "/resources/style-guide", icon: BookOpen },
     { title: "Size Charts", href: "/resources/size-guide", icon: Ruler },
@@ -109,7 +103,6 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop: Darker with more blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -118,7 +111,6 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
             onClick={handleClose}
           />
 
-          {/* Menu: Themed with neutral-800 */}
           <motion.div
             ref={ref}
             initial="hidden"
@@ -129,7 +121,6 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
           >
             <div className="bg-neutral-800 rounded-2xl shadow-2xl overflow-hidden border border-neutral-700">
               <motion.div variants={contentVariants}>
-                {/* Header with close button */}
                 <div className="flex items-center justify-between p-4 border-b border-neutral-700">
                   <h2 className="text-lg font-semibold text-neutral-100">
                     Menu
@@ -143,17 +134,14 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
                   </button>
                 </div>
 
-                {/* Auth button container */}
                 {authButton && (
                   <div className="p-4 border-b border-neutral-700">
                     {authButton}
                   </div>
                 )}
 
-                {/* Navigation */}
                 <nav className="max-h-[70vh] overflow-y-auto">
                   <div className="py-2">
-                    {/* For You */}
                     <MenuItem
                       href="/for-you"
                       icon={TrendingUp}
@@ -161,13 +149,12 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
                       onClick={handleClose}
                     />
 
-                    {/* Categories */}
                     <AccordionSection
                       title="Categories"
                       icon={ShoppingBag}
                       items={menuItems.categories}
                       onItemClick={handleClose}
-                      renderItem={(item: MenuItemWithIcon) => ( // item is now MenuItemWithIcon
+                      renderItem={(item: MenuItemWithIcon) => (
                         <MenuItem
                           key={item.title}
                           href={item.href}
@@ -179,19 +166,18 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
                       )}
                     />
 
-                    {/* Brands */}
                     <AccordionSection
                       title="Brands"
                       icon={Tags}
                       items={menuItems.brands}
                       onItemClick={handleClose}
-                      renderItem={(brand: MenuItemWithLogo) => ( // brand is now MenuItemWithLogo
-                        <BrandMenuItem
+                      renderItem={(brand: MenuItemLink) => (
+                        <MenuItem
                           key={brand.title}
                           href={brand.href}
-                          logo={brand.logo}
                           label={brand.title}
                           onClick={handleClose}
+                          isSubItem
                         />
                       )}
                       footer={
@@ -205,13 +191,12 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
                       }
                     />
 
-                    {/* Resources */}
                     <AccordionSection
                       title="Resources"
                       icon={Layers3}
                       items={menuItems.resources}
                       onItemClick={handleClose}
-                      renderItem={(item: MenuItemWithIcon) => ( // item is now MenuItemWithIcon
+                      renderItem={(item: MenuItemWithIcon) => (
                         <MenuItem
                           key={item.title}
                           href={item.href}
@@ -223,7 +208,6 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
                       )}
                     />
 
-                    {/* Help */}
                     <MenuItem
                       href="/help"
                       icon={CircleHelp}
@@ -241,7 +225,6 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
   )
 }
 
-// Menu item component
 interface MenuItemProps {
   href: string
   icon?: React.ComponentType<{ className?: string }>
@@ -273,45 +256,15 @@ const MenuItem = ({ href, icon: Icon, label, onClick, isSubItem, isAction }: Men
   </Link>
 )
 
-// Brand menu item with logo
-interface BrandMenuItemProps {
-  href: string
-  logo: string
-  label: string
-  onClick: () => void
-}
-
-const BrandMenuItem = ({ href, logo, label, onClick }: BrandMenuItemProps) => (
-  <Link
-    href={href}
-    onClick={onClick}
-    className="flex items-center w-full pl-12 pr-4 py-3 text-left transition-colors hover:bg-neutral-700/70 group"
-  >
-    <div className="relative w-4 h-4 mr-3">
-      <Image
-        src={logo}
-        alt={`${label} logo`}
-        fill
-        sizes="16px"
-        className="object-contain brightness-0 invert"
-      />
-    </div>
-    <span className="text-neutral-100 group-hover:text-white">{label}</span>
-  </Link>
-)
-
-// Accordion section component
-// MODIFIED: Made props generic with TItem
 interface AccordionSectionProps<TItem> {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
-  items: TItem[]; // Use TItem[] instead of any[]
+  items: TItem[];
   onItemClick: () => void;
-  renderItem: (item: TItem) => React.ReactNode; // Use TItem instead of any
+  renderItem: (item: TItem) => React.ReactNode;
   footer?: React.ReactNode;
 }
 
-// MODIFIED: Made component generic with <TItem,> and used generic props
 const AccordionSection = <TItem,>({
   title,
   icon: Icon,
@@ -324,10 +277,6 @@ const AccordionSection = <TItem,>({
       <AccordionTrigger className="flex items-center w-full px-4 py-3 text-left hover:bg-neutral-700/70 hover:no-underline [&[data-state=open]>svg:last-child]:rotate-90 group">
         <Icon className="w-5 h-5 mr-3 text-neutral-400 group-hover:text-neutral-200" />
         <span className="flex-1 text-neutral-100 group-hover:text-white font-medium">{title}</span>
-        {/* ChevronRight for accordion trigger is usually handled by the AccordionTrigger component itself if styled.
-            If you need one explicitly, ensure it's correctly placed and styled.
-            The original comment mentioned it was removed to prevent duplication.
-        */}
       </AccordionTrigger>
       <AccordionContent className="pb-0">
         <div className="bg-neutral-900/30">
@@ -339,4 +288,4 @@ const AccordionSection = <TItem,>({
   </Accordion>
 )
 
-export default MobileMenu;
+export default MobileMenu

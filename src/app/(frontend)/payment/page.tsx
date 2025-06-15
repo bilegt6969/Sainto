@@ -317,7 +317,7 @@ export default function PaymentPage() {
 
 
   return (
-    <div className="min-h-screen rounded-[2rem] border border-neutral-700 bg-neutral-950 text-neutral-100 py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen   bg-black text-neutral-100 py-12 md:py-16 px-4 sm:px-6 lg:px-8">
       <Toaster position="bottom-right" richColors />
       <div className="max-w-6xl mx-auto mb-6">
         <Button variant="ghost" onClick={() => step === 1 ? router.back() : handleStepNavigation(1)} className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100 px-0 hover:bg-transparent" aria-label="Go back">
@@ -533,6 +533,38 @@ export default function PaymentPage() {
           </div>
         </form>
       </div>
+      <style jsx global>{`
+        body {
+          background-color: black;
+        }
+        .bg-grid-pattern {
+          background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        /* Improve font rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
     </div>
   );
 }

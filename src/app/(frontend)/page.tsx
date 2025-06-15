@@ -32,14 +32,17 @@ export default async function HomePage() {
   }
 
   return (
-    <main>
+    <main className='page-container'>
+      <div className="px-3 sm:px-3 md:px-3 lg:px-1 xl:px-0">
       <HeroSection heroData={heroData} />
+
+      </div>
       
       {/* Rest of your page content */}
       <section className="py-12">
-        {/* Your product grid or other content */}
+         {/* Your product grid or other content */}
         <Product />
-      </section>
+       </section>
     </main>
   );
 }

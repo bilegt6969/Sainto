@@ -1,5 +1,9 @@
 'use client'
 
+import React from 'react'
+import Link from 'next/link'
+ import { motion } from 'framer-motion'
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,14 +11,17 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from './Navbar/navigation-menu' // Assuming this NavigationMenuLink supports asChild
-import { CalendarRangeIcon, CircleHelp, HashIcon, Newspaper, ShoppingBag, TrendingUp, UsersIcon } from 'lucide-react'
-import Link from 'next/link'
-import Image from 'next/image'
-import React from 'react'
-import { motion } from 'framer-motion'
+} from './Navbar/navigation-menu'
 
-// Define the Props type for the Item component
+import {
+  CalendarRangeIcon,
+  CircleHelp,
+  HashIcon,
+   ShoppingBag,
+  TrendingUp,
+  UsersIcon,
+} from 'lucide-react'
+
 type Props = {
   title: string
   href: string
@@ -26,7 +33,6 @@ type Props = {
 }
 
 const Menu = () => {
-  // Animation variants for menu items
   const menuItemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: (i: number) => ({
@@ -42,12 +48,12 @@ const Menu = () => {
   return (
     <NavigationMenu className="relative z-10">
       <NavigationMenuList className="space-x-1">
-        {/* For You Section - Corrected */}
+        {/* For You */}
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link
               href="/for-you"
-              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200"
+              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 transition-colors duration-200"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
               For You
@@ -55,9 +61,9 @@ const Menu = () => {
           </NavigationMenuLink>
         </NavigationMenuItem>
 
-        {/* Categories Section */}
+        {/* Categories */}
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
+          <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 transition-colors duration-200">
             Categories
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -65,13 +71,13 @@ const Menu = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="grid rounded-3xl gap-3 p-4 md:w-[400px] lg:w-[500px] xl:w-[550px] lg:grid-cols-[.75fr_1fr]"
+              className="grid gap-3 p-4 rounded-3xl md:w-[400px] lg:w-[500px] xl:w-[550px] lg:grid-cols-[.75fr_1fr]"
             >
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
                   <Link
                     href="/shop-all"
-                    className="flex flex-col justify-end w-full h-full p-6 no-underline rounded-lg outline-none select-none bg-gradient-to-tr from-accent to-accent/30 focus:shadow-md transition-all duration-200 hover:shadow-lg"
+                    className="flex flex-col justify-end h-full p-6 rounded-lg no-underline outline-none select-none bg-gradient-to-tr from-accent to-accent/30 hover:shadow-lg transition-all duration-200"
                   >
                     <ShoppingBag className="w-8 h-8 mb-2" />
                     <div className="my-2 text-xl font-medium">Shop All</div>
@@ -79,26 +85,25 @@ const Menu = () => {
                       Explore all categories and collections.
                     </p>
                     <div className="mt-4 text-sm font-medium flex items-center">
-                      Browse now{' '}
+                      Browse now
                       <svg
+                        className="ml-1"
                         width="15"
                         height="15"
                         viewBox="0 0 15 15"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        className="ml-1"
                       >
                         <path
-                          d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z"
+                          d="M8.146 3.146a.5.5 0 01.708 0l4 4a.5.5 0 010 .708l-4 4a.5.5 0 11-.708-.708L11.293 8H2.5a.5.5 0 010-1h8.793L8.146 3.854a.5.5 0 010-.708z"
                           fill="currentColor"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        ></path>
+                        />
                       </svg>
                     </div>
                   </Link>
                 </NavigationMenuLink>
               </li>
+
               {[
                 {
                   title: 'Sneakers',
@@ -135,9 +140,9 @@ const Menu = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        {/* Brands Section */}
+        {/* Brands */}
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200">
+          <NavigationMenuTrigger className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 transition-colors duration-200">
             Brands
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -145,16 +150,16 @@ const Menu = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="grid rounded-3xl gap-3 p-4 md:w-[400px] lg:w-[600px] xl:w-[650px] grid-cols-2"
+              className="grid gap-3 p-4 rounded-3xl md:w-[400px] lg:w-[600px] xl:w-[650px] grid-cols-2"
             >
               <li className="col-span-2 mb-2">
                 <NavigationMenuLink asChild>
                   <Link
                     href="/brands"
-                    className="flex flex-col justify-end w-full h-full p-6 no-underline rounded-lg outline-none select-none bg-gradient-to-tr from-accent to-accent/30 focus:shadow-md transition-all duration-200 hover:shadow-lg"
+                    className="flex flex-col justify-end p-6 rounded-lg no-underline outline-none select-none bg-gradient-to-tr from-accent to-accent/30 hover:shadow-lg transition-all duration-200"
                   >
                     <div className="my-2 text-xl font-medium">Shop by Brand</div>
-                    <p className="text-sm text-muted-foreground mb-4">
+                    <p className="mb-4 text-sm text-muted-foreground">
                       Explore top brands and collections.
                     </p>
                     <div className="flex flex-wrap gap-3">
@@ -178,7 +183,7 @@ const Menu = () => {
                 {
                   title: 'Nike',
                   href: '/brands/nike',
-                  logo: '/logos/nike.svg', // Ensure these logo paths are correct
+                  logo: '/logos/nike.svg',
                   description: 'Shop the latest Nike sneakers and apparel.',
                 },
                 {
@@ -237,28 +242,15 @@ const Menu = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        {/* About Section - Corrected */}
+        {/* About */}
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link
-              href="/about"
-              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200"
+              href="/about-us"
+              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 transition-colors duration-200"
             >
               <CircleHelp className="w-4 h-4 mr-2" />
               About
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        {/* News Section - Corrected */}
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link
-              href="/news"
-              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 w-max transition-colors duration-200"
-            >
-              <Newspaper className="w-4 h-4 mr-2" />
-              News
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -267,62 +259,47 @@ const Menu = () => {
   )
 }
 
-// Item component for categories menu
 const Item = React.forwardRef<HTMLAnchorElement, Props>(
-  ({ className, title, children, href, icon, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <Link
-            href={href}
-            ref={ref}
-            className={`flex items-center p-3 rounded-md hover:bg-accent/50 focus:bg-accent/70 focus:outline-none transition-colors duration-200 ${className || ''}`}
-            {...props}
-          >
-            {icon && <div className="mr-3">{icon}</div>}
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">{title}</span>
-              <p className="text-xs text-muted-foreground">{children}</p>
-            </div>
-          </Link>
-        </NavigationMenuLink>
-      </li>
-    )
-  }
+  ({ className, title, children, href, icon, ...props }, ref) => (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          href={href}
+          ref={ref}
+          className={`flex items-center p-3 rounded-md hover:bg-accent/50 transition-colors duration-200 ${className || ''}`}
+          {...props}
+        >
+          {icon && <div className="mr-3">{icon}</div>}
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">{title}</span>
+            <p className="text-xs text-muted-foreground">{children}</p>
+          </div>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  )
 )
 Item.displayName = 'Item'
 
-// BrandItem component for brands menu
 const BrandItem = React.forwardRef<HTMLAnchorElement, Props>(
-  ({ className, title, children, href, logo, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <Link
-            href={href}
-            ref={ref}
-            className={`flex items-center p-3 rounded-md hover:bg-accent/50 focus:bg-accent/70 focus:outline-none transition-colors duration-200 ${className || ''}`}
-            {...props}
-          >
-            {logo && (
-              <Image
-                src={logo}
-                alt={`${title} logo`}
-                width={24}
-                height={24}
-                className="mr-3"
-                unoptimized // Consider if unoptimized is truly needed. If logos are static and optimized at build time, this might not be necessary.
-              />
-            )}
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">{title}</span>
-              <p className="text-xs text-muted-foreground">{children}</p>
-            </div>
-          </Link>
-        </NavigationMenuLink>
-      </li>
-    )
-  }
+  ({ className, title, children, href, ...props }, ref) => (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          href={href}
+          ref={ref}
+          className={`flex items-center p-3 rounded-md hover:bg-accent/50 transition-colors duration-200 ${className || ''}`}
+          {...props}
+        >
+           
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">{title}</span>
+            <p className="text-xs text-muted-foreground">{children}</p>
+          </div>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  )
 )
 BrandItem.displayName = 'BrandItem'
 

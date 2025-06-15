@@ -130,7 +130,7 @@ const HeroSection = ({ heroData }) => {
             x: { type: 'spring', stiffness: 300, damping: 30 },
             opacity: { duration: 0.4 }
           }}
-          className="absolute inset-0"
+          className="absolute inset-0 "
         >
           <SlideContent
             slide={slides[currentSlide]}

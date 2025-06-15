@@ -2,8 +2,7 @@
 
 import React from 'react'; // Import ReactNode
 import { motion } from 'framer-motion';
-import Link from "next/link"
-
+ 
 // --- Define Interface for ContactOption Props ---
 interface ContactOptionProps {
   icon: React.ReactNode; // Type for JSX elements like <EmailIcon />
@@ -158,16 +157,7 @@ const SupportPage = () => {
       </main>
 
       {/* Footer Section */}
-      <footer className="py-12 text-center border-t border-neutral-800">
-        <p className="text-xs text-neutral-500">
-          Copyright © {new Date().getFullYear()} Saint Mongolia LLC. All rights reserved.
-        </p>
-        <div className="mt-4 space-x-6">
-          <Link href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300">Privacy Policy</Link>
-          <Link href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300">Terms of Service</Link>
-        </div>
-      </footer>
-
+      
       {/* Global Styles for Font */}
       <style jsx global>{`
         @font-face {

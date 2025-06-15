@@ -1,10 +1,18 @@
 'use client'
 
 import { auth } from '@/firebaseConfig'
-import { User, onAuthStateChanged } from 'firebase/auth'
+import { 
+  User, 
+  onAuthStateChanged, 
+  updatePassword, 
+  updateEmail, 
+  reauthenticateWithCredential, 
+  EmailAuthProvider,
+  sendEmailVerification,
+} from 'firebase/auth'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Avatar } from '@heroui/react'
+import Image from 'next/image'
 import {
   Mail,
   User as UserIcon,
@@ -14,9 +22,14 @@ import {
   CreditCard,
   HelpCircle,
   Lock,
-  ChevronRight
+  ChevronRight,
+  Eye,
+  EyeOff,
+  X
 } from 'lucide-react'
+import { FirebaseError } from 'firebase/app'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { Skeleton } from '@heroui/skeleton'
@@ -24,6 +37,25 @@ import { Skeleton } from '@heroui/skeleton'
 const AccountPage = () => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [avatarError, setAvatarError] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [updating, setUpdating] = useState(false)
+  
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  
+  const [emailForm, setEmailForm] = useState({
+    newEmail: '',
+    currentPassword: ''
+  })
+  
   const router = useRouter()
 
   useEffect(() => {
@@ -38,12 +70,200 @@ const AccountPage = () => {
   }, [router])
 
   const handleSignOut = async () => {
+    const loadingToast = toast.loading('Системээс гарч байна...')
     try {
       await auth.signOut()
-      toast.success('Амжилттай гарлаа')
+      toast.dismiss(loadingToast)
+      toast.success('Амжилттай гарлаа 👋')
       router.push('/')
-    } catch {
-      toast.error('Гарахад алдаа гарлаа')
+    } catch (error: unknown) {
+      toast.dismiss(loadingToast)
+      console.error('Sign out error:', error)
+      const errorMessage = error instanceof FirebaseError 
+        ? error.message 
+        : 'Гарахад алдаа гарлаа. Дахин оролдоно уу ⚠️'
+      toast.error(errorMessage)
+    }
+  }
+
+  const reauthenticateUser = async (password: string) => {
+    if (!user?.email) {
+      toast.error('Хэрэглэгчийн имэйл олдсонгүй')
+      throw new Error('User email not found')
+    }
+    
+    try {
+      const credential = EmailAuthProvider.credential(user.email, password)
+      await reauthenticateWithCredential(user, credential)
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/wrong-password') {
+          toast.error('Нууц үг буруу байна')
+        } else if (error.code === 'auth/too-many-requests') {
+          toast.error('Хэтэрхий олон оролдлого хийсэн байна')
+        }
+      }
+      throw error
+    }
+  }
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) return
+
+    if (!passwordForm.currentPassword.trim()) {
+      toast.error('Одоогийн нууц үгээ оруулна уу')
+      return
+    }
+
+    if (!passwordForm.newPassword.trim()) {
+      toast.error('Шинэ нууц үгээ оруулна уу')
+      return
+    }
+
+    if (!passwordForm.confirmPassword.trim()) {
+      toast.error('Нууц үгээ баталгаажуулна уу')
+      return
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error('Шинэ нууц үг таарахгүй байна')
+      return
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      toast.error('Нууц үг дор хаяж 6 тэмдэгт байх ёстой')
+      return
+    }
+
+    if (passwordForm.currentPassword === passwordForm.newPassword) {
+      toast.error('Шинэ нууц үг одоогийнхоос өөр байх ёстой')
+      return
+    }
+
+    setUpdating(true)
+    const loadingToast = toast.loading('Нууц үг солиж байна...')
+    
+    try {
+      await reauthenticateUser(passwordForm.currentPassword)
+      await updatePassword(user, passwordForm.newPassword)
+      
+      toast.dismiss(loadingToast)
+      toast.success('Нууц үг амжилттай солигдлоо! 🎉')
+      setShowPasswordModal(false)
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+    } catch (error: unknown) {
+      toast.dismiss(loadingToast)
+      console.error('Password update error:', error)
+      
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case 'auth/wrong-password':
+            toast.error('Одоогийн нууц үг буруу байна ❌')
+            break
+          case 'auth/weak-password':
+            toast.error('Нууц үг хэтэрхий сул байна. Илүү хүчтэй нууц үг ашиглана уу 🔒')
+            break
+          case 'auth/requires-recent-login':
+            toast.error('Аюулгүй байдлын шалтгаанаар дахин нэвтэрнэ үү')
+            break
+          case 'auth/too-many-requests':
+            toast.error('Хэтэрхий олон оролдлого хийсэн байна. Хүлээгээд дахин оролдоно уу ⏰')
+            break
+          case 'auth/network-request-failed':
+            toast.error('Сүлжээний алдаа гарлаа. Интернет холболтоо шалгана уу 🌐')
+            break
+          case 'auth/internal-error':
+            toast.error('Дотоод алдаа гарлаа. Дахин оролдоно уу')
+            break
+          default:
+            toast.error(`Нууц үг солихад алдаа гарлаа: ${error.message || 'Тодорхойгүй алдаа'} ⚠️`)
+        }
+      } else {
+        toast.error('Нууц үг солиход алдаа гарлаа ⚠️')
+      }
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) return
+
+    if (!emailForm.newEmail.trim()) {
+      toast.error('Шинэ имэйл хаягаа оруулна уу')
+      return
+    }
+
+    if (!emailForm.currentPassword.trim()) {
+      toast.error('Одоогийн нууц үгээ оруулна уу')
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(emailForm.newEmail)) {
+      toast.error('Зөв имэйл хэлбэр оруулна уу (example@email.com)')
+      return
+    }
+
+    if (emailForm.newEmail.toLowerCase() === user.email?.toLowerCase()) {
+      toast.error('Шинэ имэйл одоогийнхоос өөр байх ёстой')
+      return
+    }
+
+    setUpdating(true)
+    const loadingToast = toast.loading('Имэйл хаяг солиж байна...')
+    
+    try {
+      await reauthenticateUser(emailForm.currentPassword)
+      await updateEmail(user, emailForm.newEmail)
+      await sendEmailVerification(user)
+      
+      toast.dismiss(loadingToast)
+      toast.success('Имэйл хаяг амжилттай солигдлоо! Шинэ хаягаа баталгаажуулна уу 📧', {
+        duration: 6000
+      })
+      setShowEmailModal(false)
+      setEmailForm({ newEmail: '', currentPassword: '' })
+    } catch (error: unknown) {
+      toast.dismiss(loadingToast)
+      console.error('Email update error:', error)
+      
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case 'auth/wrong-password':
+            toast.error('Нууц үг буруу байна ❌')
+            break
+          case 'auth/email-already-in-use':
+            toast.error('Энэ имэйл хаяг аль хэдийн ашиглагдаж байна 📧')
+            break
+          case 'auth/invalid-email':
+            toast.error('Буруу имэйл хэлбэр байна. Зөв хэлбэрээр оруулна уу')
+            break
+          case 'auth/requires-recent-login':
+            toast.error('Аюулгүй байдлын шалтгаанаар дахин нэвтэрнэ үү')
+            break
+          case 'auth/too-many-requests':
+            toast.error('Хэтэрхий олон оролдлого хийсэн байна. Хүлээгээд дахин оролдоно уу ⏰')
+            break
+          case 'auth/network-request-failed':
+            toast.error('Сүлжээний алдаа гарлаа. Интернет холболтоо шалгана уу 🌐')
+            break
+          case 'auth/operation-not-allowed':
+            toast.error('Имэйл солих боломжгүй байна. Админтай холбогдоно уу')
+            break
+          case 'auth/user-disabled':
+            toast.error('Таны данс түр хаагдсан байна')
+            break
+          default:
+            toast.error(`Имэйл солихад алдаа гарлаа: ${error.message || 'Тодорхойгүй алдаа'} ⚠️`)
+        }
+      } else {
+        toast.error('Имэйл солиход алдаа гарлаа ⚠️')
+      }
+    } finally {
+      setUpdating(false)
     }
   }
 
@@ -53,7 +273,6 @@ const AccountPage = () => {
         <div className="max-w-6xl mx-auto px-4 py-24">
           <div className="bg-neutral-900/40 backdrop-blur-lg rounded-2xl p-8 border border-neutral-800/50">
             <div className="flex flex-col md:flex-row gap-12">
-              {/* Left side skeleton */}
               <div className="w-full md:w-1/3">
                 <div className="flex flex-col items-center">
                   <Skeleton className="h-28 w-28 rounded-full mb-6" />
@@ -63,20 +282,15 @@ const AccountPage = () => {
                 </div>
               </div>
 
-              {/* Right side skeleton */}
               <div className="w-full md:w-2/3">
                 <Skeleton className="h-10 w-64 mb-8" />
-                
-                {/* Quick actions skeleton */}
                 <div className="grid grid-cols-2 gap-4 mb-12">
                   {[...Array(4)].map((_, i) => (
                     <Skeleton key={i} className="h-24 w-full rounded-2xl" />
                   ))}
                 </div>
-                
                 <Skeleton className="h-6 w-48 mb-2" />
                 <Skeleton className="h-4 w-64 mb-6" />
-                
                 <div className="space-y-4">
                   {[...Array(3)].map((_, i) => (
                     <Skeleton key={i} className="h-20 w-full rounded-2xl" />
@@ -92,10 +306,21 @@ const AccountPage = () => {
 
   if (!user) return null
 
+  const renderFallbackAvatar = () => (
+    <div className="flex items-center justify-center h-28 w-28 rounded-full border-2 border-neutral-800 bg-gradient-to-br from-purple-900 to-purple-600 text-white">
+      {user.displayName ? (
+        <span className="text-2xl font-medium">
+          {user.displayName.split(' ').map(n => n[0]).join('')}
+        </span>
+      ) : (
+        <UserIcon className="h-12 w-12" />
+      )}
+    </div>
+  )
+
   return (
-    <div className="relative rounded-[2rem] border border-neutral-700 inset-0 overflow-y-auto bg-black min-h-screen">
+    <div className="relative inset-0 overflow-y-auto bg-black min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-20">
-        {/* Header section with clean typography */}
         <div className="mb-8">
           <h1 className="text-3xl font-medium text-white tracking-tight">Хувийн хэсэг</h1>
           <p className="text-neutral-400 text-lg mt-1">Дансны удирдлагын төв</p>
@@ -103,20 +328,24 @@ const AccountPage = () => {
         
         <div className="bg-neutral-900/40 backdrop-blur-lg rounded-2xl p-8 border border-neutral-800/50 shadow-xl">
           <div className="flex flex-col md:flex-row gap-12">
-            {/* Left side - Profile info */}
             <div className="w-full md:w-1/3">
               <div className="flex flex-col items-center">
                 <div className="relative group mb-6">
-                  <Avatar
-                    src={user.photoURL || undefined}
-                    className="h-28 w-28 border-2 border-neutral-800 shadow-xl group-hover:border-purple-500 transition-all"
-                    fallback={
-                      <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-purple-900 to-purple-600 text-white">
-                        <UserIcon className="h-12 w-12" />
-                      </div>
-                    }
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  {!avatarError && user.photoURL ? (
+                    <div className="relative h-28 w-28 rounded-full overflow-hidden border-2 border-neutral-800 shadow-xl group-hover:border-purple-500 transition-all">
+                      <Image
+                        src={user.photoURL}
+                        alt="User profile"
+                        fill
+                        className="object-cover"
+                        onError={() => setAvatarError(true)}
+                        unoptimized={true}
+                      />
+                    </div>
+                  ) : (
+                    renderFallbackAvatar()
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     <div className="bg-black/50 backdrop-blur rounded-full p-3 text-white">
                       <UserIcon className="h-5 w-5" />
                     </div>
@@ -130,7 +359,7 @@ const AccountPage = () => {
 
                 <Button
                   variant="outline"
-                  className="w-full mb-8 border-neutral-800 hover:bg-neutral-800 hover:text-white rounded-full py-6 text-sm font-medium transition-all"
+                  className="w-full mb-8 bg-neutral-900 border-neutral-800 hover:bg-neutral-800 hover:text-white rounded-full py-6 text-sm font-medium transition-all"
                   onClick={handleSignOut}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -156,11 +385,9 @@ const AccountPage = () => {
               </div>
             </div>
 
-            {/* Right side - Account info */}
             <div className="w-full md:w-2/3">
               <h2 className="text-2xl font-medium text-white mb-8">Хяналтын самбар</h2>
 
-              {/* Quick actions - Apple-like cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
                 <Link href="/account/profile" className="block">
                   <div className="bg-gradient-to-br from-purple-900/40 to-purple-600/10 border border-purple-800/30 p-6 rounded-2xl hover:scale-[1.02] transition-all duration-300">
@@ -215,7 +442,6 @@ const AccountPage = () => {
                 </Link>
               </div>
 
-              {/* Account info */}
               <div className="space-y-6">
                 <div className="space-y-2">
                   <h3 className="text-xl font-medium text-white">Дансны мэдээлэл</h3>
@@ -239,6 +465,7 @@ const AccountPage = () => {
                       variant="ghost"
                       size="sm"
                       className="text-purple-400 hover:text-purple-300 hover:bg-neutral-700/50 rounded-full"
+                      onClick={() => setShowEmailModal(true)}
                     >
                       Солих <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
@@ -258,6 +485,7 @@ const AccountPage = () => {
                       variant="ghost"
                       size="sm"
                       className="text-purple-400 hover:text-purple-300 hover:bg-neutral-700/50 rounded-full"
+                      onClick={() => setShowPasswordModal(true)}
                     >
                       Солих <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
@@ -284,7 +512,6 @@ const AccountPage = () => {
                 </div>
               </div>
 
-              {/* Footer */}
               <div className="mt-12 text-center">
                 <p className="text-neutral-400">
                   Тусламж хэрэгтэй юу?{' '}
@@ -297,6 +524,219 @@ const AccountPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Password Change Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-neutral-900 rounded-2xl p-6 w-full max-w-md border border-neutral-800">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-medium text-white">Нууц үг солих</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowPasswordModal(false)}
+                className="text-neutral-400 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <form onSubmit={handlePasswordChange} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Одоогийн нууц үг
+                </label>
+                <div className="relative">
+                  <Input
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={passwordForm.currentPassword}
+                    onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                    className="bg-neutral-800 border-neutral-700 text-white pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  >
+                    {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Шинэ нууц үг
+                </label>
+                <div className="relative">
+                  <Input
+                    type={showNewPassword ? "text" : "password"}
+                    value={passwordForm.newPassword}
+                    onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                    className="bg-neutral-800 border-neutral-700 text-white pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Шинэ нууц үг баталгаажуулах
+                </label>
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className="bg-neutral-800 border-neutral-700 text-white pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 bg-neutral-800 border-neutral-700 hover:bg-neutral-700"
+                  onClick={() => setShowPasswordModal(false)}
+                  disabled={updating}
+                >
+                  Цуцлах
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  disabled={updating}
+                >
+                  {updating ? 'Солиж байна...' : 'Солих'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Email Change Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-neutral-900 rounded-2xl p-6 w-full max-w-md border border-neutral-800">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-medium text-white">Имэйл хаяг солих</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowEmailModal(false)}
+                className="text-neutral-400 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <form onSubmit={handleEmailChange} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Шинэ имэйл хаяг
+                </label>
+                <Input
+                  type="email"
+                  value={emailForm.newEmail}
+                  onChange={(e) => setEmailForm(prev => ({ ...prev, newEmail: e.target.value }))}
+                  className="bg-neutral-800 border-neutral-700 text-white"
+                  placeholder="example@email.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Одоогийн нууц үг
+                </label>
+                <Input
+                  type="password"
+                  value={emailForm.currentPassword}
+                  onChange={(e) => setEmailForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                  className="bg-neutral-800 border-neutral-700 text-white"
+                  placeholder="Одоогийн нууц үгээ оруулна уу"
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 bg-neutral-800 border-neutral-700 hover:bg-neutral-700"
+                  onClick={() => setShowEmailModal(false)}
+                  disabled={updating}
+                >
+                  Цуцлах
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  disabled={updating}
+                >
+                  {updating ? 'Солиж байна...' : 'Солих'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <style jsx global>{`
+        body {
+          background-color: black;
+        }
+        .bg-grid-pattern {
+          background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        /* Improve font rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
     </div>
   )
 }

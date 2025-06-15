@@ -15,7 +15,7 @@
     }, [clearOrder])
 
     return (
-      <div className="min-h-screen bg-black border border-neutral-700 rounded-[2rem] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-black  flex items-center justify-center p-4">
         {/* Main Content Card */}
         <div className="w-full max-w-md bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
           <div className="p-6 sm:p-8 text-center">
@@ -69,6 +69,38 @@
             </div>
           </div>
         </div>
+        <style jsx global>{`
+        body {
+          background-color: black;
+        }
+        .bg-grid-pattern {
+          background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+          animation-fill-mode: both;
+        }
+        /* Improve font rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
       </div>
     )
   }

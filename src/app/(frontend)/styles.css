@@ -9,47 +9,59 @@ body {
   margin-right: 0rem;
 }
 
+.bg-about-us {
+  background-color: #fff; /* Dark gray for about-us */
+}
+
+.bg-contact {
+  background-color: #2d2d2d; /* Different shade for contact */
+}
+
+.bg-products {
+  background-color: #1e1e1e; /* Another variant */
+}
+
 .signup {
   /* Your styles */
   font: black; /* Makes it look clickable */
 }
 
-/* Small screens (≥640px) */
+.page-container {
+  margin-left: 0rem;
+  margin-right: 0rem;
+}
+
 @media (min-width: 640px) {
-  body {
-    margin-left: 1rem; /* Equivalent to sm:mx-8 */
+  .page-container {
+    margin-left: 1rem;
     margin-right: 1rem;
   }
 }
 
-/* Medium screens (≥768px) */
 @media (min-width: 768px) {
-  body {
-    margin-left: 1rem; /* Equivalent to md:mx-12 */
+  .page-container {
+    margin-left: 1rem;
     margin-right: 1rem;
   }
 }
 
-/* Large screens (≥1024px) */
 @media (min-width: 1024px) {
-  body {
-    margin-left: 2rem; /* Equivalent to lg:mx-20 */
+  .page-container {
+    margin-left: 2rem;
     margin-right: 2rem;
   }
 }
 
-/* Extra-large screens (≥1280px) */
 @media (min-width: 1280px) {
-  body {
-    margin-left: 5rem; /* Equivalent to xl:mx-28 */
+  .page-container {
+    margin-left: 5rem;
     margin-right: 5rem;
   }
 }
 
-/* 2XL screens (≥1536px) */
 @media (min-width: 1536px) {
-  body {
-    margin-left: 5rem; /* Equivalent to 2xl:mx-40 */
+  .page-container {
+    margin-left: 5rem;
     margin-right: 5rem;
   }
 }
@@ -547,4 +559,15 @@ a, button {
       rgba(0, 0, 0, 0) 100%
     );
   }
+}
+
+/* Add this to your global CSS file (e.g., globals.css) */
+.inverted-corners-top {
+  mask-image: 
+    radial-gradient(circle at top left, transparent 0, transparent 47px, black 48px),
+    radial-gradient(circle at top right, transparent 0, transparent 47px, black 48px),
+    linear-gradient(to top, black, black);
+  mask-composite:-add;
+  -webkit-mask-composite:-add;
+
 }
