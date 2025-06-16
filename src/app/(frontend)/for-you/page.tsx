@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef, memo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import FiltersPanel from '../../../components/filters/FiltersPanel'
 
 // --- Interface Definitions ---
 
@@ -372,6 +373,8 @@ export default function ProductsPage() {
 
     return (
         <div className="page-container text-white p-4 md:p-6 lg:p-8 min-h-screen">
+                    <FiltersPanel/>
+
             <h1 className="text-2xl md:text-3xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>For you</h1>
 
             {/* Display persistent errors at the top */}
