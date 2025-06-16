@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useRef, memo } from 'react'
+import React, { useState, useEffect, useCallback, useRef, memo, Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import FiltersPanel from '../../../components/filters/FiltersPanel'
@@ -373,8 +373,9 @@ export default function ProductsPage() {
 
     return (
         <div className="page-container text-white p-4 md:p-6 lg:p-8 min-h-screen">
-                    <FiltersPanel/>
-
+<Suspense fallback={<div className="h-12 w-full bg-neutral-900 rounded-lg animate-pulse mb-6"></div>}>
+                <FiltersPanel />
+            </Suspense>
             <h1 className="text-2xl md:text-3xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>For you</h1>
 
             {/* Display persistent errors at the top */}
