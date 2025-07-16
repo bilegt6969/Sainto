@@ -1,15 +1,19 @@
+// app/layout.tsx (your RootLayout)
 import React from 'react';
 import './(frontend)/styles.css';
-import Navbar from '@/components/Heading/Navbar';
-import Footer from '@/components/Footer';
-import { Analytics } from "@vercel/analytics/next"
+// Removed Navbar and Footer imports from here
+import { Analytics } from "@vercel/analytics/next";
 import { ProductProvider } from './context/ProductContext';
 import NextTopLoader from 'nextjs-toploader';
+// Removed headers import as it's no longer needed for this logic
+
+// Import the new Client Component wrapper
+import LayoutClientWrapper from '@/components/LayoutClientWrapper'; // Adjust path if needed
 
 export const metadata = {
   title: {
-    default: 'SAINT | Curated Luxury for the Discerning',
-    template: '%s | SAINT Mongolia'
+    default: 'SAINTO | Curated Luxury for the Discerning',
+    template: '%s | SAINTO Mongolia'
   },
   description: 'Mongolia\'s premier destination for authenticated rare sneakers, avant-garde streetwear, and timeless designer pieces. Experience curation at the intersection of culture and craftsmanship.',
   metadataBase: new URL('https://sainto.vercel.app'),
@@ -17,16 +21,16 @@ export const metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'SAINT | Beyond Fashion — A Cultural Movement',
+    title: 'SAINTO | Beyond Fashion — A Cultural Movement',
     description: 'Where Mongolia\'s elite discover the extraordinary. Each piece undergoes our 47-point verification process, representing the pinnacle of streetwear and luxury fashion.',
     url: 'https://sainto.vercel.app',
-    siteName: 'SAINT MONGOLIA',
+    siteName: 'sainto MONGOLIA',
     images: [
       {
         url: 'https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg',
         width: 1200,
         height: 630,
-        alt: 'SAINT Mongolia - Black background with minimalist gold logo and curated product display',
+        alt: 'SAINTO Mongolia - Black background with minimalist gold logo and curated product display',
       },
     ],
     type: 'website',
@@ -35,7 +39,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SAINT | The Art of Wearable Distinction',
+    title: 'SAINTO | The Art of Wearable Distinction',
     description: 'We don\'t sell products — we offer entry into an exclusive world where every stitch tells a story. Your journey into elevated style begins here.',
     creator: '@saintmongolia',
     images: ['https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg'],
@@ -79,9 +83,9 @@ export const metadata = {
   verification: {
     google: '9LAxenlZQeQyX_2239qDfra5qM_EITEwMSfpRGvlNRw',
   },
-   appleWebApp: {
+  appleWebApp: {
     capable: true,
-    title: 'SAINT Mongolia',
+    title: 'sainto Mongolia',
     statusBarStyle: 'black-translucent',
   },
   other: {
@@ -91,14 +95,13 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // headers() logic is no longer needed here for the Navbar/Footer conditional rendering
+
   return (
     <html lang="en" className="antialiased">
       <body className="bg-black text-white selection:bg-gold selection:text-black">
         <ProductProvider>
-          <div className="pb-20">
-            <Navbar />
-          </div>
-          
+          {/* Loading Bar */}
           <div className="z-[1000]">
             <NextTopLoader
               color="#FFFFFF"
@@ -116,12 +119,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             />
           </div>
 
-          <main className="relative overflow-hidden">
-            {children}
-            <Analytics />
-          </main>
-
-          <Footer />
+          {/* Page Container with Flexbox Layout */}
+          <div className="min-h-screen flex flex-col">
+            {/* Wrap the children with the new client component */}
+            <LayoutClientWrapper>
+              {children}
+            </LayoutClientWrapper>
+          </div>
+          <Analytics /> {/* Analytics can remain here if it's fine being a direct child of body in server component */}
         </ProductProvider>
       </body>
     </html>

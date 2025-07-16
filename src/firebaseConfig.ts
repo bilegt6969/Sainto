@@ -14,6 +14,7 @@ import {
   signInWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   linkWithCredential,
+  sendPasswordResetEmail,
   type Auth,
   type AuthError,
   type UserCredential,
@@ -25,6 +26,7 @@ import {
   type ApplicationVerifier
 } from "firebase/auth";
 import { getAnalytics, isSupported, type Analytics } from "firebase/analytics";
+import { getFirestore, type Firestore } from "firebase/firestore"; // Only keep getFirestore and Firestore type
 
 // Firebase configuration interface
 interface FirebaseConfig {
@@ -54,6 +56,9 @@ const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : get
 // Initialize Firebase Auth
 const auth: Auth = getAuth(app);
 
+// Initialize Firebase Firestore
+const db: Firestore = getFirestore(app);
+
 // Initialize Firebase Analytics (conditionally, client-side only)
 let analytics: Analytics | undefined;
 if (typeof window !== "undefined") {
@@ -73,6 +78,7 @@ if (typeof window !== "undefined") {
 export {
   app,
   auth,
+  db,
   analytics,
   firebaseConfig
 };
@@ -93,7 +99,8 @@ export {
   signInWithEmailAndPassword,
   updateProfile,
   fetchSignInMethodsForEmail,
-  linkWithCredential
+  linkWithCredential,
+  sendPasswordResetEmail
 };
 
 // Export Firebase types for use in other components
@@ -108,8 +115,6 @@ export type {
   ApplicationVerifier,
   Auth,
   FirebaseApp,
-  Analytics
+  Analytics,
+  Firestore
 };
-
-// Export the FirebaseConfig interface
-export type { FirebaseConfig };

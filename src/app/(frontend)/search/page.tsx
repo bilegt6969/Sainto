@@ -5,42 +5,62 @@ import { useState, useEffect, useCallback, Suspense, useRef, memo } from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
 
-// --- WARNING ---
-// Storing API keys directly in client-side code is insecure.
-// Move this logic to a backend API route for security.
-const CONSTRUCT_API_KEY = 'key_XT7bjdbvjgECO5d8'; // Replace with your actual key, but ideally fetch from backend
-const CONSTRUCT_CLIENT_ID = 'c1a92cc3-02a4-4244-8e70-bee6178e8209'; // Example Client ID
-const RESULTS_PER_PAGE = 24;
+const RESULTS_PER_PAGE = 12;
 
 // --- Interfaces ---
-interface ProductData {
-  id: string;
-  slug: string;
-  image_url: string;
-  lowest_price_cents: number | null | undefined;
+interface ProductVariant {
+  id?: string;
+  size?: string;
+  color?: string;
+  stock?: number;
+  sku?: string;
+  priceCents?: number;
+  [key: string]: unknown;
 }
 
 interface Product {
-  data: ProductData;
-  value: string; // Product name/title
+  id: string;
+  slug: string;
+  pictureUrl: string;
+  title: string;
+  localizedRetailPriceCents: {
+    amountCents: number;
+    currency: string;
+  };
+  status?: string;
+  inStock?: boolean;
+  category?: string;
+  brandName?: string;
+  variantsList?: ProductVariant[];
+  activitiesList?: string[];
+  releaseDate?: {
+    seconds: number;
+    nanos: number;
+  };
+  silhouette?: string;
+  seasonYear?: string;
+  productType?: string;
+  underRetail?: boolean;
+  gender?: string;
 }
 
-interface DirectApiResponse {
-  response: {
-    results?: Product[];
-    total_num_results?: number;
+interface ApiResponse {
+  success: boolean;
+  data?: {
+    products: Product[];
+    hasMore: boolean;
+    totalCount: number;
   };
+  error?: string;
 }
 
 interface FetchDataResponse {
   results: Product[];
   hasMore: boolean;
-  totalResults?: number;
+  totalResults: number;
 }
 
 // --- Skeleton Components (Styled like Home.tsx) ---
-
-// Updated ProductCardSkeleton
 const ProductCardSkeleton = () => (
   <div className="text-white bg-black border border-neutral-700 rounded tracking-tight relative h-full flex flex-col animate-pulse group">
     {/* Mobile-like top bar placeholder for price */}
@@ -50,26 +70,26 @@ const ProductCardSkeleton = () => (
 
     {/* Image Area */}
     <div
-      className="overflow-hidden relative flex-grow bg-neutral-800 md:rounded-none rounded-b-lg" // Mobile has rounded bottom corners for image after top bar
+      className="overflow-hidden relative flex-grow bg-neutral-800 md:rounded-none rounded-b-lg"
       style={{ aspectRatio: '1 / 1' }}
     ></div>
 
     {/* Bottom Info Bar */}
     {/* Desktop Bottom Bar */}
     <div className="hidden md:flex w-full text-xs font-bold items-center p-4 border-t border-neutral-700 justify-between relative">
-      <div className="h-4 bg-neutral-700 rounded w-2/3 mr-4"></div> {/* Name Placeholder */}
-      <div className="h-8 w-[90px] bg-neutral-700 rounded-full"></div> {/* Price/Button Placeholder */}
+      <div className="h-4 bg-neutral-700 rounded w-2/3 mr-4"></div>
+      <div className="h-8 w-[90px] bg-neutral-700 rounded-full"></div>
     </div>
 
     {/* Mobile Bottom Bar */}
     <div className="block md:hidden w-full text-xs font-bold p-3 border-t border-neutral-700 text-center">
-      <div className="h-4 bg-neutral-700 rounded w-3/4 mx-auto"></div> {/* Name Placeholder */}
+      <div className="h-4 bg-neutral-700 rounded w-3/4 mx-auto"></div>
     </div>
   </div>
 );
 
 const SearchResultsSkeleton = ({ count = 10 }: { count?: number }) => (
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-2"> {/* Matched gap */}
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-2">
     {Array.from({ length: count }).map((_, index) => (
       <ProductCardSkeleton key={index} />
     ))}
@@ -77,7 +97,6 @@ const SearchResultsSkeleton = ({ count = 10 }: { count?: number }) => (
 );
 
 // --- Product Card Components (Styled like Home.tsx) ---
-
 interface ProductCardProps {
   product: Product;
   mntRate: number | null;
@@ -86,41 +105,42 @@ interface ProductCardProps {
 }
 
 const renderPriceHelper = (
-  priceCents: number | null | undefined,
+  localizedRetailPriceCents: { amountCents: number; currency: string } | null | undefined,
   mntRate: number | null,
 ): string => {
-  if (priceCents === null || priceCents === undefined) return 'N/A';
+  if (!localizedRetailPriceCents?.amountCents) return 'N/A';
   if (mntRate === null) return '...';
-  if (priceCents === 0) return 'Unavailable'; // Consistent with Home.tsx
-  const price = (priceCents * mntRate) / 100;
+  if (localizedRetailPriceCents.amountCents === 0) return 'Unavailable';
+  
+  const price = (localizedRetailPriceCents.amountCents * mntRate) / 100;
   return `₮${Math.ceil(price).toLocaleString('en-US')}`;
 };
 
-// --- Desktop Product Card (Styled like Home.tsx DesktopItem) ---
+// --- Desktop Product Card ---
 const DesktopProductCard = memo(
   ({ product, mntRate, replaceText, index }: ProductCardProps) => {
-    const priority = index < 5; // Prioritize first 5 images for LCP
+    const priority = index < 5;
 
-    const productLink = product.data.slug ? `/product/${product.data.slug}` : '#';
-    const productName = product.value || 'Untitled Product';
-    const productImageUrl = product.data.image_url;
-    const priceDisplay = renderPriceHelper(product.data.lowest_price_cents, mntRate);
-    const isUnavailable = product.data.lowest_price_cents === 0;
+    const productLink = product.slug ? `/product/${product.slug}` : '#';
+    const productName = product.title || 'Untitled Product';
+    const productImageUrl = product.pictureUrl;
+    const priceDisplay = renderPriceHelper(product.localizedRetailPriceCents, mntRate);
+    const isUnavailable = product.localizedRetailPriceCents?.amountCents === 0;
 
     return (
       <Link
         href={productLink}
         passHref
-        className={`block h-full ${!product.data.slug ? 'pointer-events-none' : ''}`}
+        className={`block h-full ${!product.slug ? 'pointer-events-none' : ''}`}
       >
         <div className="text-white bg-black border border-neutral-700 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-blue-900/10 hover:border-neutral-600 hover:scale-[1.02] h-full flex flex-col group">
           <div
-            className="overflow-hidden relative flex-grow" // No rounding here for desktop
+            className="overflow-hidden relative flex-grow"
             style={{ aspectRatio: '1 / 1' }}
           >
             {productImageUrl ? (
               <Image
-                className=" mx-auto transition-transform duration-500 group-hover:scale-110 object-cover"
+                className="mx-auto transition-transform duration-500 group-hover:scale-110 object-cover"
                 src={productImageUrl}
                 alt={replaceText(productName)}
                 fill
@@ -133,14 +153,14 @@ const DesktopProductCard = memo(
                   const parent = (e.target as HTMLImageElement).parentElement;
                   if (parent) {
                     const placeholder = document.createElement('div');
-                    placeholder.className = 'w-full h-full flex items-center justify-center bg-neutral-800 text-neutral-500 text-xs ';
+                    placeholder.className = 'w-full h-full flex items-center justify-center bg-neutral-800 text-neutral-500 text-xs';
                     placeholder.innerText = 'Image Error';
                     parent.appendChild(placeholder);
                   }
                 }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-neutral-500 text-xs ">
+              <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-neutral-500 text-xs">
                 No Image
               </div>
             )}
@@ -175,46 +195,44 @@ const DesktopProductCard = memo(
 );
 DesktopProductCard.displayName = 'DesktopProductCard';
 
-// --- Mobile Product Card (Styled like Home.tsx MobileItem) ---
+// --- Mobile Product Card ---
 const MobileProductCard = memo(
   ({ product, mntRate, replaceText, index }: ProductCardProps) => {
-    const priority = index < 4; // Prioritize first 4 for mobile (2 rows)
+    const priority = index < 4;
 
-    const productLink = product.data.slug ? `/product/${product.data.slug}` : '#';
-    const productName = product.value || 'Untitled Product';
-    const productImageUrl = product.data.image_url;
-    const priceDisplay = renderPriceHelper(product.data.lowest_price_cents, mntRate);
-    const isUnavailable = product.data.lowest_price_cents === 0;
-
+    const productLink = product.slug ? `/product/${product.slug}` : '#';
+    const productName = product.title || 'Untitled Product';
+    const productImageUrl = product.pictureUrl;
+    const priceDisplay = renderPriceHelper(product.localizedRetailPriceCents, mntRate);
+    const isUnavailable = product.localizedRetailPriceCents?.amountCents === 0;
 
     return (
       <Link
         href={productLink}
         passHref
-        className={`block h-full ${!product.data.slug ? 'pointer-events-none' : ''}`}
+        className={`block h-full ${!product.slug ? 'pointer-events-none' : ''}`}
       >
         <div className="text-white bg-black border border-neutral-700 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-neutral-600 h-full flex flex-col group">
-          {/* Top bar for price on mobile */}
           <div className="block w-full text-xs font-bold flex items-center p-2 bg-neutral-900/80 backdrop-blur-sm border-b border-neutral-700">
             <span className="block w-full text-center">
-                {isUnavailable ? 'Unavailable' : priceDisplay}
+              {isUnavailable ? 'Unavailable' : priceDisplay}
             </span>
           </div>
           <div
-            className="overflow-hidden rounded-b-lg relative flex-grow" // Image will be rounded at bottom only
+            className="overflow-hidden rounded-b-lg relative flex-grow"
             style={{ aspectRatio: '1 / 1' }}
           >
             {productImageUrl ? (
               <Image
-                className="rounded-b-lg mx-auto transition-transform duration-500 group-hover:scale-110 object-cover" // Ensure image itself is rounded
+                className="rounded-b-lg mx-auto transition-transform duration-500 group-hover:scale-110 object-cover"
                 src={productImageUrl}
                 alt={replaceText(productName)}
                 fill
                 unoptimized
-                sizes="50vw" // For 2-column grid on mobile
+                sizes="50vw"
                 priority={priority}
                 loading={priority ? 'eager' : 'lazy'}
-                 onError={(e) => {
+                onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                   const parent = (e.target as HTMLImageElement).parentElement;
                   if (parent) {
@@ -231,7 +249,6 @@ const MobileProductCard = memo(
               </div>
             )}
           </div>
-          {/* Bottom bar for name on mobile */}
           <div className="w-full text-xs font-bold flex items-center p-3 border-t border-neutral-700 justify-center text-center relative group-hover:border-neutral-500 transition-colors duration-300">
             <span className="truncate">{replaceText(productName)}</span>
           </div>
@@ -263,53 +280,32 @@ const SearchPage = () => {
       pageNum: number,
       currentQuery: string | null,
     ): Promise<FetchDataResponse | null> => {
-      if (!currentQuery || !CONSTRUCT_API_KEY) {
-        setError(
-          !CONSTRUCT_API_KEY
-            ? 'Search API key is not configured.'
-            : 'Invalid search query.',
-        );
+      if (!currentQuery) {
+        setError('Invalid search query.');
         return null;
       }
 
-      const encodedQuery = encodeURIComponent(currentQuery);
-      const url = `https://ac.cnstrc.com/search/${encodedQuery}?c=ciojs-client-2.54.0&key=${CONSTRUCT_API_KEY}&i=${CONSTRUCT_CLIENT_ID}&s=37&page=${pageNum}&num_results_per_page=${RESULTS_PER_PAGE}&sort_by=relevance&sort_order=descending&_dt=${Date.now()}`;
-
       try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          let errorMsg = `API Error: ${res.status}`;
-          try {
-            const errorBody = await res.json();
-            errorMsg = `API Error: ${res.status} - ${
-              errorBody?.message || 'Unknown error'
-            }`;
-          } catch {
-            // console.error('Error parsing error response:', e);
-          }
-          throw new Error(errorMsg);
+        const response = await fetch(`/api/search?query=${encodeURIComponent(currentQuery)}&page=${pageNum}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const result: DirectApiResponse = await res.json();
-        const fetchedProducts = result?.response?.results || [];
-        const totalNumResults = result?.response?.total_num_results;
+        const result: ApiResponse = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Search request failed');
+        }
 
-        const validProducts = fetchedProducts.filter(
-          (p) => p.data?.id && p.data?.slug && p.data?.image_url,
-        );
-
-        let apiHasMore = fetchedProducts.length === RESULTS_PER_PAGE;
-        if (
-          totalNumResults !== undefined &&
-          pageNum * RESULTS_PER_PAGE >= totalNumResults
-        ) {
-          apiHasMore = false;
+        if (!result.data) {
+          throw new Error('No data received from search API');
         }
 
         return {
-          results: validProducts,
-          hasMore: apiHasMore,
-          totalResults: totalNumResults,
+          results: result.data.products,
+          hasMore: result.data.hasMore,
+          totalResults: result.data.totalCount,
         };
       } catch (err: unknown) {
         const message =
@@ -422,7 +418,7 @@ const SearchPage = () => {
   const replaceText = (text: string): string => {
     try {
       return String(text || '')
-        .replace(/GOAT/gi, 'SAINT')
+        .replace(/GOAT/gi, 'sainto')
         .replace(/Canada/gi, 'MONGOLIA');
     } catch (e) {
       console.error('Error replacing text:', text, e);
@@ -438,17 +434,15 @@ const SearchPage = () => {
     resultsCountText = `${products.length.toLocaleString()}${hasMore ? '+' : ''} results`;
   }
 
-
   return (
     <div className="min-h-screen text-white p-0 md:p-0">
       <div className="container mx-auto px-4 py-8 md:py-12">
         <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-6 md:mb-8">
-          Search Results {displayQuery && <span className="text-neutral-400">for {displayQuery}</span>}
+          Search Results for {displayQuery && <span className="text-neutral-400"> {displayQuery}</span>}
         </h1>
 
         {isLoading && (
           <>
-            {/* Skeleton for results count */}
             <div className="h-4 w-1/3 md:w-1/4 bg-neutral-700 rounded mb-4 animate-pulse"></div>
             <SearchResultsSkeleton count={RESULTS_PER_PAGE} />
           </>
@@ -472,7 +466,7 @@ const SearchPage = () => {
         )}
 
         {!isLoading && !error && products.length === 0 && !query && (
-           <div className="text-center py-10">
+          <div className="text-center py-10">
             <h2 className="text-xl font-semibold text-neutral-300 mb-2">Start Your Search</h2>
             <p className="text-neutral-500">Please enter a search term in the bar above to find products.</p>
           </div>
@@ -483,10 +477,9 @@ const SearchPage = () => {
             {resultsCountText && (
               <p className="text-neutral-400 text-sm mb-4">{resultsCountText}</p>
             )}
-            {/* Ensure gap here matches SearchResultsSkeleton's gap */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-2">
               {products.map((item, idx) => (
-                <div key={item.data.id || `product-${idx}`}>
+                <div key={item.id || `product-${idx}`}>
                   <div className="block md:hidden h-full">
                     <MobileProductCard
                       product={item}
@@ -544,9 +537,7 @@ const SearchPageWithSuspense = () => (
     fallback={
       <div className="min-h-screen text-white p-0 md:p-0">
         <div className="container mx-auto px-4 py-8 md:py-12">
-          {/* Skeleton for Title */}
           <div className="h-8 md:h-9 w-3/4 md:w-1/2 bg-neutral-700 rounded mb-6 md:mb-8 animate-pulse"></div>
-          {/* Skeleton for results count */}
           <div className="h-4 w-1/3 md:w-1/4 bg-neutral-700 rounded mb-4 animate-pulse"></div>
           <SearchResultsSkeleton count={RESULTS_PER_PAGE} />
         </div>

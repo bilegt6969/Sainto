@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Link from "next/link"
-
+ 
 // Define the PolicyBlock component
 interface PolicyBlockProps {
   title: string;
@@ -193,19 +192,8 @@ const ReturnsPage = () => {
             </motion.a>
           </div>
         </motion.div>
-      </main>
-
-      <footer className="py-12 text-center border-t border-neutral-800">
-        <p className="text-xs text-neutral-500">
-          Copyright © {new Date().getFullYear()} Saint Mongolia LLC. All rights reserved.
-        </p>
-        <div className="mt-4 space-x-6">
-          <Link href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300">Privacy Policy</Link>
-          <Link href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300">Terms of Service</Link>
-        </div>
-      </footer>
-
-      <style jsx global>{`
+ 
+      <style>{`
         @font-face {
           font-family: 'SF Pro Display';
           src: url('/fonts/sf-pro-display-regular.woff2') format('woff2');
@@ -235,6 +223,7 @@ const ReturnsPage = () => {
           color: #f5f5f5;
         }
       `}</style>
+              </main>
     </div>
   );
 };

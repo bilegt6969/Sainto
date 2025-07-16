@@ -85,12 +85,12 @@ const DarkAppleFaqPage = () => {
 
   const faqData: FaqItemData[] = [
     {
-      question: "What is Saint?",
-      answer: "Saint is Mongolia&apos;s premier online marketplace connecting buyers and sellers of authentic, highly sought-after sneakers, streetwear, collectibles, and electronics. Think of us as a trusted intermediary ensuring authenticity and smoothing transactions, similar to StockX, but tailored for the Mongolian market."
+      question: "What is sainto?",
+      answer: "sainto is Mongolia&apos;s premier online marketplace connecting buyers and sellers of authentic, highly sought-after sneakers, streetwear, collectibles, and electronics. Think of us as a trusted intermediary ensuring authenticity and smoothing transactions, similar to StockX, but tailored for the Mongolian market."
     },
     {
-      question: "How does Saint ensure authenticity?",
-      answer: "Authenticity is our top priority. Every item sold on Saint undergoes a rigorous multi-point inspection process by our trained authenticators. We source directly from trusted suppliers in Hong Kong and verify each product before it&apos;s shipped to a buyer, guaranteeing you receive genuine items."
+      question: "How does sainto ensure authenticity?",
+      answer: "Authenticity is our top priority. Every item sold on sainto undergoes a rigorous multi-point inspection process by our trained authenticators. We source directly from trusted suppliers in Hong Kong and verify each product before it&apos;s shipped to a buyer, guaranteeing you receive genuine items."
     },
     {
       question: "Where do the products come from?",
@@ -108,7 +108,7 @@ const DarkAppleFaqPage = () => {
       question: "What are the fees involved?",
       answer: (
         <>
-          Saint incorporates a processing and service fee (approximately <span className="font-medium text-neutral-300">20%</span> of transaction value) covering authentication, secure logistics, and platform costs. This is factored into the final buyer price or deducted from the seller payout. See our Terms of Service for the detailed buyer/seller fee breakdown.
+          sainto incorporates a processing and service fee (approximately <span className="font-medium text-neutral-300">20%</span> of transaction value) covering authentication, secure logistics, and platform costs. This is factored into the final buyer price or deducted from the seller payout. See our Terms of Service for the detailed buyer/seller fee breakdown.
         </>
       )
     },
@@ -130,7 +130,7 @@ const DarkAppleFaqPage = () => {
     },
     {
       question: "How can I contact customer support?",
-      answer: <>Reach us via email at <a href="mailto:support@saint.mn" className="text-blue-400 hover:text-blue-300 font-medium">support@saint.mn</a>, our website&apos;s contact form, or social media.</>
+      answer: <>Reach us via email at <a href="mailto:support@sainto.mn" className="text-blue-400 hover:text-blue-300 font-medium">support@sainto.mn</a>, our website&apos;s contact form, or social media.</>
     }
   ];
 
@@ -165,7 +165,7 @@ const DarkAppleFaqPage = () => {
         </motion.div>
       </main>
 
-      <style jsx global>{`
+      <style >{`
         @font-face {
           font-family: 'SF Pro Display';
           src: url('/fonts/sf-pro-display-regular.woff2') format('woff2');

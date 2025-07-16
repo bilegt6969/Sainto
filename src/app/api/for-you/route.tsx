@@ -1,4 +1,4 @@
-// /web/src/app/api/for-you/route.tsx
+//  web/src/app/api/for-you/route.tsx
 
 import { NextResponse } from 'next/server'
 
@@ -142,7 +142,10 @@ function buildApiUrl(searchParams: URLSearchParams): string {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  
+
+  const brand = searchParams.get('brand')
+  console.log("Brand:", brand) // Will log: "comme des garcons play"
+    
   try {
     // Build the API URL with proper parameter handling
     const apiUrl = buildApiUrl(searchParams)

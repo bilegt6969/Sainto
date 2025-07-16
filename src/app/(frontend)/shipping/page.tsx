@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Link from "next/link"
-
+ 
 
   
   interface ShippingMethodProps {
@@ -178,7 +177,7 @@ const ShippingPage = () => {
                 International Shipping
               </h3>
               <p className="text-neutral-400">
-                Currently, Saint only ships within Mongolia. We&aposre working on expanding our international shipping options and will update this page when available. For international customers with a Mongolian shipping address, we can accommodate your order.
+                Currently, sainto only ships within Mongolia. We&aposre working on expanding our international shipping options and will update this page when available. For international customers with a Mongolian shipping address, we can accommodate your order.
               </p>
             </div>
             
@@ -187,7 +186,7 @@ const ShippingPage = () => {
                 Order Tracking
               </h3>
               <p className="text-neutral-400">
-                All orders include tracking information sent via email and SMS once your authenticated item ships. You can also track your order status by logging into your Saint account or using the tracking number provided with any major Mongolian courier.
+                All orders include tracking information sent via email and SMS once your authenticated item ships. You can also track your order status by logging into your sainto account or using the tracking number provided with any major Mongolian courier.
               </p>
             </div>
             
@@ -223,17 +222,9 @@ const ShippingPage = () => {
         </motion.div>
       </main>
 
-      <footer className="py-12 text-center border-t border-neutral-800">
-        <p className="text-xs text-neutral-500">
-          Copyright © {new Date().getFullYear()} Saint Mongolia LLC. All rights reserved.
-        </p>
-        <div className="mt-4 space-x-6">
-          <Link href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300">Privacy Policy</Link>
-          <Link href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300">Terms of Service</Link>
-        </div>
-      </footer>
+ 
 
-      <style jsx global>{`
+      <style>{`
         @font-face {
           font-family: 'SF Pro Display';
           src: url('/fonts/sf-pro-display-regular.woff2') format('woff2');

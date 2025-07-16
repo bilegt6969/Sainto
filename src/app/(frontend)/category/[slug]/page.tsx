@@ -65,7 +65,7 @@ const renderPriceHelper = (
 const replaceText = (text: string): string => {
   try {
     return String(text || '')
-      .replace(/GOAT/gi, 'SAINT')
+      .replace(/GOAT/gi, 'sainto')
       .replace(/Canada/gi, 'MONGOLIA');
   } catch (e) {
     console.error('Error replacing text:', text, e);

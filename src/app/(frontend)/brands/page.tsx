@@ -232,7 +232,7 @@ export default function AllBrandsPage() {
             </div>
 
              {/* Global Styles */}
-            <style jsx global>{`
+            <style>{`
                 html { scroll-behavior: smooth; }
                 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
                 .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }

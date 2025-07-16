@@ -1,462 +1,340 @@
-'use client';
-
+'use client'
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-
-import Link from 'next/link'
-
-
-// Props for the ContactOption component
-type ContactOptionProps = {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  link: string;
-  linkText: string;
-};
-
-// Component for displaying a single contact method (Email, Phone, Location)
-const ContactOption: React.FC<ContactOptionProps> = ({ icon, title, description, link, linkText }) => (
-  <motion.div
-    className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6"
-    whileHover={{ y: -4, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } }}
-  >
-    <div className="text-blue-400 mb-4">{icon}</div>
-    <h3 className="text-lg font-medium text-white mb-2 tracking-tight">{title}</h3>
-    <p className="text-neutral-400 mb-4">{description}</p>
-    <a
-      href={link}
-      className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
-    >
-      {linkText} <ArrowRightIcon />
-    </a>
-  </motion.div>
-);
-
-// Props for the FormField component
-type FormFieldProps = {
-  label: string;
-  id: string;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  textarea?: boolean;
-};
-
-// Reusable Form Field component (handles input and textarea)
-const FormField: React.FC<FormFieldProps> = ({
-  label,
-  id,
-  type = 'text',
-  placeholder,
-  required = false,
-  value,
-  onChange,
-  textarea = false,
-}) => (
-  <div className="mb-6">
-    <label htmlFor={id} className="block mb-2 text-sm font-medium text-neutral-300">
-      {label} {required && <span className="text-blue-400">*</span>}
-    </label>
-    {textarea ? (
-      <textarea
-        id={id}
-        name={id} // Added name attribute for consistency
-        rows={5}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:border-blue-400 focus:outline-none transition-colors"
-      />
-    ) : (
-      <input
-        id={id}
-        name={id} // Added name attribute for consistency
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:border-blue-400 focus:outline-none transition-colors"
-      />
-    )}
-  </div>
-);
-
-// --- SVG Icons ---
-
-const EmailIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-  </svg>
-);
-
-const PhoneIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-  </svg>
-);
-
-const LocationIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-  </svg>
-);
-
-const ArrowRightIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 ml-1 mt-0.5">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-  </svg>
-);
-
-const CheckCircleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-// --- Main Contact Page Component ---
-
-const ContactPage = () => {
-  // State for form fields
-  const [formState, setFormState] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-    orderNumber: '',
+ 
+export default function App() {
+  const [formStatus, setFormStatus] = useState('');
+  const [formData, setFormData] = useState({
+    companySize: '',
+    companyName: '',
+    firstName: '',
+    lastName: '',
+    workEmail: '',
+    phoneNumber: '',
+    productInterest: '',
+    businessNeeds: ''
   });
+  const [showSubmitAgain, setShowSubmitAgain] = useState(false); // New state for "Submit again" button
+  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // State for individual field errors
 
-  // State to track form submission status
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  // Define the type for formData keys to resolve TypeScript error
+  type FormDataKeys = keyof typeof formData;
 
-  // Handler for form field changes
-  // FIX: Use specific event type instead of any
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error for the field when user starts typing/selecting
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+    // If a general form status is showing (e.g., "fill all fields"), clear it on input
+    if (formStatus && !showSubmitAgain) {
+      setFormStatus('');
+    }
   };
 
-  // Handler for form submission
-  // FIX: Use specific event type instead of any
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // In a real app, you would submit to your backend here (e.g., using fetch or axios)
-    console.log('Form submitted:', formState);
-    setIsSubmitted(true); // Show success message
+  const resetForm = () => {
+    setFormData({
+      companySize: '',
+      companyName: '',
+      firstName: '',
+      lastName: '',
+      workEmail: '',
+      phoneNumber: '',
+      productInterest: '',
+      businessNeeds: ''
+    });
+    setFormStatus('');
+    setShowSubmitAgain(false);
+    setErrors({}); // Clear all errors on reset
+  };
 
-    // Reset form after submission (optional)
-    setFormState({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
-      orderNumber: '',
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const newErrors: { [key: string]: string } = {};
+    const requiredFields: FormDataKeys[] = ['companySize', 'companyName', 'firstName', 'lastName', 'workEmail', 'phoneNumber', 'productInterest'];
+
+    // Validate required fields
+    requiredFields.forEach(field => {
+      if (!formData[field] || String(formData[field]).trim() === '') {
+        newErrors[field] = 'Энэ талбарыг бөглөнө үү.';
+      }
     });
 
-    // Hide success message after a delay (optional)
-    // In a real app, this might happen after successful API response
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 5000); // Hide after 5 seconds
+    // Validate email format
+    if (formData.workEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.workEmail)) {
+      newErrors.workEmail = 'Бодит имэйл хаяг оруулна уу.';
+    }
+    // Specific check for Gmail domain if desired, but general regex is usually sufficient
+    // if (formData.workEmail && !formData.workEmail.endsWith('@gmail.com')) {
+    //   newErrors.workEmail = 'Please enter a valid Gmail address.';
+    // }
+
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setFormStatus('Шаардлагатай бүх талбарыг бөглөнө үү эсвэл алдааг засна уу.');
+      setShowSubmitAgain(false); // Ensure form is not in success state
+      return;
+    }
+
+    // IMPORTANT: For this Canvas environment, we'll use the provided URL directly.
+    // In a real Next.js application, you would use process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL
+    // and ensure it's properly configured in your .env.local file and build process.
+    const discordWebhookUrl = 'https://discord.com/api/webhooks/1382680453835657237/uTlQfIFGK7BhX5ErU2dq3VV16SJe1_FQeqLK0mZB-9bx0Fqtz5Rj54_hBr1v9g6EZU0P';
+
+    if (!discordWebhookUrl || !discordWebhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+        setFormStatus('Discord Webhook URL тохируулагдаагүй эсвэл буруу байна.');
+        // No timeout here, let it persist until user interacts
+        return;
+    }
+
+    // Structure the data for the Discord embed
+    const discordPayload = {
+        embeds: [{
+            title: 'Шинэ борлуулалтын хүсэлт',
+            color: 5814783, // A nice blue color
+            fields: [
+                { name: 'Компанийн нэр', value: formData.companyName, inline: true },
+                { name: 'Компанийн хэмжээ', value: formData.companySize, inline: true },
+                { name: 'Нэр', value: `${formData.firstName} ${formData.lastName}` },
+                { name: 'Имэйл', value: formData.workEmail, inline: true },
+                { name: 'Утасны дугаар', value: formData.phoneNumber, inline: true },
+                { name: 'Сонирхож буй үйлчилгээ', value: formData.productInterest },
+                { name: 'Бизнесийн хэрэгцээ', value: formData.businessNeeds || 'Оруулсангүй' }
+            ],
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    try {
+        const response = await fetch(discordWebhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(discordPayload),
+        });
+
+        if (response.ok) {
+            setFormStatus('Баярлалаа! Манай борлуулалтын баг тантай удахгүй холбогдох болно.');
+            setShowSubmitAgain(true); // Show "Submit again" button on success
+            setErrors({}); // Clear any previous errors on success
+        } else {
+            setFormStatus('Хүсэлт илгээхэд алдаа гарлаа. Дахин оролдоно уу.');
+            setShowSubmitAgain(false);
+        }
+    } catch (error) {
+        console.error('Discord webhook error:', error);
+        setFormStatus('Сүлжээний алдаа гарлаа. Дахин оролдоно уу.');
+        setShowSubmitAgain(false);
+    } finally {
+        // No timeout for formStatus here, it will be cleared by resetForm or new input
+    }
   };
 
   return (
-    <div className="min-h-screen bg-black font-sans antialiased">
-      <main className="max-w-6xl mx-auto px-6 py-20 md:py-32">
-        {/* Page Header */}
-        <motion.h1
-          className="text-3xl md:text-4xl font-semibold text-white text-center mb-6 tracking-tight"
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        >
-          Contact Us
-        </motion.h1>
-
-        <motion.p
-          className="text-center text-neutral-400 mb-16 md:mb-24 max-w-xl mx-auto"
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        >
-          Our team is ready to assist you with any questions or concerns. Choose your preferred contact method or fill out the form below.
-        </motion.p>
-
-        {/* Contact Options Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <ContactOption
-              icon={<EmailIcon />}
-              title="Email Us"
-              description="Get in touch via email for non-urgent inquiries. We typically respond within 24 hours."
-              link="mailto:support@saint.mn"
-              linkText="support@saint.mn"
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <ContactOption
-              icon={<PhoneIcon />}
-              title="Call Us"
-              description="For urgent matters, our support team is available Monday-Friday, 10AM-6PM."
-              link="tel:+97677123456"
-              linkText="+976 7712 3456"
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <ContactOption
-              icon={<LocationIcon />}
-              title="Visit Us"
-              description="Our flagship store and authentication center is located in central Ulaanbaatar."
-              link="https://maps.google.com/?q=Central+Tower+Ulaanbaatar" // Example valid maps link
-              linkText="Get directions"
-            />
-          </motion.div>
+    <div className="min-h-screen bg-black text-white font-sans flex items-center justify-center py-16 px-4">
+      <div className="max-w-2xl w-full">
+        <div className="text-center mb-12">
+          <h1 className="text-6xl font-medium mb-4">Борлуулалтын багтай холбогдох</h1>
+          <p className="text-base text-gray-300">
+          Хамтран ажиллах шинэ санаа байна уу? Тэгвэл Saint-тай хамт эхэлье.
+          </p>
         </div>
 
-        {/* Contact Form & Business Info Grid */}
-        <motion.div
-          className="grid md:grid-cols-2 gap-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {/* Contact Form Section */}
-          <div>
-            <h2 className="text-2xl font-medium text-white mb-8 tracking-tight">Send Us a Message</h2>
-
-            {isSubmitted ? (
-              // Success Message
-              <motion.div
-                className="flex flex-col items-center justify-center py-16 text-center"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="text-green-400 mb-4">
-                  <CheckCircleIcon />
-                </div>
-                <h3 className="text-xl font-medium text-white mb-3">Message Sent!</h3>
-                {/* FIX: Use &apos; for single quote */}
-                <p className="text-neutral-400 max-w-sm">Thank you for contacting us. We&apos;ll get back to you as soon as possible.</p>
-              </motion.div>
-            ) : (
-              // Actual Form
-              <form onSubmit={handleSubmit} className="bg-black">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    label="Full Name"
-                    id="name"
-                    placeholder="Your name"
-                    required={true}
-                    value={formState.name}
-                    onChange={handleChange}
-                  />
-
-                  <FormField
-                    label="Email Address"
-                    id="email"
-                    type="email"
-                    placeholder="your@email.com"
-                    required={true}
-                    value={formState.email}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    label="Phone Number"
-                    id="phone"
-                    type="tel"
-                    placeholder="+976 XXXX XXXX"
-                    value={formState.phone}
-                    onChange={handleChange}
-                  />
-
-                  <FormField
-                    label="Order Number (if applicable)"
-                    id="orderNumber"
-                    placeholder="SAI-XXXXXX"
-                    value={formState.orderNumber}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <FormField
-                  label="Subject"
-                  id="subject"
-                  placeholder="What's this about?"
-                  required={true}
-                  value={formState.subject}
-                  onChange={handleChange}
-                />
-
-                <FormField
-                  label="Message"
-                  id="message"
-                  placeholder="Tell us how we can help you..."
-                  required={true}
-                  value={formState.message}
-                  onChange={handleChange}
-                  textarea={true}
-                />
-
-                <motion.button
-                  type="submit"
-                  className="mt-2 px-8 py-3 bg-blue-500 text-white font-medium rounded-full focus:outline-none transition hover:bg-blue-600 active:bg-blue-700" // Added hover/active states
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  Send Message
-                </motion.button>
-              </form>
-            )}
-          </div>
-
-          {/* Business Info Section */}
-          <div>
-            <h2 className="text-2xl font-medium text-white mb-8 tracking-tight">Business Hours & Location</h2>
-
-            {/* Store Hours */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-white mb-3 tracking-tight">Store Hours</h3>
-              <table className="w-full text-neutral-400 text-sm">
-                <tbody>
-                  <tr className="border-b border-neutral-800">
-                    <td className="py-3 pr-6">Monday - Friday</td>
-                    <td className="py-3 font-medium text-white text-right">10:00 AM - 8:00 PM</td>
-                  </tr>
-                  <tr className="border-b border-neutral-800">
-                    <td className="py-3 pr-6">Saturday</td>
-                    <td className="py-3 font-medium text-white text-right">11:00 AM - 6:00 PM</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pr-6">Sunday</td>
-                    <td className="py-3 font-medium text-white text-right">12:00 PM - 5:00 PM</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* Support Hours */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-white mb-3 tracking-tight">Customer Support Hours</h3>
-              <table className="w-full text-neutral-400 text-sm">
-                <tbody>
-                  <tr className="border-b border-neutral-800">
-                    <td className="py-3 pr-6">Phone Support</td>
-                    <td className="py-3 font-medium text-white text-right">Mon-Fri, 10:00 AM - 6:00 PM</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pr-6">Email & Chat</td>
-                    <td className="py-3 font-medium text-white text-right">7 days a week (24hr response)</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* Location */}
+        {!showSubmitAgain ? ( // Conditionally render form or success message
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Company Size */}
             <div>
-              <h3 className="text-lg font-medium text-white mb-3 tracking-tight">Store Location</h3>
-              <p className="text-neutral-400 mb-4 text-sm leading-relaxed">
-                Central Tower, 5th Floor<br />
-                Great Chinggis Khaan Square<br />
-                Sukhbaatar District<br />
-                Ulaanbaatar, Mongolia
-              </p>
+              <label htmlFor="companySize" className="block text-xs font-medium mb-2">
+                Компанийн хэмжээ <span className="text-white">*</span>
+              </label>
+              <div className="relative">
+                <select
+                  id="companySize"
+                  name="companySize"
+                  value={formData.companySize}
+                  onChange={handleInputChange}
+                  className={`w-full bg-transparent border rounded-xs px-3 py-2 text-sm text-white focus:outline-none focus:border-gray-500 pr-10 ${errors.companySize ? 'border-red-500' : 'border-[#FFFFFF33]'}`}
+                >
+                  <option value="" disabled className="bg-gray-900 text-gray-500">Сонгоно уу</option>
+                  <option value="1-10 ажилтантай" className="bg-gray-900">1-10 ажилтантай</option>
+                  <option value="11-50 ажилтантай" className="bg-gray-900">11-50 ажилтантай</option>
+                  <option value="51-200 ажилтантай" className="bg-gray-900">51-200 ажилтантай</option>
+                  <option value="201-500 ажилтантай" className="bg-gray-900">201-500 ажилтантай</option>
+                  <option value="500+ ажилтантай" className="bg-gray-900">500+ ажилтантай</option>
+                </select>
+               </div>
+              {errors.companySize && <p className="text-red-500 text-xs mt-1">{errors.companySize}</p>}
+            </div>
 
-              {/* Placeholder Map */}
-              <div className="aspect-video bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
-                {/* In a real app, use an actual map component (e.g., Google Maps React, Mapbox GL JS) */}
-                <div className="w-full h-full flex items-center justify-center">
-                   {/* Using a placeholder image for now */}
-                   <Image
-                    src="https://placehold.co/600x400/111827/4b5563?text=Map+Placeholder" // Placeholder image URL
-                    alt="Map location placeholder"
-                    width={600}
-                    height={400}
-                    className="object-cover w-full h-full"
-                    unoptimized // Recommended for external placeholder services
-                  />
-                </div>
+            {/* Company Name */}
+            <div>
+              <label htmlFor="companyName" className="block text-xs font-medium mb-2">
+                Компанийн нэр <span className="text-white">*</span>
+              </label>
+              <input
+                type="text"
+                id="companyName"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                className={`w-full bg-transparent border rounded-xs px-3 py-2 text-sm text-white focus:outline-none focus:border-gray-500 ${errors.companyName ? 'border-red-500' : 'border-[#FFFFFF33]'}`}
+              />
+              {errors.companyName && <p className="text-red-500 text-xs mt-1">{errors.companyName}</p>}
+            </div>
+
+            {/* First Name and Last Name */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="firstName" className="block text-xs font-medium mb-2">
+                  Нэр <span className="text-white">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  className={`w-full bg-transparent border rounded-xs px-3 py-2 text-sm text-white focus:outline-none focus:border-gray-500 ${errors.firstName ? 'border-red-500' : 'border-[#FFFFFF33]'}`}
+                />
+                {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-xs font-medium mb-2">
+                  Овог <span className="text-white">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  className={`w-full bg-transparent border rounded-xs px-3 py-2 text-sm text-white focus:outline-none focus:border-gray-500 ${errors.lastName ? 'border-red-500' : 'border-[#FFFFFF33]'}`}
+                />
+                {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
               </div>
             </div>
+
+            {/* Work Email and Phone Number */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="workEmail" className="block text-xs font-medium mb-2">
+                  Ажлын имэйл <span className="text-white">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="workEmail"
+                  name="workEmail"
+                  value={formData.workEmail}
+                  onChange={handleInputChange}
+                  className={`w-full bg-transparent border rounded-xs px-3 py-2 text-sm text-white focus:outline-none focus:border-gray-500 ${errors.workEmail ? 'border-red-500' : 'border-[#FFFFFF33]'}`}
+                />
+                {errors.workEmail && <p className="text-red-500 text-xs mt-1">{errors.workEmail}</p>}
+              </div>
+              <div>
+                <label htmlFor="phoneNumber" className="block text-xs font-medium mb-2">
+                  Утасны дугаар <span className="text-white">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  className={`w-full bg-transparent border rounded-xs px-3 py-2 text-sm text-white focus:outline-none focus:border-gray-500 ${errors.phoneNumber ? 'border-red-500' : 'border-[#FFFFFF33]'}`}
+                />
+                {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
+              </div>
+            </div>
+
+            {/* Product Interest */}
+            <div>
+              <label htmlFor="productInterest" className="block text-xs font-medium mb-2">
+                Та манай ямар бүтээгдэхүүн, үйлчилгээг сонирхож байна вэ? <span className="text-white">*</span>
+              </label>
+              <div className="relative">
+                  <select
+                    id="productInterest"
+                    name="productInterest"
+                    value={formData.productInterest}
+                    onChange={handleInputChange}
+                    className={`w-full bg-transparent border rounded-xs px-3 py-2 text-sm text-white focus:outline-none focus:border-gray-500 pr-10 ${errors.productInterest ? 'border-red-500' : 'border-[#FFFFFF33]'}`}
+                  >
+                    <option value="" disabled className="bg-gray-900 text-gray-500">Доорх сонголтуудаас нэгийг сонгоно уу</option>
+                    <option value="Түншлэлийн лавлагаа" className="bg-gray-900">Түншлэлийн лавлагаа</option>
+                    <option value="Худалдагчийн бүртгэлийн дэмжлэг" className="bg-gray-900">Худалдагчийн бүртгэлийн дэмжлэг</option>
+                    <option value="Бөөнөөр худалдан авах" className="bg-gray-900">Бөөнөөр худалдан авах</option>
+                    <option value="API холболт" className="bg-gray-900">API холболт</option>
+                    <option value="Бусад" className="bg-gray-900">Бусад</option>
+                  </select>
+               </div>
+              {errors.productInterest && <p className="text-red-500 text-xs mt-1">{errors.productInterest}</p>}
+            </div>
+
+            {/* Business Needs */}
+            <div>
+              <label htmlFor="businessNeeds" className="block text-xs font-medium mb-2">
+                Та бизнесийн хэрэгцээ, тулгамдаж буй асуудлынхаа талаар хуваалцана уу?
+              </label>
+              <textarea
+                id="businessNeeds"
+                name="businessNeeds"
+                value={formData.businessNeeds}
+                onChange={handleInputChange}
+                rows={5} // Changed to number
+                className="w-full bg-transparent border border-[#FFFFFF33] rounded-xs px-3 py-2 text-sm text-white resize-none focus:outline-4 focus:border-[#FFFFFF33]"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-4">
+              <button
+                type="submit"
+                className="bg-white hover:bg-gray-200 text-black px-4 py-2 rounded-full text-sm font-medium transition-colors"
+              >
+                Илгээх
+              </button>
+            </div>
+
+              
+          </form>
+        ) : (
+          <div className="text-center mt-12">
+            <p className="text-lg text-[#FFFFFF80] mb-6">{formStatus}</p>
+            <button
+              onClick={resetForm}
+              className="bg-white hover:bg-gray-200 text-black px-6 py-3 rounded-full text-base font-medium transition-colors"
+            >
+              Дахин илгээх
+            </button>
           </div>
-        </motion.div>
-      </main>
+        )}
 
-      {/* Footer */}
-      <footer className="py-12 text-center border-t border-neutral-800">
-        <p className="text-xs text-neutral-500">
-          Copyright © {new Date().getFullYear()} Saint Mongolia LLC. All rights reserved.
-        </p>
-        <div className="mt-4 space-x-6">
-          <Link href="/privacy" className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
-            Privacy Policy
-          </Link>
-          <Link href="/terms" className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
-            Terms of Service
-          </Link>
-        </div>
-      </footer>
-
-      {/* Global Styles (Optional - can be handled in global CSS) */}
-      <style jsx global>{`
-        /* Example using a local font file - ensure files are in /public/fonts */
-        /* @font-face {
-          font-family: 'SF Pro Display';
-          src: url('/fonts/sf-pro-display-regular.woff2') format('woff2');
-          font-weight: normal;
-          font-style: normal;
-          font-display: swap;
-        }
-        @font-face {
-          font-family: 'SF Pro Display';
-          src: url('/fonts/sf-pro-display-medium.woff2') format('woff2');
-          font-weight: 500;
-          font-style: normal;
-          font-display: swap;
-        }
-        @font-face {
-          font-family: 'SF Pro Display';
-          src: url('/fonts/sf-pro-display-semibold.woff2') format('woff2');
-          font-weight: 600;
-          font-style: normal;
-          font-display: swap;
-        } */
+        {/* General Status Message (for errors or initial messages) */}
+        {formStatus && !showSubmitAgain && (
+          <div className={`mt-6 p-4 rounded-md ${formStatus.includes('амжилттай') ? 'bg-green-500/10 border border-green-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
+            <p className={`text-center ${formStatus.includes('амжилттай') ? 'text-green-400' : 'text-red-400'}`}>{formStatus}</p>
+          </div>
+        )}
+      </div>
+      <style>{`
         body {
-          /* font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, Helvetica, Arial, sans-serif; */
+          background-color: black;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-          background-color: black; /* Ensure body background is black */
-          color: #f5f5f7; /* Default text color */
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        .font-sans {
+          font-family: 'Inter', sans-serif;
         }
       `}</style>
     </div>
   );
-};
-
-export default ContactPage;
+}

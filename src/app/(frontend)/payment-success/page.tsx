@@ -69,7 +69,7 @@
             </div>
           </div>
         </div>
-        <style jsx global>{`
+        <style>{`
         body {
           background-color: black;
         }

@@ -57,7 +57,7 @@ interface ApiBrandResponse {
 
 // --- Constants ---
 const NUM_RESULTS_PER_PAGE = 24;
-const API_BASE_URL = 'https://ac.cnstrc.com/browse/brand';
+const API_BASE_URL = 'https://ac.cnstrc.com/browse/group_id';
 // Static query parameters from the example URL
 const API_STATIC_PARAMS =
   'c=ciojs-client-2.54.0&key=key_XT7bjdbvjgECO5d8&i=c1a92cc3-02a4-4244-8e70-bee6178e8209&s=103&num_results_per_page=' +

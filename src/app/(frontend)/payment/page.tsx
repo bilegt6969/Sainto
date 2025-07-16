@@ -533,7 +533,7 @@ export default function PaymentPage() {
           </div>
         </form>
       </div>
-      <style jsx global>{`
+      <style >{`
         body {
           background-color: black;
         }

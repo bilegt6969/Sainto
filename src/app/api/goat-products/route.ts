@@ -1,10 +1,10 @@
 // src/app/api/payload/collections/route.js
-import { getCollections } from '../../../../../lib/api'
+import { getCollections } from '../../../../lib/api'
 
 export async function GET() {
   try {
     const collections = await getCollections()
-     return new Response(JSON.stringify(collections), {
+    return new Response(JSON.stringify(collections[0].url), {
       status: 200,
       headers: {
         'Content-Type': 'application/json'

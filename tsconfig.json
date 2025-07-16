@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/HeroSection.js", "src/firebaseConfig.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/HeroSection.js", "src/firebaseConfig.ts", "src/app/(frontend)/terms/TermsView.js", "src/app/(frontend)/about-us/demo", "src/app/api/goat-products/route.ts", "src/app/api/home-data/route.js", "src/app/store/cartStore.js"],
   "exclude": ["node_modules"]
 }

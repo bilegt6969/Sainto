@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 body {
-  background-color: #252525; /* Set background color */
+  background-color: #2d2d2d; /* Set background color */
   margin-left: 0rem; /* Default for extra small screens */
   margin-right: 0rem;
 }
@@ -89,8 +92,51 @@ bodyExceptNav {
   .bg-blue-500\/50 {
     background-color: color-mix(in oklab, var(--color-blue-500) 50%, transparent);
   }
+  .shadow-inner-custom {
+    box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4), /* Top highlight */
+                inset 0 -1px 0px rgba(0, 0, 0, 0.1);    /* Bottom shadow for depth */
+  }
 }
 
+/* Remove the previous .glass-button-effect if you added it */
+
+@layer components {
+  .glossy-button-effect {
+    position: relative; /* Needed for pseudo-element positioning */
+    overflow: hidden;   /* Crucial to hide the gradient outside the button */
+
+    /* Base background for the button, perhaps slightly darker to make the gloss pop */
+    background-color: #262626; /* A darker gray for the button background */
+    border: 1px solid rgba(124, 124, 124, 0.4); /* A slightly more pronounced border */
+
+    /* Ensure children (text, icon) are above the pseudo-element */
+    z-index: 1;
+
+    /* Create the glossy reflection effect */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%; /* Start off-screen to the left */
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,      /* Transparent white start */
+        rgba(255, 255, 255, 0.2) 50%,   /* Semi-transparent white in middle (the highlight) */
+        rgba(255, 255, 255, 0) 100%     /* Transparent white end */
+      );
+      transition: transform 0.8s ease-out; /* Smooth transition for the slide */
+      z-index: -1; /* Place behind button content but above button background */
+      pointer-events: none; /* Allows clicks to pass through */
+    }
+
+    /* Animation on hover */
+    &:hover::before {
+      transform: translateX(200%); /* Slide across to the right (200% covers full width + initial offset) */
+    }
+  }
+}
 @layer base {
   .dark {
     --background: 0 0% 100%;
@@ -570,4 +616,116 @@ a, button {
   mask-composite:-add;
   -webkit-mask-composite:-add;
 
+}
+
+.glass-badge {
+  position: relative;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.glass-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.glass-badge::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  pointer-events: none;
+}
+
+.group:hover .glass-badge::before {
+  left: 100%;
+}
+
+.group:hover .glass-badge {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+/* Improve font rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.backdrop-blur-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Apple-style hover animations */
+.group:hover .relative {
+  filter: brightness(1.1);
+}
+
+/* Simplified floating animations */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px) translateX(0px) rotate(var(--rotation, 0deg)); }
+  50% { transform: translateY(-2px) translateX(1px) rotate(var(--rotation, 0deg)); }
+}
+
+.group .relative {
+  animation: gentle-float 6s ease-in-out infinite;
+}
+
+.group:hover .relative {
+  animation-play-state: paused;
+}
+
+.group:hover > .relative > .glass-badge {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3), 
+    0 0 30px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3);
 }

@@ -95,7 +95,7 @@ const SupportPage = () => {
             title="Email Support"
             description="Send us an email and we'll get back to you within 24 hours, even on weekends."
             actionText="Email us"
-            actionLink="mailto:support@saint.mn"
+            actionLink="mailto:support@sainto.mn"
           />
 
           <ContactOption
@@ -159,7 +159,7 @@ const SupportPage = () => {
       {/* Footer Section */}
       
       {/* Global Styles for Font */}
-      <style jsx global>{`
+      <style>{`
         @font-face {
           font-family: 'SF Pro Display';
           src: url('/fonts/sf-pro-display-regular.woff2') format('woff2');
