@@ -32,9 +32,18 @@ interface ItemData {
     inStock: boolean;
 }
 
+// ProductListItem now directly represents a product from productsList within your API response
+// It should match the structure you get after parsing rawProductJson and adding collectionName.
+interface ProductListItem extends ItemData { // Extend ItemData as these are the product details
+    collectionName: string; // The added field from your API route
+    // If there are other top-level fields on the product object after parsing, add them here
+    // For instance, if you had a 'value' field directly on the product object:
+    // value?: string;
+}
+
 interface Item {
-    data: ItemData;
-    value: string;
+    data: ItemData; // Contains id, slug, pictureUrl, title, etc.
+    value?: string; // If 'value' exists at the same level as 'data' in your transformed product object
     category: string;
     categoryUrl: string;
 }
@@ -43,13 +52,8 @@ interface CollectionDoc {
     url: string;
     name: string;
     order: number;
-}
-
-interface ApiResponse {
-    data: {
-        totalResults: number;
-        productsList: ItemData[];
-    };
+    // IMPORTANT: 'products' now directly holds the array of ProductListItem
+    products?: ProductListItem[];
 }
 
 interface ProcessedSanityCategory {
@@ -117,39 +121,39 @@ const SkeletonCategoryCard = () => (
 
 //--- Helper Functions ---
 
-const getLowestPriceCents = (item: ItemData): number => {
-    if (item.variantsList && item.variantsList.length > 0) {
-        const variantPrices = item.variantsList
+const getLowestPriceCents = (itemData: ItemData): number => { // Changed param name to reflect ItemData
+    if (itemData.variantsList && itemData.variantsList.length > 0) {
+        const variantPrices = itemData.variantsList
             .map(variant => variant.localizedLowestPriceCents?.amountCents)
             .filter((price): price is number => price !== undefined);
-        
+
         if (variantPrices.length > 0) {
             return Math.min(...variantPrices);
         }
     }
-    
-    return item.localizedRetailPriceCents?.amountCents || 9999; // Fallback to 9999 if price is missing
+
+    return itemData.localizedRetailPriceCents?.amountCents || 9999; // Fallback to 9999 if price is missing
 };
 
 //--- Memoized Child Components ---
 
 interface DesktopItemProps { item: Item; renderPrice: (priceCents: number) => string; replaceText: (text: string) => string; priority: boolean; }
 const DesktopItem = memo(({ item, renderPrice, replaceText, priority }: DesktopItemProps) => {
-    const lowestPrice = getLowestPriceCents(item.data);
-    
+    const lowestPrice = getLowestPriceCents(item.data); // Pass item.data to getLowestPriceCents
+
     return (
         <Link href={`/product/${item.data.slug}`} passHref>
             <div className="text-white bg-black border border-neutral-700 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-blue-900/10 hover:border-neutral-600 hover:scale-[1.02] h-full flex flex-col group">
                 <div className="overflow-hidden rounded-t-lg relative flex-grow" style={{ aspectRatio: '1 / 1' }}>
-                    <Image 
-                        className="rounded-t-lg mx-auto transition-transform duration-500 group-hover:scale-110 object-cover" 
-                        src={item.data.pictureUrl} 
-                        alt={replaceText(item.data.title)} 
-                        fill 
-                        unoptimized 
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, (max-width: 1536px) 25vw, 20vw" 
-                        priority={priority} 
-                        loading={priority ? 'eager' : 'lazy'} 
+                    <Image
+                        className="rounded-t-lg mx-auto transition-transform duration-500 group-hover:scale-110 object-cover"
+                        src={item.data.pictureUrl}
+                        alt={replaceText(item.data.title)}
+                        fill
+                        unoptimized
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, (max-width: 1536px) 25vw, 20vw"
+                        priority={priority}
+                        loading={priority ? 'eager' : 'lazy'}
                     />
                 </div>
                 <div className="w-full text-xs font-bold flex items-center p-4 border-t border-neutral-700 justify-between relative transition-colors duration-300 group-hover:border-neutral-500">
@@ -173,8 +177,8 @@ DesktopItem.displayName = 'DesktopItem';
 
 interface MobileItemProps { item: Item; renderPrice: (priceCents: number) => string; replaceText: (text: string) => string; priority: boolean; }
 const MobileItem = memo(({ item, renderPrice, replaceText, priority }: MobileItemProps) => {
-    const lowestPrice = getLowestPriceCents(item.data);
-    
+    const lowestPrice = getLowestPriceCents(item.data); // Pass item.data to getLowestPriceCents
+
     return (
         <Link href={`/product/${item.data.slug}`} passHref>
             <div className="text-white bg-black border border-neutral-800 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-neutral-600 h-full flex flex-col group">
@@ -182,15 +186,15 @@ const MobileItem = memo(({ item, renderPrice, replaceText, priority }: MobileIte
                     <span className="block">{lowestPrice === 0 || !item.data.inStock ? 'Unavailable' : renderPrice(lowestPrice)}</span>
                 </div>
                 <div className="overflow-hidden rounded-b-lg relative flex-grow" style={{ aspectRatio: '1 / 1' }}>
-                    <Image 
-                        className="rounded-b-lg mx-auto transition-transform duration-500 group-hover:scale-110 object-cover" 
-                        src={item.data.pictureUrl} 
-                        alt={replaceText(item.data.title)} 
-                        fill 
-                        unoptimized 
-                        sizes="50vw" 
-                        priority={priority} 
-                        loading={priority ? 'eager' : 'lazy'} 
+                    <Image
+                        className="rounded-b-lg mx-auto transition-transform duration-500 group-hover:scale-110 object-cover"
+                        src={item.data.pictureUrl}
+                        alt={replaceText(item.data.title)}
+                        fill
+                        unoptimized
+                        sizes="50vw"
+                        priority={priority}
+                        loading={priority ? "eager" : "lazy"}
                     />
                 </div>
                 <div className="w-full text-xs font-bold flex items-center p-3 border-t border-neutral-700 justify-center text-center relative group-hover:border-neutral-500 transition-colors duration-300">
@@ -251,12 +255,11 @@ CategoryCard.displayName = 'CategoryCard';
 
 //--- Main Home Component ---
 const Home = () => {
-    const [data, setData] = useState<{ [title: string]: Item[] }>({});
+    const [sectionItems, setSectionItems] = useState<{ [title: string]: Item[] }>({});
     const [categoryData, setCategoryData] = useState<{ [elKey: string]: ProcessedSanityCategory[] }>({});
     const [collections, setCollections] = useState<CollectionDoc[]>([]);
-    const [sanityCategoryDocs, setSanityCategoryDocs] = useState<SanityProductCategoryUrlDoc[]>([]);
     const [mntRate, setMntRate] = useState<number | null>(null);
-    const [isMetaLoading, setIsMetaLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { setPageData } = useProductContext();
     const sectionRefs = useRef<SectionRefs>({});
@@ -292,63 +295,8 @@ const Home = () => {
         return `₮${Math.ceil(price).toLocaleString('en-US')}`;
     };
 
-    // Fetch metadata
-    useEffect(() => {
-        const fetchMetadata = async () => {
-            setIsMetaLoading(true);
-            setError(null);
-            fetchedSections.current.clear();
-
-            if (isCacheValid(homeCache.timestamp) && homeCache.collections && homeCache.mntRate && homeCache.sanityCategoryDocs) {
-                console.log("Using cached metadata for instant layout.");
-                setCollections(homeCache.collections);
-                setSanityCategoryDocs(homeCache.sanityCategoryDocs);
-                setMntRate(homeCache.mntRate);
-                setIsMetaLoading(false);
-                return;
-            }
-
-            console.log("Fetching all essential metadata in parallel...");
-            try {
-                const [collectionsRes, sanityDocsRes, currencyRes] = await Promise.all([
-                    fetch("/api/payload/collections?sort=order").then(res => res.ok ? res.json() : Promise.reject(`Collections fetch failed: ${res.status}`)),
-                    sanityClient.fetch<SanityProductCategoryUrlDoc[]>(`*[_type == "productCategoryUrls"] | order(order asc) {docCategory, order, el1{url, label}, el2{url, label}, el3{url, label}, el4{url, label}}`),
-                    fetch('https://hexarate.paikama.co/api/rates/latest/USD?target=MNT').then(res => res.ok ? res.json() : Promise.reject(`Currency fetch failed: ${res.status}`))
-                ]);
-
-                interface CollectionsResponse {
-                    docs: CollectionDoc[];
-                }
-
-                const collectionsArray = Array.isArray(collectionsRes) ? collectionsRes : (collectionsRes as CollectionsResponse)?.docs || [];
-                const sortedCollections = collectionsArray
-                    .filter((c): c is CollectionDoc => 
-                        !!c.url && !!c.name && typeof c.order === 'number'
-                    )
-                    .sort((a: CollectionDoc, b: CollectionDoc) => a.order - b.order);
-
-                const rate = currencyRes.data?.mid;
-                if (!rate) throw new Error('MNT currency rate not available.');
-
-                setCollections(sortedCollections);
-                setSanityCategoryDocs(sanityDocsRes);
-                setMntRate(rate);
-
-                homeCache = { collections: sortedCollections, sanityCategoryDocs: sanityDocsRes, mntRate: rate, timestamp: Date.now() };
-                console.log("Metadata fetched successfully.");
-
-            } catch (err) {
-                const errorMessage = err instanceof Error ? err.message : String(err);
-                console.error("Critical error fetching metadata:", errorMessage);
-                setError(`Failed to load page. ${errorMessage}`);
-            } finally {
-                setIsMetaLoading(false);
-            }
-        };
-        fetchMetadata();
-    }, []);
-
-    // Process category data
+    // processCategoryData needs to remain a useCallback, but its execution is now consolidated
+    // Moved this declaration before the useEffect that uses it.
     const processCategoryData = useCallback((items: Item[], docs: SanityProductCategoryUrlDoc[]): { [elKey: string]: ProcessedSanityCategory[] } => {
         const categoryData: { [elKey: string]: ProcessedSanityCategory[] } = {};
 
@@ -365,52 +313,111 @@ const Home = () => {
                 }];
             });
         });
-
         return categoryData;
     }, []);
 
-    // Fetch section data
-    const fetchDataForSection = useCallback(async (collection: CollectionDoc, index: number) => {
-        const sectionId = `${collection.name}-${index}`;
-        if (fetchedSections.current.has(sectionId)) {
-            return;
-        }
+    // Fetch all initial data (collections with products, sanity category URLs, currency rate)
+    useEffect(() => {
+        const fetchAllInitialData = async () => {
+            setIsLoading(true);
+            setError(null);
+            fetchedSections.current.clear(); // Clear fetched sections on new data fetch
 
-        console.log(`INTERSECTION: Fetching data for section: "${sectionId}"`);
-        fetchedSections.current.add(sectionId);
-
-        try {
-            const productRes: ApiResponse = await fetch('/api/app').then(res => res.json());
-
-            if (productRes?.data?.productsList) {
-                const items: Item[] = productRes.data.productsList
-                    .filter(product => product.pictureUrl)
-                    .map((product: ItemData): Item => ({
-                        data: product,
-                        value: product.title,
-                        category: product.category || collection.name, // Fallback to collection name if category is missing
-                        categoryUrl: `/collections/${(product.category || collection.name).toLowerCase().replace(/\s+/g, '-')}`,
-                    }));
-
-                setData(prevData => ({ ...prevData, [sectionId]: items }));
-                
-                // Update category data
-                if (sanityCategoryDocs.length > 0) {
-                    setCategoryData(processCategoryData(items, sanityCategoryDocs));
+            if (isCacheValid(homeCache.timestamp) && homeCache.collections && homeCache.mntRate && homeCache.sanityCategoryDocs) {
+                console.log("Using cached initial data for instant layout.");
+                setCollections(homeCache.collections);
+                // Directly use cached sanityCategoryDocs for processing
+                if (homeCache.sanityCategoryDocs && homeCache.sanityCategoryDocs.length > 0) {
+                    // Re-process categories if using cached data, as categoryData isn't cached directly
+                    const allCachedItems: Item[] = [];
+                    homeCache.collections.forEach(collection => {
+                        if (collection.products) {
+                            const items: Item[] = collection.products
+                                .filter(productListItem => productListItem.pictureUrl)
+                                .map((productListItem): Item => ({
+                                    data: productListItem,
+                                    category: productListItem.category || collection.name,
+                                    categoryUrl: `/collections/${(productListItem.category || collection.name).toLowerCase().replace(/\s+/g, '-')}`,
+                                }));
+                            allCachedItems.push(...items);
+                        }
+                    });
+                    setCategoryData(processCategoryData(allCachedItems, homeCache.sanityCategoryDocs));
                 }
-
-                if (index === 0 && setPageData) {
-                    const pageDataObject = { [sectionId]: items };
-                    setPageData(pageDataObject);
-                }
+                setMntRate(homeCache.mntRate);
+                setIsLoading(false);
+                return;
             }
 
-        } catch (error) {
-            console.error(`Failed to fetch data for section "${sectionId}":`, error);
-        }
-    }, [setPageData, sanityCategoryDocs, processCategoryData]);
+            console.log("Fetching all essential initial data in parallel...");
+            try {
+                const [collectionsRes, sanityDocsRes, currencyRes] = await Promise.all([
+                    fetch("/api/payload/collections?sort=order").then(res => res.ok ? res.json() : Promise.reject(`Collections fetch failed: ${res.status}`)),
+                    sanityClient.fetch<SanityProductCategoryUrlDoc[]>(`*[_type == "productCategoryUrls"] | order(order asc) {docCategory, order, el1{url, label}, el2{url, label}, el3{url, label}, el4{url, label}}`),
+                    fetch('https://hexarate.paikama.co/api/rates/latest/USD?target=MNT').then(res => res.ok ? res.json() : Promise.reject(`Currency fetch failed: ${res.status}`))
+                ]);
 
-    // Setup Intersection Observer
+                const collectionsArray: CollectionDoc[] = collectionsRes;
+
+                const sortedCollections = collectionsArray
+                    .filter((c): c is CollectionDoc =>
+                        !!c.url && !!c.name && typeof c.order === 'number'
+                    )
+                    .sort((a: CollectionDoc, b: CollectionDoc) => a.order - b.order);
+
+                const rate = currencyRes.data?.mid;
+                if (!rate) throw new Error('MNT currency rate not available.');
+
+                setCollections(sortedCollections);
+                setMntRate(rate);
+
+                const initialSectionItems: { [key: string]: Item[] } = {};
+                const allFetchedItems: Item[] = [];
+
+                sortedCollections.forEach((collection, index) => {
+                    const sectionId = `${collection.name}-${index}`;
+                    if (collection.products) {
+                        const items: Item[] = collection.products
+                            .filter(productListItem => productListItem.pictureUrl)
+                            .map((productListItem): Item => ({
+                                data: productListItem,
+                                category: productListItem.category || collection.name,
+                                categoryUrl: `/collections/${(productListItem.category || collection.name).toLowerCase().replace(/\s+/g, '-')}`,
+                            }));
+                        initialSectionItems[sectionId] = items;
+                        allFetchedItems.push(...items);
+                    }
+                });
+
+                setSectionItems(initialSectionItems);
+
+                if (sanityDocsRes.length > 0) {
+                    setCategoryData(processCategoryData(allFetchedItems, sanityDocsRes));
+                }
+
+                if (setPageData && sortedCollections.length > 0) {
+                    const firstCollectionSectionId = `${sortedCollections[0].name}-0`;
+                    if (initialSectionItems[firstCollectionSectionId]) {
+                        setPageData({ [firstCollectionSectionId]: initialSectionItems[firstCollectionSectionId] });
+                    }
+                }
+
+                // Update cache directly with fetched data
+                homeCache = { collections: sortedCollections, sanityCategoryDocs: sanityDocsRes, mntRate: rate, timestamp: Date.now() };
+                console.log("All initial data fetched and processed successfully.");
+
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : String(err);
+                console.error("Critical error fetching initial data:", errorMessage);
+                setError(`Failed to load page. ${errorMessage}`);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchAllInitialData();
+    }, [processCategoryData, setPageData]); // Dependencies for useEffect
+
+
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -418,7 +425,11 @@ const Home = () => {
                     const sectionIndex = Number(entry.target.getAttribute('data-section-index'));
                     const collection = collections[sectionIndex];
                     if (collection) {
-                        fetchDataForSection(collection, sectionIndex);
+                        const sectionId = `${collection.name}-${sectionIndex}`;
+                        if (!fetchedSections.current.has(sectionId)) {
+                             console.log(`INTERSECTION: Section "${sectionId}" is now visible.`);
+                             fetchedSections.current.add(sectionId);
+                        }
                     }
                 }
             });
@@ -429,18 +440,19 @@ const Home = () => {
         });
 
         return () => observer.disconnect();
-    }, [collections, fetchDataForSection]);
+    }, [collections]);
 
-    // Render logic
+
     const handleRetry = () => {
         console.log("Performing hard refresh...");
         homeCache = { collections: null, sanityCategoryDocs: null, mntRate: null, timestamp: null };
         setCollections([]);
-        setData({});
+        setSectionItems({});
         setCategoryData({});
+        // Re-trigger fetchAllInitialData by running the effect again
     };
 
-    if (isMetaLoading) {
+    if (isLoading) {
         const skeletonSectionCount = 3;
         return (
             <div className="p-0 md:p-0">
@@ -458,14 +470,14 @@ const Home = () => {
                         </div>
                         <div className="block lg:hidden px-3">
                             <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                                {[...Array(8)].map((_, i) => <div key={`meta-skel-prod-mob-${index}-${i}`} className="w-full"><SkeletonCard /></div>)}
+                                {[...Array(8)].map((_, i) => <div key={`placeholder-mob-${index}-${i}`} className="w-full"><SkeletonCard /></div>)}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
-        );
-    }
+                    ))}
+                </div>
+            );
+        }
 
     if (error) {
         return (
@@ -493,7 +505,7 @@ const Home = () => {
             {collections.map((collection, index) => {
                 const sectionId = `${collection.name}-${index}`;
                 const title = collection.name;
-                const items = data[sectionId];
+                const items = sectionItems[sectionId]; // Get items from the pre-processed sectionItems state
                 const categories = categoryData[`el${index + 1}`] || [];
 
                 if (!sectionRefs.current[sectionId]) {

@@ -1,79 +1,82 @@
-// app/api/products/route.js
+// app/api/payload/collections/route.js
 
 import { NextResponse } from 'next/server';
-import { getCollections } from '../../../../lib/api';
+import { client as sanityClient } from '../../../../lib/sanity'; // Ensure this path is correct for your Sanity client
 
 /**
  * Handles GET requests to the API endpoint.
- * Fetches product search results from the GOAT API and returns them.
+ * Fetches raw product JSON string from Sanity, parses it, and returns the product data.
  *
- * @param {Request} request - The incoming request object.
  * @returns {NextResponse} A JSON response containing the product data or an error message.
  */
-export async function GET() {
-  let apiUrl = null; // Declare apiUrl outside to ensure it's accessible in all scopes
-
-  // --- Step 1: Determine the API URL ---
+ export async function GET(request) {
   try {
-    // Attempt to get the API URL from collections first
-    const collections = await getCollections();
+    const { searchParams } = new URL(request.url);
+    const sortOrder = searchParams.get('sort');
 
-    // Check if collections exist and contain a valid URL
-    if (collections && collections.length > 0 && collections[0].url) {
-      apiUrl = collections[0].url;
-    } else {
-      // If collections are empty or don't provide a valid URL, log a warning
-      console.warn('getCollections did not return a valid URL. Using default GOAT API URL as fallback.');
-      // Fallback to a hardcoded GOAT API URL if collections didn't provide one
-      // IMPORTANT: Replace this placeholder with your actual default GOAT API URL
-      apiUrl = 'https://api.goat.com/v1/products/search'; 
-    }
-  } catch (collectionsError) {
-    // If fetching collections fails entirely, log the error
-    console.error('Error fetching collections:', collectionsError);
-    // Fallback to a hardcoded GOAT API URL in case of an error fetching collections
-    // IMPORTANT: Replace this placeholder with your actual default GOAT API URL
-    apiUrl = 'https://api.goat.com/v1/products/search'; 
-  }
+    // Fetch both rawProductJson and name
+    const sanityCollectionsData = await sanityClient.fetch(`*[_type == "productCollection"]{
+      name,
+      rawProductJson,
+      order // Ensure 'order' is fetched from Sanity if it exists there
+    }`);
 
-  // --- Step 2: Validate the determined API URL ---
-  // If after all attempts, apiUrl is still null, it means we couldn't get a valid URL
-  if (!apiUrl) {
-    console.error('Failed to determine a valid API URL for product data.');
-    return NextResponse.json(
-      { message: 'Internal Server Error', error: 'Could not determine API URL for product data.' },
-      { status: 500 }
-    );
-  }
+    let allCollections = [];
 
-  // --- Step 3: Fetch data from the determined API URL ---
-  try {
-    // Fetch data from the external API using the determined apiUrl
-    const response = await fetch(apiUrl, {
-      headers: {    
-        'Content-Type': 'application/json',
-        'User-Agent': 'YourAppName/1.0' // Good practice to identify your application
-      },
-      cache: 'no-store' // Ensures fresh data, as you intended
+    sanityCollectionsData.forEach((collection) => {
+      if (collection.rawProductJson) {
+        try {
+          const parsedProducts = JSON.parse(collection.rawProductJson);
+
+          if (Array.isArray(parsedProducts)) {
+            // Add collection name to each product object
+            const productsWithCollection = parsedProducts.map(product => ({
+              ...product,
+              collectionName: collection.name // Add collectionName here
+            }));
+
+            allCollections.push({
+              name: collection.name,
+              // Assuming there's an 'order' field in your Sanity collection schema
+              // If not, you might need to add it or derive it.
+              order: collection.order || 0, // Default to 0 if order is not explicitly set in Sanity
+              url: `/collections/${collection.name.toLowerCase().replace(/\s+/g, '-')}`, // Example URL
+              // CRITICAL CHANGE: Nest products inside 'data' and 'productsList' to match screenshot
+              products: [{
+                data: {
+                  totalResults: productsWithCollection.length,
+                  productsList: productsWithCollection,
+                }
+              }],
+            });
+          } else {
+            console.warn(
+              `Sanity document contains non-array JSON (doc: ${collection._id || 'unknown'}):`,
+              collection.rawProductJson
+            );
+          }
+        } catch (e) {
+          console.error(
+            `Error parsing rawProductJson (doc: ${collection._id || 'unknown'}):`,
+            e
+          );
+        }
+      }
     });
 
-    // Check if the HTTP response was successful (status code 200-299)
-    if (!response.ok) {
-      const errorText = await response.text(); // Get detailed error message from response body
-      throw new Error(`Failed to fetch data from external API: ${response.status} ${response.statusText} - ${errorText}`);
+    // Apply sorting if requested
+    if (sortOrder === 'order') {
+      allCollections.sort((a, b) => a.order - b.order);
     }
 
-    // Parse the JSON response body
-    const data = await response.json();
-
-    // Return the fetched data as a JSON response with a 200 OK status
-    return NextResponse.json(data, { status: 200 });
+    // The API response format now matches the screenshot
+    return NextResponse.json(
+      allCollections, // Directly return the array of processed collections
+      { status: 200 }
+    );
 
   } catch (apiError) {
-    // Catch any errors that occur during the fetch operation (e.g., network errors, JSON parsing errors)
-    console.error('Error fetching product data from GOAT API:', apiError);
-
-    // Return an error response to the client
+    console.error('Error fetching and parsing product data from Sanity:', apiError);
     return NextResponse.json(
       { message: 'Internal Server Error', error: apiError.message },
       { status: 500 }
