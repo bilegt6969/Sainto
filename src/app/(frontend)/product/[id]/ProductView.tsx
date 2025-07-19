@@ -294,7 +294,7 @@ export default function ProductView({ product: initialProduct, priceData: initia
                 <div className="h-fit w-full flex flex-col lg:flex-row gap-8">
                     {/* Left Column: Product Image with Swipe */}
                     <div className="flex flex-col items-center relative w-full lg:w-1/2">
-                        <div className="relative h-[500px] sm:h-[600px] md:h-[700px] w-full flex items-center justify-center bg-white backdrop-blur-sm rounded-2xl overflow-hidden group cursor-grab active:cursor-grabbing border border-white/20 shadow-xl">
+                        <div className="relative h-[500px] sm:h-[600px] md:h-[700px] w-full flex items-center justify-center bg-white backdrop-blur-sm rounded-4xl overflow-hidden group cursor-grab active:cursor-grabbing border border-white/20 shadow-xl">
                             {imagesForPagination.length > 0 ? (
                                 <AnimatePresence initial={false} custom={direction}>
                                     <motion.div
@@ -363,7 +363,7 @@ export default function ProductView({ product: initialProduct, priceData: initia
                             <div className="flex flex-wrap justify-center gap-2 mt-3 mb-4">
                                 {imagesForPagination.map((img: string, index: number) => (
                                     <button key={index} onClick={() => { const newDirection = index > selectedImageIndex ? 1 : (index < selectedImageIndex ? -1 : 0); setDirection(newDirection); setSelectedImageIndex(index); }} aria-label={`Select image ${index + 1}`} className={`border-2 p-1 rounded-lg transition-all duration-300 backdrop-blur-sm ${selectedImageIndex === index ? 'border-white/80 bg-white/10 shadow-lg' : 'border-white/20 hover:border-white/60 bg-white/5 hover:bg-white/10'}`}>
-                                        <Image src={img} alt={`Thumbnail ${index + 1}`} width={60} unoptimized height={60} className="rounded object-cover bg-white" onError={(e) => e.currentTarget.src = '/placeholder.png'} />
+                                        <Image src={img} alt={`Thumbnail ${index + 1}`} width={60} unoptimized height={60} className="rounded-md object-cover bg-white" onError={(e) => e.currentTarget.src = '/placeholder.png'} />
                                     </button>
                                 ))}
                             </div>

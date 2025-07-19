@@ -142,7 +142,7 @@ const DesktopItem = memo(({ item, renderPrice, replaceText, priority }: DesktopI
     const lowestPrice = getLowestPriceCents(item.data); // Pass item.data to getLowestPriceCents
 
     return (
-        <Link href={`/product/${item.data.slug}`} passHref>
+<Link href={`/product/${item.data.slug}`} passHref target="_blank" rel="noopener noreferrer">
             <div className="text-white bg-black border border-neutral-700 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-blue-900/10 hover:border-neutral-600 hover:scale-[1.02] h-full flex flex-col group">
                 <div className="overflow-hidden rounded-t-lg relative flex-grow" style={{ aspectRatio: '1 / 1' }}>
                     <Image
@@ -180,7 +180,7 @@ const MobileItem = memo(({ item, renderPrice, replaceText, priority }: MobileIte
     const lowestPrice = getLowestPriceCents(item.data); // Pass item.data to getLowestPriceCents
 
     return (
-        <Link href={`/product/${item.data.slug}`} passHref>
+<Link href={`/product/${item.data.slug}`} passHref target="_blank" rel="noopener noreferrer">
             <div className="text-white bg-black border border-neutral-800 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-neutral-600 h-full flex flex-col group">
                 <div className="block w-full text-xs font-bold flex items-center p-2 bg-neutral-900/80 backdrop-blur-sm border-b border-neutral-700">
                     <span className="block">{lowestPrice === 0 || !item.data.inStock ? 'Unavailable' : renderPrice(lowestPrice)}</span>
