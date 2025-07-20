@@ -1,7 +1,7 @@
 // app/api/payload/collections/route.js
 
 import { NextResponse } from 'next/server';
-import { client as sanityClient } from '../../../../../lib/sanity'; // Ensure this path is correct
+import { client as sanityClient } from '../../../../../lib/sanity';
 
 export async function GET(request) {
   try {
@@ -10,9 +10,8 @@ export async function GET(request) {
 
     console.log('--- API Request Started ---');
 
-    // Fetch both rawProductJson and name
     const sanityCollectionsData = await sanityClient.fetch(`*[_type == "productCollection"]{
-      _id, // Add _id for better logging
+      _id,
       name,
       rawProductJson,
       order
@@ -34,43 +33,65 @@ export async function GET(request) {
       }
 
       try {
-        console.log(`Attempting to parse rawProductJson for ${collection.name || 'Unnamed'} (ID: ${collection._id}). Length: ${collection.rawProductJson.length}`);
-        const parsedData = JSON.parse(collection.rawProductJson); // This is the entire original JSON object
-        console.log('Successfully parsed rawProductJson. Parsed data keys:', Object.keys(parsedData || {}));
+        console.log(`Attempting to parse rawProductJson for ${collection.name || 'Unnamed'} (ID: ${collection._id}).`);
+        const parsedRawJson = JSON.parse(collection.rawProductJson); // This is the content from Sanity's rawProductJson field
+        console.log('Successfully parsed rawProductJson. Parsed data structure (first 2 keys):', Object.keys(parsedRawJson || {}).slice(0,2));
 
 
-        // Ensure parsedData.data and parsedData.data.productsList exist and are an array
-// Access the object under the '0' key first
-const actualData = parsedData?.['0'];
-const productsList = actualData?.data?.productsList;
+        let actualProducts = [];
 
-        if (Array.isArray(productsList)) {
-          console.log(`Found ${productsList.length} products in productsList for ${collection.name || 'Unnamed'} (ID: ${collection._id}).`);
+        // --- NEW LOGIC START ---
+        // Based on the latest screenshot:
+        // 1. The 'rawProductJson' for each collection contains an object.
+        // 2. This object has a 'response' key.
+        // 3. The 'response' key's value is an object that contains the 'products' array.
+        if (parsedRawJson?.response?.products && Array.isArray(parsedRawJson.response.products)) {
+            actualProducts = parsedRawJson.response.products;
+            console.log(`Extracted ${actualProducts.length} products from 'parsedRawJson.response.products'.`);
+        }
+        // Fallback for previous structures, just in case (less likely now, but good for robustness)
+        else if (parsedRawJson?.data?.productsList && Array.isArray(parsedRawJson.data.productsList)) {
+            actualProducts = parsedRawJson.data.productsList;
+            console.log(`Extracted ${actualProducts.length} products from 'parsedRawJson.data.productsList'.`);
+        }
+        else if (Array.isArray(parsedRawJson)) {
+            actualProducts = parsedRawJson;
+            console.log(`Extracted ${actualProducts.length} products from direct array parse.`);
+        }
+        else if (parsedRawJson?.['0']?.data?.productsList && Array.isArray(parsedRawJson['0'].data.productsList)) {
+            actualProducts = parsedRawJson['0'].data.productsList;
+            console.log(`Extracted ${actualProducts.length} products from parsedRawJson['0'].data.productsList.`);
+        }
+        else {
+            console.warn(`Could not find a valid products array in rawProductJson for ${collection.name || 'Unnamed'} (ID: ${collection._id}). Parsed object keys:`, Object.keys(parsedRawJson || {}));
+        }
+        // --- NEW LOGIC END ---
 
-          const productsWithCollection = productsList.map(product => ({
+
+        if (actualProducts.length > 0) {
+          const productsWithCollection = actualProducts.map(product => ({
             ...product,
-            collectionName: collection.name
+            collectionName: collection.name // Attach collection name to each product for frontend
           }));
 
           allCollections.push({
             name: collection.name,
             order: collection.order || 0,
             url: `/collections/${(collection.name || '').toLowerCase().replace(/\s+/g, '-')}`,
-            products: productsWithCollection,
+            products: productsWithCollection, // This will be the flat list of product objects
           });
-          console.log(`Added collection ${collection.name || 'Unnamed'} to allCollections.`);
+          console.log(`Added collection ${collection.name || 'Unnamed'} with ${productsWithCollection.length} products to allCollections.`);
         } else {
           console.warn(
-            `Sanity document ${collection.name || 'Unnamed'} (ID: ${collection._id}) contains invalid or missing productsList. Expected parsedData.data.productsList to be an array. Received:`,
-            typeof parsedData, parsedData ? Object.keys(parsedData) : 'null/undefined',
-            parsedData?.data ? typeof parsedData.data : 'n/a',
-            parsedData?.data?.productsList ? typeof parsedData.data.productsList : 'n/a'
+            `Sanity document ${collection.name || 'Unnamed'} (ID: ${collection._id}) resulted in an empty or invalid products list after parsing. Raw JSON snippet:`,
+            collection.rawProductJson.substring(0, 200) + '...'
           );
         }
       } catch (e) {
         console.error(
           `Error parsing rawProductJson for ${collection.name || 'Unnamed'} (ID: ${collection._id}):`,
-          e.message
+          e.message,
+          'Raw JSON snippet:', collection.rawProductJson.substring(0, 200) + '...'
         );
       }
     });
