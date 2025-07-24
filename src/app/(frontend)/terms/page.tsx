@@ -32,6 +32,8 @@ interface ContactInfo {
 // Represents the complete terms data structure
 interface TermsData {
     lastUpdated: string;
+    // Added 'published' property as per the error message
+    published: string;
     version: string;
     sections: TermsSection[];
     contactInfo: ContactInfo;
@@ -44,6 +46,7 @@ async function getTermsData(): Promise<TermsData | null> {
         // For now, we'll return static data that matches your terms structure
         const termsData: TermsData = {
             lastUpdated: "June 18, 2025",
+            published: "June 1, 2025", // Added a default value for 'published'
             version: "1.0",
             contactInfo: {
                 phone: "90195589",

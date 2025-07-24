@@ -1,5 +1,5 @@
 import React from 'react';
- 
+  
 const Footer = ({ variant = 'dark' }) => {
   const isDark = variant === 'dark';
   
@@ -39,13 +39,18 @@ const Footer = ({ variant = 'dark' }) => {
             <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">
               Terms of Service
             </a>
-            <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">
-              Privacy Policy
+            <a href="#" className="hover:text-gray-200 transition-colors text-white whitespace-nowrap">
+              Powered by 
+              <a
+  href="https://bytecode-smoky.vercel.app/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="hover:text-gray-200 transition-colors text-white whitespace-nowrap"
+> {" "}
+  Bytecode Studios
+</a>
             </a>
-            <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">
-              Cookie Policy
-            </a>
-          </div>
+           </div>
         </div>
       </div>
     </footer>

@@ -334,7 +334,7 @@ export default function PaymentPage() {
             <AnimatePresence mode="wait">
               {step === 1 ? (
                 <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
-                  <Card className="bg-neutral-900 border border-neutral-800 shadow-lg rounded-2xl overflow-hidden">
+                  <Card className="bg-neutral-900 border border-neutral-800 shadow-lg rounded-4xl overflow-hidden">
                     <CardHeader className="pb-4 border-b border-neutral-800">
                       <CardTitle className="text-xl font-medium text-neutral-100">Хүргэлтийн мэдээлэл</CardTitle>
                       <CardDescription className="text-neutral-400">Барааг хүлээн авах хүний мэдээллийг үнэн зөв оруулна уу.</CardDescription>
@@ -459,7 +459,7 @@ export default function PaymentPage() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-24">
-              <Card className="bg-neutral-900 border border-neutral-800 shadow-lg rounded-2xl overflow-hidden">
+              <Card className="bg-neutral-900 border border-neutral-800 shadow-lg rounded-4xl overflow-hidden">
                 <CardHeader className="pb-4 border-b border-neutral-800">
                   <CardTitle className="text-xl font-medium text-neutral-100">Захиалгын дэлгэрэнгүй</CardTitle>
                 </CardHeader>
@@ -468,9 +468,9 @@ export default function PaymentPage() {
                     {cart.map((item: CartItem) => (
                       <div key={`${item.product.id}-${item.size}`} className="flex justify-between items-start">
                         <div className="flex items-center gap-4">
-                            <div className="relative w-32 h-32 rounded-lg overflow-hidden bg-neutral-800 border border-neutral-700 flex-shrink-0">
+                            <div className="relative w-32 h-32 rounded-3xl overflow-hidden bg-neutral-800 border border-neutral-700 flex-shrink-0">
                                 {item.product.mainPictureUrl ? (
-                                    <Image src={item.product.mainPictureUrl} alt={item.product.name} fill className="object-cover" sizes="128px" />
+                                    <Image src={item.product.mainPictureUrl} alt={item.product.name} fill className="object-cover bg-white rounded-3xl" sizes="128px" />
                                 ) : (
                                     <ShoppingBag className="h-12 w-12 text-neutral-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
                                 )}

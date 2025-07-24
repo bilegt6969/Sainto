@@ -17,7 +17,7 @@
     return (
       <div className="min-h-screen bg-black  flex items-center justify-center p-4">
         {/* Main Content Card */}
-        <div className="w-full max-w-md bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
+        <div className="w-full max-w-md bg-neutral-900 rounded-4xl border border-neutral-800 overflow-hidden">
           <div className="p-6 sm:p-8 text-center">
             {/* Success Icon */}
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-900/50 mb-5"> {/* Darker green bg */}
@@ -60,7 +60,7 @@
             {/* Back to Home Button */}
             <div className="w-full">
               {/* Using asChild to make the whole button a link */}
-              <Button asChild size="lg" className="w-full bg-neutral-800 hover:bg-neutral-700 text-neutral-100">
+              <Button asChild size="lg" className="w-full bg-neutral-100 hover:bg-neutral-200 rounded-full text-neutral-800">
                 <Link href="/">
                   <Home className="h-4 w-4 mr-2" />
                   Нүүр хуудас руу буцах

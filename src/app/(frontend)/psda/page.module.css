@@ -1,0 +1,149 @@
+/* src/app/(frontend)/psda/page.module.css */
+
+/* Main page container to act as a positioning context */
+.pageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #111111; /* A very dark gray, almost black */
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+  position: relative; /* Essential for positioning child elements */
+}
+
+/* Container for the arc of images, positioned absolutely */
+.arcContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center the pivot point */
+  z-index: 1; /* Keep arc behind content */
+}
+
+/* Wrapper for each image tile in the arc */
+.imageWrapper {
+  position: absolute;
+  /* Set the pivot point for rotation at the container's center */
+  top: 50%;
+  left: 50%;
+
+  /* Define image tile properties */
+  width: 100px;
+  height: 100px;
+  border-radius: 15px; /* Rounded square corners */
+  overflow: hidden;
+
+  /* CSS variables for dynamic arc calculation */
+  --num-images: 11; /* Increased number of images */
+  --arc-radius: 420px; /* Radius of the arc */
+  --total-angle: 200deg; /* Total angular spread of the arc */
+  --start-angle-offset: -100deg; /* Start angle (-total/2) to center the arc */
+
+  /* Calculate angle for the current image based on its index (--i) */
+  --current-angle: calc(var(--start-angle-offset) + (var(--i) / (var(--num-images) - 1)) * var(--total-angle));
+
+  /* Apply transformations:
+    1. Rotate the wrapper around the center.
+    2. Translate it outwards along the new rotated Y-axis.
+    3. Translate it back by half its own size to ensure the center of the image is on the arc path.
+  */
+  transform: translate(-50%, -50%) rotate(var(--current-angle)) translateY(calc(var(--arc-radius) * -1));
+}
+
+/* The actual image inside the wrapper */
+.arcImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  /* Counter-rotate the image to keep it upright */
+  transform: rotate(calc(-1 * var(--current-angle)));
+}
+
+/* Central content block */
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 10; /* Ensure content is on top of the arc */
+  position: relative; /* Keep it in the flex flow of the page container */
+  padding: 20px;
+  max-width: 450px;
+}
+
+.title {
+  font-size: 2.5rem; /* 40px */
+  font-weight: 600;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 1rem; /* 16px */
+  color: #a0a0a0; /* Light gray text for the subtitle */
+  line-height: 1.5;
+  margin: 16px 0 24px 0;
+}
+
+.joinButton {
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 9999px; /* Pill shape */
+  padding: 12px 24px;
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.joinButton:hover {
+  transform: scale(1.05);
+}
+
+/* Navigation Arrow */
+.navArrow {
+  position: absolute;
+  top: 50%;
+  right: 5vw; /* Position relative to viewport width */
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.navArrow:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Blurry bottom effect */
+.blurryBottomEffect {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px; /* Adjust height as needed */
+  background: linear-gradient(to top, #111111, transparent); /* Adjust colors for the desired effect */
+  z-index: 5; /* Ensure it's above the image arc */
+  pointer-events: none; /* Allows clicks to pass through */
+}
+
+.arcContainer::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px; /* Adjust height as needed */
+  background: linear-gradient(to top, #111111, transparent); /* Match background color */
+  z-index: 5;
+  pointer-events: none;
+}

@@ -1,21 +1,20 @@
-'useclient';
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { cn } from '@/functions';
+import { cn } from '@/functions'; // Assuming this utility is correctly defined
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, XIcon, Clock, ShoppingBag } from 'lucide-react';
-//ChevronRightisreplacedbySVG
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '../ui/button';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import Icons from '../global/icons';
-import Wrapper from '../global/wrapper';
-import Menu from './menu';
-import MobileMenu from './mobile-menu';
-import AuthButton from '../../app/(frontend)/auth/AuthButton';
-import useCartStore from '../../app/store/cartStore';
-import Logo from '../../../public/images/Logo.svg';
+import { Button } from '../ui/button'; // Assuming this path is correct
+import { useMediaQuery } from '@/hooks/use-media-query'; // Assuming this hook is correct
+import Icons from '../global/icons'; // Assuming this path is correct
+import Wrapper from '../global/wrapper'; // Assuming this path is correct
+import Menu from './menu'; // Assuming this path is correct
+import MobileMenu from './mobile-menu'; // Assuming this path is correct
+import AuthButton from '../../app/(frontend)/auth/AuthButton'; // Corrected path to AuthButton
+import useCartStore from '../../app/store/cartStore'; // Assuming this path is correct
+import Logo from '../../../public/images/Logo.svg'; // Corrected path to Logo
 
 // Smooth ease for transitions
 const smoothEase: [number, number, number, number] = [0.4, 0, 0.2, 1];
@@ -400,15 +399,6 @@ const Navbar = () => {
             document.body.style.overflow = '';
         };
     }, [isOpen, isMobile]);
-
-    // Effect to clear search query when search modal is closed
-    // You might want to remove this if you want to remember the search query
-    // This is optional based on your exact requirement
-    // useEffect(() => {
-    //     if (!isSearchOpen) {
-    //         setSearchQuery('');
-    //     }
-    // }, [isSearchOpen]);
 
     return (
         <div className="relative w-full text-neutral-400">

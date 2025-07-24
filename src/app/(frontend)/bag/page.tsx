@@ -378,7 +378,7 @@ export default function BagPage() {
         <div className="flex flex-wrap items-center justify-between gap-y-4 mb-8">
           <div className="flex items-center gap-2 sm:gap-3">
             <h1 className="text-3xl font-semibold">Таны Сагс</h1>
-            <Badge variant="secondary" className="bg-neutral-800 text-neutral-300 rounded-full px-3 py-1 text-sm">
+            <Badge variant="secondary" className="bg-neutral-100 text-neutral-800 rounded-full px-3 py-1 text-sm">
               {itemCount} {itemCount === 1 ? 'бараа' : 'бараа'}
             </Badge>
           </div>
@@ -440,12 +440,12 @@ export default function BagPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="flex justify-between items-start p-4 sm:p-5 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-md hover:shadow-neutral-700/30 transition-all duration-300"
+                      className="flex justify-between items-start p-4 sm:p-4 bg-neutral-900 border border-neutral-800 rounded-4xl shadow-md hover:shadow-neutral-700/30 transition-all duration-300"
                     >
                       <div className="flex items-start gap-4 sm:gap-5 flex-1">
                         {/* Product Image */}
                         <Link href={`/product/${item.product.id}`}>
-                          <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-white flex-shrink-0 border border-neutral-700">
+                          <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden bg-white flex-shrink-0 border border-neutral-700">
                             {item.product.mainPictureUrl || item.product.image_url ? (
                               <Image
                                 src={item.product.mainPictureUrl || item.product.image_url!}
@@ -564,7 +564,7 @@ export default function BagPage() {
 
             {/* Order Summary Section */}
             <div className="lg:col-span-1">
-              <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-lg lg:sticky lg:top-24">
+              <div className="bg-neutral-900 border border-neutral-800 rounded-4xl p-6 shadow-lg lg:sticky lg:top-24">
                 <h2 className="text-xl font-semibold mb-6 text-neutral-100">Захиалгын дэлгэрэнгүй</h2>
 
                 {/* Price Breakdown */}

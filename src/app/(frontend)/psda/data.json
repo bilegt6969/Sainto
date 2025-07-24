@@ -1,0 +1,2500 @@
+{
+    "data": {
+      "totalResults": 120,
+      "productsList": [
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "46",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 800000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "729640",
+          "status": "active",
+          "slug": "raf-simons-large-sterling-caban-with-patches-black-a01-608-20023-00099",
+          "title": "Raf Simons Redux Large Sterling Caban With Patches 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/061/103/246/original/729640_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2021",
+          "productType": "outerwear",
+          "localizedRetailPriceCents": {
+            "amountCents": 402227,
+            "currency": "USD"
+          },
+          "brandName": "Raf Simons",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            
+          ],
+          "id": "625824",
+          "status": "active",
+          "slug": "raf-simons-patchwork-relaxed-fit-jeans-black-orange-182-310-10033-09935",
+          "title": "Raf Simons Patchwork Relaxed-Fit Jeans 'Black/Orange'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/081/568/857/original/625824_00.png.png",
+          "inStock": false,
+          "category": "apparel",
+          "seasonYear": "2018",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 116600,
+            "currency": "USD"
+          },
+          "brandName": "Raf Simons",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "103",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 29100,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1514077",
+          "status": "active",
+          "slug": "casablanca-crochet-polo-with-patches-brown-ms25-kw-914-01-brow",
+          "title": "Casablanca Crochet Polo With Patches 'Brown'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/108/311/757/original/1514077_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 97000,
+            "currency": "USD"
+          },
+          "brandName": "Casablanca",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "106",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 106500,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1580759",
+          "status": "active",
+          "slug": "casablanca-crochet-motif-trousers-brown-ms25-kw-915-01-brow",
+          "title": "Casablanca Crochet Motif Trousers 'Brown'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/108/312/657/original/1580759_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 106500,
+            "currency": "USD"
+          },
+          "brandName": "Casablanca",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "104",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 24500,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "848985",
+          "status": "active",
+          "slug": "supreme-x-mitchell-ness-patchwork-baseball-jersey-multicolor-fw21kn46-multicolor",
+          "title": "Supreme x Mitchell & Ness Patchwork Baseball Jersey 'Multicolor'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/111/188/990/original/848985_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2021",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 19800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1636675199,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "106",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 76400,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1608456",
+          "status": "active",
+          "slug": "bape-x-kidsuper-patchwork-track-jacket-multicolor-1l23-140-906-multicolor",
+          "title": "BAPE x KidSuper Patchwork Track Jacket 'Multicolor'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/109/704/775/original/1608456_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "outerwear",
+          "localizedRetailPriceCents": {
+            "amountCents": 36900,
+            "currency": "USD"
+          },
+          "brandName": "BAPE",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "104",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 38700,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1608461",
+          "status": "active",
+          "slug": "bape-x-kidsuper-patchwork-trackpants-multicolor-1l23-152-906-multicolor",
+          "title": "BAPE x KidSuper Patchwork Trackpants 'Multicolor'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/109/704/800/original/1608461_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 36900,
+            "currency": "USD"
+          },
+          "brandName": "BAPE",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "106",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 14600,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1471873",
+          "status": "active",
+          "slug": "supreme-patchwork-yoke-football-top-green-fw24kn33-green",
+          "title": "Supreme Patchwork Yoke Football Top 'Green'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/103/552/795/original/1471873_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2024",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 9800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1724371199,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "102",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 141500,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1473057",
+          "status": "active",
+          "slug": "balenciaga-patchwork-hooded-sweatshirt-black-green-556137-tdv32-5567",
+          "title": "Balenciaga Patchwork Hooded Sweatshirt 'Black/Green'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/103/586/123/original/1473057_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2019",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "Balenciaga",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "104",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 46000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1500799",
+          "status": "active",
+          "slug": "palace-x-beams-plus-patchwork-crew-knit-jacquard-green-3815021015665",
+          "title": "Palace x Beams Plus Patchwork Crew Knit 'Jacquard Green'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/104/763/080/original/1500799_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2024",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 29800,
+            "currency": "USD"
+          },
+          "brandName": "Palace",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1728691199,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "106",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 41900,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1612478",
+          "status": "active",
+          "slug": "bape-abc-camo-patchwork-relaxed-fit-zip-hoodie-multicolor-1l30-115-307-multicolor",
+          "title": "BAPE ABC Camo Patchwork Relaxed Fit Zip Hoodie 'Multicolor'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/109/921/594/original/1612478_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2024",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 48900,
+            "currency": "USD"
+          },
+          "brandName": "BAPE",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "103.5",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 11200,
+                "currency": "USD"
+              },
+              "localizedInstantLowestPriceCents": {
+                "amountCents": 16000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1222672",
+          "status": "active",
+          "slug": "supreme-frayed-patchwork-denim-crusher-washed-blue-ss23h138-washed-blue",
+          "title": "Supreme Frayed Patchwork Denim Crusher 'Washed Blue'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/089/401/659/original/1222672_00.png.png",
+          "inStock": true,
+          "category": "accessories",
+          "seasonYear": "2023",
+          "productType": "hats",
+          "localizedRetailPriceCents": {
+            "amountCents": 6800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1686268799,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "102",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 18000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1139097",
+          "status": "active",
+          "slug": "kith-patchwork-indigo-active-short-indigo-khm060281-403",
+          "title": "Kith Patchwork Indigo Active Short 'Indigo'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/084/882/108/original/1139097_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2023",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 16000,
+            "currency": "USD"
+          },
+          "brandName": "Kith",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "34",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 48000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1222657",
+          "status": "active",
+          "slug": "supreme-frayed-patchwork-baggy-denim-short-washed-blue-ss23sh12-washed-blue",
+          "title": "Supreme Frayed Patchwork Baggy Denim Short 'Washed Blue'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/089/401/508/original/1222657_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2023",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 28800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1686268799,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "105",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 64900,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1278260",
+          "status": "active",
+          "slug": "kith-patchwork-brixton-puffed-shirt-jacket-helium-khm010401-409",
+          "title": "Kith Patchwork Brixton Puffed Shirt Jacket 'Helium'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/092/684/648/original/1278260_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2023",
+          "productType": "outerwear",
+          "localizedRetailPriceCents": {
+            "amountCents": 29500,
+            "currency": "USD"
+          },
+          "brandName": "Kith",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "105",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 191300,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1639245",
+          "status": "active",
+          "slug": "supreme-kermit-photo-tee-teal-00052-1ss0804skptt-teal",
+          "title": "Supreme Kermit Photo Tee 'Teal'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/111/210/766/original/1639245_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2008",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "105",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 451400,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1639247",
+          "status": "active",
+          "slug": "supreme-dipset-photo-tee-lavender-00052-1ss0604sdptl-lave",
+          "title": "Supreme Dipset Photo Tee 'Lavender'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/111/210/773/original/1639247_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2006",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            
+          ],
+          "id": "1636015",
+          "status": "active",
+          "slug": "hellstar-vandal-tee-grape-09357-1ss2504hvtg-grap",
+          "title": "Godspeed Vandal Tee 'Grape'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/111/041/398/original/1636015_00.png.png",
+          "inStock": false,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "Godspeed",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "105",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 21400,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1613035",
+          "status": "active",
+          "slug": "supreme-patchwork-velour-track-jacket-tan-ss25j26-tan",
+          "title": "Supreme Patchwork Velour Track Jacket 'Tan'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/109/898/032/original/1613035_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "outerwear",
+          "localizedRetailPriceCents": {
+            "amountCents": 23800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1746748799,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "105",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 23600,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1613032",
+          "status": "active",
+          "slug": "supreme-patchwork-velour-short-tan-ss25sh44-tan",
+          "title": "Supreme Patchwork Velour Short 'Tan'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/109/898/147/original/1613032_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 13800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1746748799,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "102",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 48200,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1073595",
+          "status": "active",
+          "slug": "raf-simons-overzized-t-shirt-grand-fete-de-nuit-print-front-yellow-222-m131-0015",
+          "title": "Raf Simons Overzized T-Shirt Grand Fete De Nuit Print Front 'Yellow'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/080/067/959/original/1073595_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2022",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 43300,
+            "currency": "USD"
+          },
+          "brandName": "Raf Simons",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "107",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 145000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1610070",
+          "status": "active",
+          "slug": "comme-des-garcons-black-patchwork-twisted-trucker-jacket-black-1o-j029-052-1",
+          "title": "Comme des Garçons Black Patchwork Twisted Trucker Jacket 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/109/853/240/original/1610070_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "outerwear",
+          "localizedRetailPriceCents": {
+            "amountCents": 145000,
+            "currency": "USD"
+          },
+          "brandName": "Comme des Garçons Black",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "107",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 99500,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1610068",
+          "status": "active",
+          "slug": "comme-des-garcons-black-patchwork-elastic-shorts-black-1o-p022-052-1",
+          "title": "Comme des Garçons Black Patchwork Elastic Shorts 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/109/853/237/original/1610068_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 99500,
+            "currency": "USD"
+          },
+          "brandName": "Comme des Garçons Black",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "107",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 32100,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1621275",
+          "status": "active",
+          "slug": "supreme-patchwork-zip-up-hooded-sweatshirt-navy-ss25sw51-navy",
+          "title": "Supreme Patchwork Zip Up Hooded Sweatshirt 'Navy'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/110/336/699/original/1621275_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 23800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1748563199,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "103",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 18500,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1621273",
+          "status": "active",
+          "slug": "supreme-patchwork-sweatpant-navy-ss25p47-navy",
+          "title": "Supreme Patchwork Sweatpant 'Navy'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/110/336/626/original/1621273_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2025",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 19800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1748563199,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            
+          ],
+          "id": "825818",
+          "status": "active",
+          "slug": "raf-simons-patchwork-relaxed-fit-jeans-black-182-310-10031-09980",
+          "title": "Raf Simons Patchwork Relaxed-Fit Jeans 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/061/126/523/original/825818_00.png.png",
+          "inStock": false,
+          "category": "apparel",
+          "seasonYear": "2018",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "Raf Simons",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "103",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 43000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "729680",
+          "status": "active",
+          "slug": "raf-simons-large-short-sleeve-t-shirt-with-flower-print-black-a01-136-19001-00099",
+          "title": "Raf Simons Redux Large Short-Sleeve T-Shirt With Flower Print 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/100/295/350/original/729680_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2021",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 35000,
+            "currency": "USD"
+          },
+          "brandName": "Raf Simons",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "105",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 55000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1635915",
+          "status": "active",
+          "slug": "nahmias-mascot-wide-sweatpants-worn-black-y2-p53q3-023-worn",
+          "title": "Nahmias Mascot Wide Sweatpants 'Worn Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/111/189/546/original/1635915_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 55000,
+            "currency": "USD"
+          },
+          "brandName": "Nahmias",
+          "activity": "",
+          "seasonType": "",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "103",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 36900,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1635652",
+          "status": "active",
+          "slug": "bape-x-marvel-comics-ape-head-tee-black-00039-1ss1904bxmcah-blac",
+          "title": "BAPE x Marvel Comics Ape Head Tee 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/111/063/346/original/1635652_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2019",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "BAPE",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "104",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 23500,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1635571",
+          "status": "active",
+          "slug": "stussy-codes-tee-black-1905057-blac",
+          "title": "Stussy Codes Tee 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/111/063/116/original/1635571_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2024",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "Stussy",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "107.5",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 139500,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1632954",
+          "status": "active",
+          "slug": "paly-hollywood-cowboy-cardigan-black-6u002q1005blk",
+          "title": "Paly Hollywood Cowboy Cardigan 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/110/923/270/original/1632954_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2024",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 139500,
+            "currency": "USD"
+          },
+          "brandName": "Paly Hollywood",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "103",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 203000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1510871",
+          "status": "active",
+          "slug": "casablanca-chenille-embroidered-patchwork-bomber-jacket-navy-off-white-mf24-ot-131-01-navy",
+          "title": "Casablanca Chenille Embroidered Patchwork Bomber Jacket 'Navy/Off White'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/105/550/502/original/1510871_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2024",
+          "productType": "outerwear",
+          "localizedRetailPriceCents": {
+            "amountCents": 203000,
+            "currency": "USD"
+          },
+          "brandName": "Casablanca",
+          "activity": "",
+          "seasonType": "Fall/Winter",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "104",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 19900,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1469309",
+          "status": "active",
+          "slug": "bape-patch-work-print-long-sleeve-tee-black-1k80-111-002-black",
+          "title": "BAPE Patch Work Print Long-Sleeve Tee 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/103/477/188/original/1469309_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "BAPE",
+          "activity": "",
+          "seasonType": "",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "105",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 38400,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1370473",
+          "status": "active",
+          "slug": "kith-overdyed-patchwork-jaydin-buttondown-ink-khm031906-432",
+          "title": "Kith Overdyed Patchwork Jaydin Buttondown 'Ink'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/097/974/725/original/1370473_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2024",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 25500,
+            "currency": "USD"
+          },
+          "brandName": "Kith",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "104",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 15100,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "1274703",
+          "status": "active",
+          "slug": "bape-patchwork-eazy-shorts-black-1j30-153-006-black",
+          "title": "BAPE Patchwork Eazy Shorts 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/092/485/636/original/1274703_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2023",
+          "productType": "bottoms",
+          "localizedRetailPriceCents": {
+            "amountCents": 0,
+            "currency": "USD"
+          },
+          "brandName": "BAPE",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "silhouette": ""
+        },
+        {
+          "variantsList": [
+            {
+              "productCondition": 1,
+              "boxCondition": 1,
+              "size": {
+                "gender": 0,
+                "sizeUnit": 1,
+                "size": "104",
+                "displayName": ""
+              },
+              "localizedLowestPriceCents": {
+                "amountCents": 34000,
+                "currency": "USD"
+              }
+            }
+          ],
+          "id": "986123",
+          "status": "active",
+          "slug": "supreme-reverse-patchwork-zip-up-hooded-sweatshirt-black-ss22sw17-black",
+          "title": "Supreme Reverse Patchwork Zip Up Hooded Sweatshirt 'Black'",
+          "pictureUrl": "https://image.goat.com/attachments/product_template_pictures/images/103/176/190/original/986123_00.png.png",
+          "inStock": true,
+          "category": "apparel",
+          "seasonYear": "2022",
+          "productType": "tops",
+          "localizedRetailPriceCents": {
+            "amountCents": 18800,
+            "currency": "USD"
+          },
+          "brandName": "Supreme",
+          "activity": "",
+          "seasonType": "Spring/Summer",
+          "underRetail": false,
+          "gender": "men",
+          "activitiesList": [
+            
+          ],
+          "releaseDate": {
+            "seconds": 1655423999,
+            "nanos": 999000000
+          },
+          "silhouette": ""
+        }
+      ],
+      "aggregationValuesList": [
+        {
+          "bucketName": "release_years",
+          "valuesList": [
+            {
+              "value": "2025",
+              "slug": "2025",
+              "count": 12,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "2024",
+              "slug": "2024",
+              "count": 7,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "2023",
+              "slug": "2023",
+              "count": 6,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "2021",
+              "slug": "2021",
+              "count": 5,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "2022",
+              "slug": "2022",
+              "count": 3,
+              "bucketsList": [
+                
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "colors",
+          "valuesList": [
+            {
+              "value": "Black",
+              "slug": "black",
+              "count": 27,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Multi-Color",
+              "slug": "multi-color",
+              "count": 21,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Blue",
+              "slug": "blue",
+              "count": 18,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Brown",
+              "slug": "brown",
+              "count": 11,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Green",
+              "slug": "green",
+              "count": 10,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Cream",
+              "slug": "cream",
+              "count": 8,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "White",
+              "slug": "white",
+              "count": 7,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Red",
+              "slug": "red",
+              "count": 5,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Orange",
+              "slug": "orange",
+              "count": 4,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Tan",
+              "slug": "tan",
+              "count": 3,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Grey",
+              "slug": "grey",
+              "count": 2,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Purple",
+              "slug": "purple",
+              "count": 2,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Teal",
+              "slug": "teal",
+              "count": 1,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Yellow",
+              "slug": "yellow",
+              "count": 1,
+              "bucketsList": [
+                
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "brands",
+          "valuesList": [
+            {
+              "value": "Supreme",
+              "slug": "supreme",
+              "count": 34,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "KidSuper",
+              "slug": "kidsuper",
+              "count": 10,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "BAPE",
+              "slug": "bape",
+              "count": 8,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "Raf Simons",
+              "slug": "raf-simons",
+              "count": 6,
+              "bucketsList": [
+                
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "categories",
+          "valuesList": [
+            {
+              "value": "Apparel",
+              "slug": "apparel",
+              "count": 118,
+              "bucketsList": [
+                {
+                  "bucketName": "product_type",
+                  "valuesList": [
+                    {
+                      "value": "Tops",
+                      "slug": "tops",
+                      "count": 65,
+                      "bucketsList": [
+                        {
+                          "bucketName": "activities",
+                          "valuesList": [
+                            {
+                              "value": "Shirts and Tops",
+                              "slug": "shirts-and-tops",
+                              "count": 20,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "T-Shirts",
+                              "slug": "t-shirts",
+                              "count": 10,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Knitwear",
+                              "slug": "knitwear",
+                              "count": 8,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Hoodies",
+                              "slug": "hoodies",
+                              "count": 6,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Sweatshirts",
+                              "slug": "sweatshirts",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "Bottoms",
+                      "slug": "bottoms",
+                      "count": 32,
+                      "bucketsList": [
+                        {
+                          "bucketName": "activities",
+                          "valuesList": [
+                            {
+                              "value": "Shorts",
+                              "slug": "shorts",
+                              "count": 13,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Pants",
+                              "slug": "pants",
+                              "count": 7,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Jeans",
+                              "slug": "jeans",
+                              "count": 6,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Sweatpants",
+                              "slug": "sweatpants",
+                              "count": 3,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Trousers",
+                              "slug": "trousers",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "Outerwear",
+                      "slug": "outerwear",
+                      "count": 19,
+                      "bucketsList": [
+                        {
+                          "bucketName": "activities",
+                          "valuesList": [
+                            {
+                              "value": "Jackets",
+                              "slug": "jackets",
+                              "count": 10,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Anoraks",
+                              "slug": "anoraks",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ]
+                            },
+                            {
+                              "value": "Coats",
+                              "slug": "coats",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "Dresses",
+                      "slug": "dresses",
+                      "count": 1,
+                      "bucketsList": [
+                        {
+                          "bucketName": "activities",
+                          "valuesList": [
+                            
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "Tailoring",
+                      "slug": "tailoring",
+                      "count": 1,
+                      "bucketsList": [
+                        {
+                          "bucketName": "activities",
+                          "valuesList": [
+                            {
+                              "value": "Blazers",
+                              "slug": "blazers",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "value": "Accessories",
+              "slug": "accessories",
+              "count": 2,
+              "bucketsList": [
+                {
+                  "bucketName": "product_type",
+                  "valuesList": [
+                    {
+                      "value": "Hats",
+                      "slug": "hats",
+                      "count": 1,
+                      "bucketsList": [
+                        {
+                          "bucketName": "activities",
+                          "valuesList": [
+                            
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "Wallets",
+                      "slug": "wallets",
+                      "count": 1,
+                      "bucketsList": [
+                        {
+                          "bucketName": "activities",
+                          "valuesList": [
+                            
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "genders",
+          "valuesList": [
+            {
+              "value": "men",
+              "slug": "men",
+              "count": 118,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "women",
+              "slug": "women",
+              "count": 2,
+              "bucketsList": [
+                
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "sizes",
+          "valuesList": [
+            {
+              "value": "tops",
+              "slug": "tops",
+              "count": 0,
+              "bucketsList": [
+                {
+                  "bucketName": "genders",
+                  "valuesList": [
+                    {
+                      "value": "men",
+                      "slug": "men",
+                      "count": 0,
+                      "bucketsList": [
+                        {
+                          "bucketName": "sizes",
+                          "valuesList": [
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 38,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "M"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 37,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "S"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 35,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "L"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 34,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 15,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XXL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 5,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XS"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XXL/XXXL"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "women",
+                      "slug": "women",
+                      "count": 0,
+                      "bucketsList": [
+                        {
+                          "bucketName": "sizes",
+                          "valuesList": [
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 2,
+                                "gender": 2,
+                                "sizeUnit": 7,
+                                "size": "L"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "value": "bottoms",
+              "slug": "bottoms",
+              "count": 0,
+              "bucketsList": [
+                {
+                  "bucketName": "genders",
+                  "valuesList": [
+                    {
+                      "value": "men",
+                      "slug": "men",
+                      "count": 0,
+                      "bucketsList": [
+                        {
+                          "bucketName": "sizes",
+                          "valuesList": [
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 20,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "L"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 20,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "M"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 19,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "S"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 19,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 10,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XXL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XS"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "women",
+                      "slug": "women",
+                      "count": 0,
+                      "bucketsList": [
+                        {
+                          "bucketName": "sizes",
+                          "valuesList": [
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 5,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 2,
+                                "sizeUnit": 7,
+                                "size": "4XL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 4,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 2,
+                                "sizeUnit": 7,
+                                "size": "XXL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 4,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 2,
+                                "sizeUnit": 7,
+                                "size": "XXXL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 3,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 3,
+                                "gender": 2,
+                                "sizeUnit": 7,
+                                "size": "XL"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "value": "outerwear",
+              "slug": "outerwear",
+              "count": 0,
+              "bucketsList": [
+                {
+                  "bucketName": "genders",
+                  "valuesList": [
+                    {
+                      "value": "men",
+                      "slug": "men",
+                      "count": 0,
+                      "bucketsList": [
+                        {
+                          "bucketName": "sizes",
+                          "valuesList": [
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 13,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "S"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 12,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "M"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 11,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "L"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 10,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 5,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XXL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 2,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XXXL"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 1,
+                                "sizeUnit": 7,
+                                "size": "XS"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "women",
+                      "slug": "women",
+                      "count": 0,
+                      "bucketsList": [
+                        {
+                          "bucketName": "sizes",
+                          "valuesList": [
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 2,
+                                "sizeUnit": 7,
+                                "size": "XL"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "value": "youth",
+                      "slug": "youth",
+                      "count": 0,
+                      "bucketsList": [
+                        {
+                          "bucketName": "sizes",
+                          "valuesList": [
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 3,
+                                "sizeUnit": 7,
+                                "size": "L"
+                              }
+                            },
+                            {
+                              "value": "",
+                              "slug": "",
+                              "count": 1,
+                              "bucketsList": [
+                                
+                              ],
+                              "sizeValue": {
+                                "productType": 4,
+                                "gender": 3,
+                                "sizeUnit": 7,
+                                "size": "S"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "price_min",
+          "valuesList": [
+            {
+              "value": "",
+              "slug": "",
+              "count": 0,
+              "bucketsList": [
+                
+              ],
+              "moneyValue": {
+                "amountCents": 1800,
+                "currency": "USD"
+              }
+            }
+          ]
+        },
+        {
+          "bucketName": "price_max",
+          "valuesList": [
+            {
+              "value": "",
+              "slug": "",
+              "count": 0,
+              "bucketsList": [
+                
+              ],
+              "moneyValue": {
+                "amountCents": 800000,
+                "currency": "USD"
+              }
+            }
+          ]
+        },
+        {
+          "bucketName": "conditions",
+          "valuesList": [
+            {
+              "value": "new_no_defects",
+              "slug": "new_no_defects",
+              "count": 111,
+              "bucketsList": [
+                
+              ]
+            },
+            {
+              "value": "used",
+              "slug": "used",
+              "count": 1,
+              "bucketsList": [
+                
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "instant_ship",
+          "valuesList": [
+            {
+              "value": "22",
+              "slug": "22",
+              "count": 0,
+              "bucketsList": [
+                
+              ]
+            }
+          ]
+        },
+        {
+          "bucketName": "under_retail",
+          "valuesList": [
+            {
+              "value": "17",
+              "slug": "17",
+              "count": 0,
+              "bucketsList": [
+                
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
