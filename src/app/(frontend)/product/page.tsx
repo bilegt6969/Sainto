@@ -86,8 +86,7 @@ const isCacheValid = (cacheTimestamp: number | null): boolean => {
   return Date.now() - cacheTimestamp < CACHE_DURATION_MS;
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+ 
 //---Skeleton Loading Components---
 const SkeletonCard = () => (
   <div className="text-white bg-neutral-800 border border-neutral-700 rounded tracking-tight relative h-full flex flex-col animate-pulse">
