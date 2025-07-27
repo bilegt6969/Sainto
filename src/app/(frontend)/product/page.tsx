@@ -86,6 +86,8 @@ const isCacheValid = (cacheTimestamp: number | null): boolean => {
   return Date.now() - cacheTimestamp < CACHE_DURATION_MS;
 };
 
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 //---Skeleton Loading Components---
 const SkeletonCard = () => (
   <div className="text-white bg-neutral-800 border border-neutral-700 rounded tracking-tight relative h-full flex flex-col animate-pulse">
@@ -439,9 +441,9 @@ const Home = () => {
       try {
         const [productCollectionsRes, categoryUrlsRes, currencyRes] = await Promise.all([
           // Fetch product collections from /api/payload/collections
-          fetch("https://sainto.vercel.app/api/payload/collections?sort=order").then(res => res.ok ? res.json() : Promise.reject(`Product Collections fetch failed: ${res.status}`)),
+          fetch(`${baseUrl}/api/payload/collections?sort=order`).then(res => res.ok ? res.json() : Promise.reject(`Product Collections fetch failed: ${res.status}`)),
           // Fetch category URLs from /api/payload/categories
-          fetch("https://sainto.vercel.app/api/payload/categories").then(res => res.ok ? res.json() : Promise.reject(`Category URLs fetch failed: ${res.status}`)),
+          fetch(`${baseUrl}/api/payload/categories`).then(res => res.ok ? res.json() : Promise.reject(`Category URLs fetch failed: ${res.status}`)),
           fetch('https://hexarate.paikama.co/api/rates/latest/USD?target=MNT').then(res => res.ok ? res.json() : Promise.reject(`Currency fetch failed: ${res.status}`))
         ]);
 

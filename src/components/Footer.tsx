@@ -6,13 +6,17 @@ const Footer = ({ variant = 'dark' }) => {
   return (
     <footer className={`relative ${isDark ? 'bg-black' : 'bg-gray-50'} overflow-hidden`}>
       {/* Main Content Section */}
-      <div className="relative z-10 px-4 sm:px-6 py-12 sm:py-16 md:py-20 lg:py-24 -translate-y-6 sm:-translate-y-8 md:-translate-y-10 lg:-translate-y-12">
+      <div className="relative z-10 px-4 sm:px-6 py-12 sm:py-16 md:py-20 lg:py-24 -translate-y-6 sm:-translate-y-8 md:-translate-y-10 lg:-translate-y-5">
         <div className="max-w-7xl mx-auto text-center">
           {/* Main Heading */}
           <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-medium ${isDark ? 'text-gray-300' : 'text-[#5e5e5e]'} leading-tight mb-6 sm:mb-8 max-w-2xl sm:max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-2`}>
-            Work seamlessly with a creative team that&apos;s built to match your pace and{' '}
-            <span className={`${isDark ? 'text-white' : 'text-black'} font-medium`}>exceed</span> your expectations.
-          </h2>
+          The Art of Pioneering  <br/>  built by Gen Z for ALL as your only <br/> 
+
+          <span className={`${isDark ? 'text-white' : 'text-black'} font-medium text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl`}>DRIP PLUG.</span>
+
+
+
+           </h2>
           
           {/* CTA Button */}
          
@@ -39,7 +43,7 @@ const Footer = ({ variant = 'dark' }) => {
             <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">
               Terms of Service
             </a>
-            <a href="#" className="hover:text-gray-200 transition-colors text-white whitespace-nowrap">
+            <a href="#" className="hover:text-gray-400 transition-colors text-gray-400 whitespace-nowrap">
               Powered by 
               <a
   href="https://bytecode-smoky.vercel.app/"

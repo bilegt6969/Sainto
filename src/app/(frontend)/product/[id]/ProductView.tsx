@@ -445,7 +445,7 @@ export default function ProductView({ product: initialProduct, priceData: initia
           {/* Right Column: Product Info */}
           <div className="text-white flex flex-col justify-start items-start w-full lg:w-1/2 lg:p-4">
             {/* Authentication Badge */}
-            <div className="flex items-center gap-2 mb-4 bg-emerald-500/20 backdrop-blur-sm px-3 py-2 rounded-full border border-emerald-400/30">
+            <div className="flex items-center gap-2 mb-4 bg-yellow-500/90 backdrop-blur-sm px-3 py-2 rounded-full border border-emerald-400/30">
               <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
               <span className="text-sm font-medium text-emerald-100">Authenticated by Psda</span>
             </div>
