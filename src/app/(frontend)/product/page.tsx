@@ -441,9 +441,9 @@ const Home = () => {
       try {
         const [productCollectionsRes, categoryUrlsRes, currencyRes] = await Promise.all([
           // Fetch product collections from /api/payload/collections
-          fetch(`${baseUrl}/api/payload/collections?sort=order`).then(res => res.ok ? res.json() : Promise.reject(`Product Collections fetch failed: ${res.status}`)),
+          fetch(`/api/payload/collections?sort=order`).then(res => res.ok ? res.json() : Promise.reject(`Product Collections fetch failed: ${res.status}`)),
           // Fetch category URLs from /api/payload/categories
-          fetch(`${baseUrl}/api/payload/categories`).then(res => res.ok ? res.json() : Promise.reject(`Category URLs fetch failed: ${res.status}`)),
+          fetch(`/api/payload/categories`).then(res => res.ok ? res.json() : Promise.reject(`Category URLs fetch failed: ${res.status}`)),
           fetch('https://hexarate.paikama.co/api/rates/latest/USD?target=MNT').then(res => res.ok ? res.json() : Promise.reject(`Currency fetch failed: ${res.status}`))
         ]);
 
