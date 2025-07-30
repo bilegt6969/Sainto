@@ -20,6 +20,8 @@ import {
    ShoppingBag,
   TrendingUp,
   UsersIcon,
+  Mail
+
 } from 'lucide-react'
 
 type Props = {
@@ -251,6 +253,18 @@ const Menu = () => {
             >
               <CircleHelp className="w-4 h-4 mr-2" />
               About
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link
+              href="/contact"
+              className="flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md text-neutral-300 hover:text-neutral-400 transition-colors duration-200"
+            >
+                            <Mail className="w-4 h-4 mr-2" />
+
+               Contact Us
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
