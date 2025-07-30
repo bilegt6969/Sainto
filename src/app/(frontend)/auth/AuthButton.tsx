@@ -100,12 +100,12 @@ const AuthButton = () => {
   };
 
   const handleProfileClick = () => {
-    router.push('/profile');
+    router.push('/account');
     setIsOpen(false);
   };
 
   const handleEditProfile = () => {
-    router.push('/profile/edit');
+    router.push('/account/edit');
     setIsOpen(false);
   };
 

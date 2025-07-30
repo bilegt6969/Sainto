@@ -65,7 +65,7 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-black min-h-screen text-white p-6">
+    <div className="relative inset-0 overflow-y-auto bg-black min-h-screen text-white p-6">
       <div className="max-w-4xl mx-auto">
         <Link href="/account" className="inline-flex items-center text-neutral-400 hover:text-white transition-colors mb-6 group">
           <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
