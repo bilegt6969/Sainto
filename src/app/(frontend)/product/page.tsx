@@ -220,7 +220,7 @@ const CategoryCard = memo(({ label, categoryUrl, images, replaceText, priority }
   if (!firstImage) return null; // Must have at least one image
 
   return (
-    <div className="text-black rounded tracking-tight relative bg-white border border-neutral-700 cursor-pointer transition-all duration-300 hover:shadow-md hover:border-neutral-400 h-fit flex flex-col group">
+    <div className="text-black rounded tracking-tight relative bg-black cursor-pointer transition-all duration-300 hover:shadow-md h-fit flex flex-col group">
       <Link href={categoryUrl} passHref>
         <div className="w-full flex justify-between items-center text-lg md:text-xl font-bold bg-white text-black p-4 border-b border-neutral-200 relative transition-colors duration-300 group-hover:bg-neutral-50">
           <span className="truncate pr-2">{replaceText(label)}</span>
@@ -228,7 +228,7 @@ const CategoryCard = memo(({ label, categoryUrl, images, replaceText, priority }
         </div>
       </Link>
       <Link href={categoryUrl} passHref className="block flex-grow">
-        <div className="relative overflow-hidden bg-black group-hover:bg-white transition-colors duration-300" style={{ aspectRatio: '1/1' }}>
+        <div className="relative overflow-hidden bg-black group-hover:bg-black transition-colors duration-300" style={{ aspectRatio: '1/1' }}>
           {firstImage && (
             <div className="absolute left-0 top-0 bottom-0 w-1/2 flex items-center justify-start" style={{ zIndex: 1 }}>
               <div className="relative transition-transform duration-300 group-hover:scale-105" style={{ width: '130%', height: '130%' }}>
@@ -586,7 +586,13 @@ const Home = () => {
             style={{ minHeight: '400px' }}
             aria-label={replaceText(title)}
           >
-            <header className="flex justify-between items-center mb-6 md:mb-8 px-4 md:px-0">
+            
+
+            {/* Category Previews - Now rendered within each collection section */}
+
+
+
+<header className="flex justify-between items-center mb-6 md:mb-8 px-4 md:px-0">
               <h2 className="font-extrabold text-white text-xl md:text-3xl relative truncate pr-4">{replaceText(title)}</h2>
               {(isLoading || items.length > 0) && (
                 <Link
@@ -598,31 +604,6 @@ const Home = () => {
                 </Link>
               )}
             </header>
-
-            {/* Category Previews - Now rendered within each collection section */}
-            {isLoading && categoriesToRender.length === 0 ? ( // Show skeleton if loading and no categories
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 md:px-0 mb-8">
-                {[...Array(4)].map((_, i) => <SkeletonCategoryCard key={`loading-cat-${sectionId}-${i}`} />)}
-              </div>
-            ) : (
-              categoriesToRender.length > 0 ? ( // Only render if categories are available
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 md:px-0 mb-8">
-                  {categoriesToRender.map((category, idx) => (
-                    <CategoryCard
-                      key={`${category.id}-${idx}`}
-                      label={category.label}
-                      images={category.images}
-                      categoryUrl={category.categoryUrl}
-                      replaceText={replaceText}
-                      priority={idx < 4}
-                    />
-                  ))}
-                </div>
-              ) : (
-                // No categories found at all, or none to display
-                <p className="text-neutral-500 text-center py-4 col-span-full">No categories found to display.</p>
-              )
-            )}
 
             {/* Mobile View */}
             <div className="block lg:hidden mb-8 px-3">
@@ -665,6 +646,31 @@ const Home = () => {
                 ) : <p className="text-neutral-500 col-span-full text-center py-4">No items found in this collection.</p>
               )}
             </div>
+
+
+            {isLoading && categoriesToRender.length === 0 ? ( // Show skeleton if loading and no categories
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 md:px-0 mt-8 mb-8">
+                {[...Array(4)].map((_, i) => <SkeletonCategoryCard key={`loading-cat-${sectionId}-${i}`} />)}
+              </div>
+            ) : (
+              categoriesToRender.length > 0 ? ( // Only render if categories are available
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 md:px-0 mt-16 mb-8">
+                  {categoriesToRender.map((category, idx) => (
+                    <CategoryCard
+                      key={`${category.id}-${idx}`}
+                      label={category.label}
+                      images={category.images}
+                      categoryUrl={category.categoryUrl}
+                      replaceText={replaceText}
+                      priority={idx < 4}
+                    />
+                  ))}
+                </div>
+              ) : (
+                // No categories found at all, or none to display
+                <p className="text-neutral-500 text-center py-4 col-span-full">No categories found to display.</p>
+              )
+            )}
           </section>
         );
       }) : (
@@ -695,6 +701,8 @@ const Home = () => {
           </div>
         )
       )}
+
+      
     </div>
   );
 };

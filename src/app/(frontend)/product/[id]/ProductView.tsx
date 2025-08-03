@@ -942,6 +942,25 @@ export default function ProductView({
           },
         }}
       />
+      <div className="w-1/2 h-[40vh] bg-black border border-neutral-700 shadow-2xl flex mt-8 justify-center mx-auto rounded-3xl flex">
+  <div className="relative w-1/2 p-4 h-full">
+    <Image
+      src="/images/dog.jpg"
+      alt="Dog"
+      fill
+      className="object-cover p-4"
+    />
+  </div>
+  <div className="w-1/2 flex flex-col items-start pt-8 justify-start text-white">
+    <h1 className="text-3xl font-bold text-neutral-300">Very Orignall<br/>shiiiiit</h1>
+
+    <p className="text-neutral-300 text-lg mb-8 leading-relaxed">
+              Every item undergoes rigorous multi-point authentication by our expert team. 
+               
+            </p>
+  </div>
+  
+</div>
     </div>
   );
 }
