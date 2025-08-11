@@ -6,13 +6,13 @@ const Footer = ({ variant = 'dark' }) => {
   return (
     <footer className={`relative ${isDark ? 'bg-black' : 'bg-gray-50'} overflow-hidden`}>
       {/* Main Content Section */}
-      <div className="relative z-10 px-4 sm:px-6 py-12 sm:py-16 md:py-20 lg:py-24 -translate-y-6 sm:-translate-y-8 md:-translate-y-10 lg:-translate-y-5">
+      <div className="relative z-10 px-4 sm:px-6 pt-12 sm:pt-16 md:pt-20 lg:pt-24 -translate-y-4 sm:-translate-y-8 md:-translate-y-10 lg:-translate-y-5">
         <div className="max-w-7xl mx-auto text-center">
           {/* Main Heading */}
-          <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-medium ${isDark ? 'text-neutral-200/80' : 'text-[#5e5e5e]'} leading-tight mb-6 sm:mb-8 max-w-2xl sm:max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-2`}>
+          <h2 className={`text-3xl sm:text-4xl md:text-4xl lg:text-6xl xl:text-7xl 2xl:text-7xl font-medium ${isDark ? 'text-neutral-300' : 'text-[#5e5e5e]'} leading-tight -mb-0 sm:mb-8 max-w-2xl sm:max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-2`}>
           The Art of Pioneering  <br/>  built by Gen Z for ALL as your only <br/> 
 
-          <span className={`${isDark ? 'text-white' : 'text-black'} font-medium text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl`}>DRIP PLUG.</span>
+          <span className={`${isDark ? 'text-white' : 'text-black'} font-medium text-5xl sm:text-3xl md:text-6xl lg:text-8xl xl:text-7xl 2xl:text-8xl`}>DRIP PLUG.</span>
 
 
 
@@ -25,8 +25,8 @@ const Footer = ({ variant = 'dark' }) => {
       
       {/* Large Background Text */}
       <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
-        <div className={`font-bitcount ${isDark ? 'text-neutral-100 opacity-10' : 'text-[#BDBCBD] opacity-60'} font-bold text-[6rem] xs:text-[8rem] sm:text-[10rem] md:text-[14rem] lg:text-[18rem] xl:text-[22rem] 2xl:text-[26rem] leading-none select-none`}>
-          SAINTO.
+        <div className={`font-bitcount ${isDark ? 'text-neutral-300 opacity-20' : 'text-[#BDBCBD] opacity-60'} font-bold text-[5rem] xs:text-[8rem] sm:text-[10rem] md:text-[12rem] lg:text-[16rem] xl:text-[20rem] 2xl:text-[26rem] leading-none select-none flex items-start`}>
+          {""}SAINTO<span className='text-[3rem] xs:text-[5rem] sm:text-[6rem] md:text-[7rem] lg:text-[10rem] xl:text-[10rem] 2xl:text-[10rem]'>®</span>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ const Footer = ({ variant = 'dark' }) => {
       <div className="relative z-10 px-4 sm:px-6 py-4 sm:py-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-neutral-400 space-y-3 sm:space-y-0">
           <div className="text-center sm:text-left order-2 sm:order-1">
-            © {new Date().getFullYear()} SAINTO. All rights reserved.
+          ® {new Date().getFullYear()} SAINTO. All rights reserved.
           </div>
           <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6 order-1 sm:order-2">
             <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">
@@ -45,18 +45,35 @@ const Footer = ({ variant = 'dark' }) => {
             </a>
  <span className="text-neutral-400 whitespace-nowrap">
   Powered by{' '}
-  <a
-    href="https://bytecode-smoky.vercel.app/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="hover:text-gray-200 transition-colors text-white"
-  >
-    Bytecode
-  </a>
+  <a href="https://bytecode-smoky.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-300 font-medium underline-animation transition-all text-white duration-300 ease-in-out">
+    Bytecode Studio
+</a>
 </span>
            </div>
         </div>
       </div>
+      <style>{`
+               .underline-animation {
+                position: relative; /* This is crucial for positioning the pseudo-element */
+                display: inline-block; /* Or any other display that allows the pseudo-element to be contained */
+                text-decoration: none; /* Hide the default underline */
+              }
+              
+              .underline-animation::after {
+                content: ''; /* Required for pseudo-elements to display */
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 0; /* Start with zero width */
+                height: 1px; /* Adjust the thickness of the line */
+                background-color: currentColor; /* Matches the text color */
+                transition: width 0.3s ease-out; /* Smooth transition */
+              }
+              
+              .underline-animation:hover::after {
+                width: 100%; /* Expand the width to 100% on hover */
+              }
+            `}</style>
     </footer>
   );
 };

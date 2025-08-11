@@ -12,7 +12,7 @@ import LayoutClientWrapper from '@/components/LayoutClientWrapper'; // Adjust pa
 
 export const metadata = {
   title: {
-    default: 'SAINTO | Curated Luxury for the Discerning',
+    default: 'SAINTO® | Curated Luxury for the Discerning',
     template: '%s | SAINTO Mongolia'
   },
   description: 'Mongolia\'s premier destination for authenticated rare sneakers, avant-garde streetwear, and timeless designer pieces. Experience curation at the intersection of culture and craftsmanship.',
@@ -21,7 +21,7 @@ export const metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'SAINTO | Beyond Fashion — A Cultural Movement',
+    title: 'SAINTO® | Beyond Fashion — A Cultural Movement',
     description: 'Where Mongolia\'s elite discover the extraordinary. Each piece undergoes our 47-point verification process, representing the pinnacle of streetwear and luxury fashion.',
     url: 'https://sainto.vercel.app',
     siteName: 'sainto MONGOLIA',
@@ -30,7 +30,7 @@ export const metadata = {
         url: 'https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg',
         width: 1200,
         height: 630,
-        alt: 'SAINTO Mongolia - Black background with minimalist gold logo and curated product display',
+        alt: 'SAINTO® Mongolia - Black background with minimalist gold logo and curated product display',
       },
     ],
     type: 'website',
@@ -39,9 +39,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SAINTO | The Art of Wearable Distinction',
+    title: 'SAINTO® | The Art of Wearable Distinction',
     description: 'We don\'t sell products — we offer entry into an exclusive world where every stitch tells a story. Your journey into elevated style begins here.',
-    creator: '@saintmongolia',
+    creator: '@saintomongolia',
     images: ['https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg'],
   },
   robots: {

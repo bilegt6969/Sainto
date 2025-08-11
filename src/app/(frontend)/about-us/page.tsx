@@ -79,7 +79,7 @@ const contentTransitionVariants = {
 const content: Content = {
   en: {
     headerTitle: 'The Art Of Pioneering',
-    heroSubtitle: 'Connecting Fashion, Authenticity, and Opportunity.',
+    heroSubtitle: 'Connecting Fashion, Culture, and Technology.',
     openLetterTitle: 'An Open Letter',
     openLetterP1:
       'From the bustling streets of Ulaanbaatar, a new vision for fashion retail is taking shape. SAINTO was born from a simple yet profound realization: the fashion landscape in Mongolia and across Central Asia was ripe for transformation. Consumers yearned for genuine products, accessible pricing, and a trustworthy platform that stood by its promises.',
