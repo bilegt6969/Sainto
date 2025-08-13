@@ -412,10 +412,10 @@ const Navbar = () => {
             >
                 <Wrapper
                     className={cn(
-                        'relative backdrop-blur-lg backdrop-brightness-40 rounded-xl lg:rounded-3xl border border-[rgba(124,124,124,0.2)] px-1 md:px-2 flex items-center justify-start h-full'
+                        'relative backdrop-blur-lg backdrop-brightness-40 rounded-3xl lg:rounded-3xl border border-[rgba(124,124,124,0.2)] px-1 md:px-2 flex items-center justify-start h-full'
                     )}
                 >
-                    <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center mx-1 sm:mx-0 justify-between w-full">
                         <div className="flex items-center gap-4 flex-shrink-0">
                             {/* Logo */}
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -441,23 +441,23 @@ const Navbar = () => {
                         </div>
                         <div className="flex items-center gap-2 lg:gap-4">
                             {/* Search Button */}
-                            <motion.div whileHover={{ y: -1 }} whileTap={{ y: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
+                            <motion.div whileHover={{ y: -1 }} whileTap={{ y: 1 }}  >
                                 <Button
                                     size="sm"
                                     variant="tertiary"
                                     onClick={() => setIsSearchOpen(true)}
-                                    className="rounded-full text-white transition-all duration-200 px-3 py-1.5 glossy-button-effect hover:brightness-125 hover:scale-105 active:scale-95"
+                                    className="rounded-full text-white transition-all items-center duration-200 px-3 py-2 glossy-button-effect hover:brightness-125 hover:scale-105 active:scale-95"
                                     aria-label="Хайх"
                                 >
                                     <Search className="w-4 h-4 relative z-10" />
-                                    <span className="ml-1.5 hidden sm:inline relative z-10">Хайх</span>
+                                    <span className="ml-0 sm:ml-2 hidden sm:inline relative z-10">Хайх</span>
                                 </Button>
                             </motion.div>
                             {/* Shopping Bag Button */}
                             <motion.div whileHover={{ y: -1 }} whileTap={{ y: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
                                 <Link
                                     href="/bag"
-                                    className="relative flex items-center duration-300 transition-all ease-soft-spring text-neutral-400 hover:text-white p-1.5 rounded-full hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                                    className="relative flex items-center  duration-300 transition-all ease-soft-spring text-neutral-400 hover:text-white p-1.5 rounded-full hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                                     aria-label={`Shopping bag with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
                                 >
                                     <ShoppingBag className="w-6 h-6" />
@@ -478,7 +478,7 @@ const Navbar = () => {
                                 </Link>
                             </motion.div>
                             {/* AuthButton */}
-                            <motion.div whileHover={{ y: -3 }} whileTap={{ y: -3 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
+                            <motion.div className='hidden sm:inline' whileHover={{ y: -3 }} whileTap={{ y: -3 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
                                 <AuthButton />
                             </motion.div>
                             {/* Mobile Menu Toggle Button */}

@@ -268,7 +268,7 @@ const App = () => {
           {t.headerTitle}
         </motion.h1>
         <motion.p
-          className="text-2xl md:text-3xl font-playfair-display font-medium text-gray-300 tracking-tight leading-relaxed relative z-20"
+          className="text-xl md:text-2xl  font-medium text-neutral-300 tracking-tight leading-relaxed relative z-20"
           variants={textVariants}
         >
           {t.heroSubtitle}

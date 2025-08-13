@@ -329,9 +329,9 @@ const Home = () => {
     const updateLimit = () => {
       const screenWidth = window.innerWidth;
       if (screenWidth >= 1536) {
-        setItemLimit(6);
+        setItemLimit(4);
       } else if (screenWidth >= 1280) {
-        setItemLimit(6);
+        setItemLimit(5);
       } else if (screenWidth >= 1024) {
         setItemLimit(6);
       } else {

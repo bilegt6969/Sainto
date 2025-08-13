@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 body {
-  background-color: #262626; /* 2d2d2d */
+  background-color: #1e1e1e; /* 2d2d2d */
   margin-left: 0rem; /* Default for extra small screens */
   margin-right: 0rem;
 }

@@ -35,23 +35,41 @@ const Footer = ({ variant = 'dark' }) => {
       
       {/* Bottom Footer Links */}
       <div className="relative z-10 px-4 sm:px-6 py-4 sm:py-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-neutral-400 space-y-3 sm:space-y-0">
-          <div className="text-center sm:text-left order-2 sm:order-1">
-          ® {new Date().getFullYear()} SAINTO. All rights reserved.
-          </div>
-          <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6 order-1 sm:order-2">
-            <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">
-              Terms of Service
-            </a>
- <span className="text-neutral-400 whitespace-nowrap">
-  Powered by{' '}
-  <a href="https://bytecode-smoky.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-300 font-medium underline-animation transition-all text-white duration-300 ease-in-out">
-    Bytecode Studio
-</a>
-</span>
-           </div>
-        </div>
-      </div>
+  <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-neutral-400 space-y-3 sm:space-y-0">
+    
+    {/* Left Section */}
+    <div className="text-center sm:text-left items-center order-2 sm:order-1">
+      ®   {new Date().getFullYear()} SAINTO. All rights reserved.
+    </div>
+
+    {/* Middle Section (Navigation Links) */}
+    <div className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4 order-3 sm:order-2">
+      <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">About</a>
+      <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">Contact Us</a>
+      <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">FAQ</a>
+      <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">Support</a>
+      <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">For You</a>
+    </div>
+
+    {/* Right Section */}
+    <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6 order-1 sm:order-3">
+      <a href="#" className="hover:text-gray-200 transition-colors whitespace-nowrap">Terms of Service</a>
+      <span className="whitespace-nowrap">
+        Powered by{' '}
+        <a
+          href="https://bytecode-smoky.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-neutral-300 font-medium underline-animation transition-all text-white duration-300 ease-in-out"
+        >
+          Bytecode Studio
+        </a>
+      </span>
+    </div>
+
+  </div>
+</div>
+
       <style>{`
                .underline-animation {
                 position: relative; /* This is crucial for positioning the pseudo-element */
