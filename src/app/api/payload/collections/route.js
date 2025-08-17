@@ -37,19 +37,19 @@ export async function GET(request) {
         const parsedRawJson = JSON.parse(collection.rawProductJson); // This is the content from Sanity's rawProductJson field
         console.log('Successfully parsed rawProductJson. Parsed data structure (first 2 keys):', Object.keys(parsedRawJson || {}).slice(0,2));
 
-
         let actualProducts = [];
 
-        // --- NEW LOGIC START ---
-        // Based on the latest screenshot:
-        // 1. The 'rawProductJson' for each collection contains an object.
-        // 2. This object has a 'response' key.
-        // 3. The 'response' key's value is an object that contains the 'products' array.
-        if (parsedRawJson?.response?.products && Array.isArray(parsedRawJson.response.products)) {
+        // --- UPDATED LOGIC FOR NEW STRUCTURE ---
+        // Based on your new JSON structure: { summary: {...}, products: [...] }
+        if (parsedRawJson?.products && Array.isArray(parsedRawJson.products)) {
+            actualProducts = parsedRawJson.products;
+            console.log(`Extracted ${actualProducts.length} products from 'parsedRawJson.products'.`);
+        }
+        // Fallback for previous structures, just in case
+        else if (parsedRawJson?.response?.products && Array.isArray(parsedRawJson.response.products)) {
             actualProducts = parsedRawJson.response.products;
             console.log(`Extracted ${actualProducts.length} products from 'parsedRawJson.response.products'.`);
         }
-        // Fallback for previous structures, just in case (less likely now, but good for robustness)
         else if (parsedRawJson?.data?.productsList && Array.isArray(parsedRawJson.data.productsList)) {
             actualProducts = parsedRawJson.data.productsList;
             console.log(`Extracted ${actualProducts.length} products from 'parsedRawJson.data.productsList'.`);
@@ -63,10 +63,9 @@ export async function GET(request) {
             console.log(`Extracted ${actualProducts.length} products from parsedRawJson['0'].data.productsList.`);
         }
         else {
-            console.warn(`Could not find a valid products array in rawProductJson for ${collection.name || 'Unnamed'} (ID: ${collection._id}). Parsed object keys:`, Object.keys(parsedRawJson || {}));
+            console.warn(`Could not find a valid products array in rawProductJson for ${collection.name || 'Unnamed'} (ID: ${collection._id}). Expected 'products' array. Parsed object keys:`, Object.keys(parsedRawJson || {}));
         }
-        // --- NEW LOGIC END ---
-
+        // --- END UPDATED LOGIC ---
 
         if (actualProducts.length > 0) {
           const productsWithCollection = actualProducts.map(product => ({
