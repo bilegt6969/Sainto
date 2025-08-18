@@ -1,35 +1,46 @@
 'use client';
 import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { useProductContext } from '../../context/ProductContext';
+import { client } from '../../../../lib/sanity'; // Import your Sanity client
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
-import 'swiper/css';
-import 'swiper/css/pagination';
 
 // --- Interface Definitions ---
 type SectionRefs = Record<string, React.RefObject<HTMLDivElement | null>>;
+
+// From your API route
+interface ApiProduct {
+  id: string;
+  name: string;
+  image: string;
+  slug: string;
+  collection?: string;
+  price?: string;
+}
+
+interface ApiResponse {
+  products: ApiProduct[];
+  collectionName: string;
+  collectionSlug: string;
+  hasMore: boolean;
+  total: number;
+  currentPage: number;
+  totalPages: number;
+  error?: string;
+}
+
+// Adapt to your existing Item interface
 interface ItemData {
   id: string;
   slug: string;
   pictureUrl: string;
   title: string;
   category?: string;
-  localizedRetailPriceCents?: {
-    amountCents: number;
-    currency: string;
-  };
-  variantsList?: Array<{
-    localizedLowestPriceCents?: {
-      amountCents: number;
-      currency: string;
-    };
-  }>;
   inStock: boolean;
+  price?: string;
 }
-interface ProductListItem extends ItemData {
-  collectionName: string;
-}
+
 interface Item {
   data: ItemData;
   value?: string;
@@ -37,22 +48,26 @@ interface Item {
   categoryUrl: string;
   collection: string;
 }
+
 interface CategoryImage {
   url: string;
   alt: string;
 }
-interface CollectionDoc {
-  url: string;
+
+interface SanityCollectionDoc {
+  _id: string;
   name: string;
   order: number;
-  products?: ProductListItem[];
+  slug: string;
 }
+
 interface ProcessedSanityCategory {
   id: string;
   label: string;
   categoryUrl: string;
   images: CategoryImage[];
 }
+
 interface SanityProductCategoryUrlDoc {
   category?: string;
   order: number;
@@ -61,36 +76,17 @@ interface SanityProductCategoryUrlDoc {
   el3?: { url1: string; url2?: string; url3?: string; label: string };
   el4?: { url1: string; url2?: string; url3?: string; label: string };
 }
+
 interface ProductScrollerProps {
     items: Item[];
     ItemComponent: React.ElementType;
     renderPrice: (priceCents: number) => string;
     replaceText: (text: string) => string;
-    itemLimit?: number;
     itemBaseClassName: string;
     priorityStartIndex?: number;
 }
 
-// --- In-Memory Cache ---
-interface HomeCache {
-  collections: CollectionDoc[] | null;
-  sanityCategoryDocs: SanityProductCategoryUrlDoc[] | null;
-  mntRate: number | null;
-  timestamp: number | null;
-}
-let homeCache: HomeCache = {
-  collections: null,
-  sanityCategoryDocs: null,
-  mntRate: null,
-  timestamp: null,
-};
-const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
-const isCacheValid = (cacheTimestamp: number | null): boolean => {
-  if (!cacheTimestamp) return false;
-  return Date.now() - cacheTimestamp < CACHE_DURATION_MS;
-};
-
-// --- Skeleton Loading Components ---
+// --- Skeleton Components (same as before) ---
 const SkeletonCard = () => (
   <div className="text-white bg-neutral-800 border border-neutral-700 rounded tracking-tight relative h-full flex flex-col animate-pulse">
     <div className="block lg:hidden h-8 w-full bg-neutral-700 border-b border-neutral-600"></div>
@@ -101,6 +97,7 @@ const SkeletonCard = () => (
     </div>
   </div>
 );
+
 const SkeletonCategoryCard = () => (
   <div className="text-black rounded tracking-tight relative bg-neutral-300 border border-neutral-400 animate-pulse h-fit">
     <div className="w-full flex justify-between items-center text-xl font-bold bg-neutral-200 p-4 border-b border-neutral-400 mt-0 relative">
@@ -113,29 +110,20 @@ const SkeletonCategoryCard = () => (
   </div>
 );
 
-// --- Helper Functions ---
-const getLowestPriceCents = (itemData: ItemData): number => {
-  if (itemData.variantsList && itemData.variantsList.length > 0) {
-    const variantPrices = itemData.variantsList
-      .map(variant => variant.localizedLowestPriceCents?.amountCents)
-      .filter((price): price is number => price !== undefined);
-    if (variantPrices.length > 0) {
-      return Math.min(...variantPrices);
-    }
-  }
-  return itemData.localizedRetailPriceCents?.amountCents || 9999;
-};
-
-// --- Memoized Child Components ---
+// --- Item Components (simplified - no price logic since Sanity data doesn't have prices) ---
 interface DesktopItemProps {
   item: Item;
   renderPrice: (priceCents: number) => string;
   replaceText: (text: string) => string;
   priority: boolean;
 }
+
+
+ 
+
+ 
 const DesktopItem = memo(({ item, renderPrice, replaceText, priority }: DesktopItemProps) => {
-  const lowestPrice = getLowestPriceCents(item.data);
-  return (
+   return (
     <Link href={`/product/${item.data.slug}`} passHref target="_blank" rel="noopener noreferrer">
       <div className="text-white bg-black border border-neutral-700 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-blue-900/10 hover:border-neutral-600 hover:scale-[1.02] h-full flex flex-col group">
         <div className="overflow-hidden rounded-t-lg relative flex-grow" style={{ aspectRatio: '1 / 1' }}>
@@ -152,25 +140,13 @@ const DesktopItem = memo(({ item, renderPrice, replaceText, priority }: DesktopI
         </div>
         <div className="w-full text-xs font-bold flex items-center p-4 border-t border-neutral-700 justify-between relative transition-colors duration-300 group-hover:border-neutral-500">
           <span className="truncate pr-2">{replaceText(item.data.title)}</span>
-          <div
-            className={`py-2 px-2 rounded-full whitespace-nowrap transition-all duration-300 ease-out min-w-[90px] text-center relative overflow-hidden ${
-              lowestPrice === 0
-                ? 'bg-neutral-800 border border-neutral-700 text-neutral-400'
-                : 'bg-neutral-800 backdrop-brightness-90 border border-neutral-700 group-hover:bg-neutral-600 group-hover:border-neutral-500'
-            }`}
-          >
-            {lowestPrice === 0 || !item.data.inStock ? (
-              <span className="block">Unavailable</span>
-            ) : (
-              <>
-                <span className="block group-hover:opacity-0 group-hover:-translate-y-2 transition-all duration-300">
-                  {renderPrice(lowestPrice)}
-                </span>
-                <span className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  View
-                </span>
-              </>
-            )}
+          <div className="py-2 px-2 rounded-full whitespace-nowrap transition-all duration-300 ease-out min-w-[90px] text-center relative overflow-hidden bg-neutral-800 backdrop-brightness-90 border border-neutral-700 group-hover:bg-neutral-600 group-hover:border-neutral-500">
+            <span className="block group-hover:opacity-0 group-hover:-translate-y-2 transition-all duration-300">
+            {renderPrice(Number(item.data.price))}
+            </span>
+            <span className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+            ${Number(item.data.price)/100}
+            </span>
           </div>
         </div>
       </div>
@@ -185,13 +161,13 @@ interface MobileItemProps {
   replaceText: (text: string) => string;
   priority: boolean;
 }
-const MobileItem = memo(({ item, renderPrice, replaceText, priority }: MobileItemProps) => {
-  const lowestPrice = getLowestPriceCents(item.data);
+
+const MobileItem = memo(({ item, replaceText, priority }: MobileItemProps) => {
   return (
     <Link href={`/product/${item.data.slug}`} passHref target="_blank" rel="noopener noreferrer">
       <div className="text-white bg-black border border-neutral-800 rounded tracking-tight relative cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-neutral-600 h-full flex flex-col group">
         <div className="block w-full text-xs font-bold flex items-center p-2 bg-neutral-900/80 backdrop-blur-sm border-b border-neutral-700">
-          <span className="block">{lowestPrice === 0 || !item.data.inStock ? 'Unavailable' : renderPrice(lowestPrice)}</span>
+          <span className="block">View Details</span>
         </div>
         <div className="overflow-hidden rounded-b-lg relative flex-grow" style={{ aspectRatio: '1 / 1' }}>
           <Image
@@ -214,6 +190,7 @@ const MobileItem = memo(({ item, renderPrice, replaceText, priority }: MobileIte
 });
 MobileItem.displayName = 'MobileItem';
 
+// Category card component (same as before)
 interface CategoryCardProps {
   label: string;
   categoryUrl: string;
@@ -221,6 +198,7 @@ interface CategoryCardProps {
   replaceText: (text: string) => string;
   priority: boolean;
 }
+
 const CategoryCard = memo(({ label, categoryUrl, images, replaceText, priority }: CategoryCardProps) => {
   const firstImage = images?.[0];
   const secondImage = images?.[1];
@@ -269,8 +247,8 @@ const CategoryCard = memo(({ label, categoryUrl, images, replaceText, priority }
 });
 CategoryCard.displayName = 'CategoryCard';
 
-// --- Product Scroller Component ---
-const ProductScroller = memo(({ items, ItemComponent, renderPrice, replaceText, itemLimit, itemBaseClassName, priorityStartIndex = 4 }: ProductScrollerProps) => {
+// Product Scroller (same as before)
+const ProductScroller = memo(({ items, ItemComponent, renderPrice, replaceText, itemBaseClassName, priorityStartIndex = 4 }: ProductScrollerProps) => {
     const scrollerRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
@@ -304,14 +282,12 @@ const ProductScroller = memo(({ items, ItemComponent, renderPrice, replaceText, 
     const scroll = (direction: 'left' | 'right') => {
         const el = scrollerRef.current;
         if (el) {
-            const scrollAmount = el.clientWidth * 0.5; // Scroll by half a page
+            const scrollAmount = el.clientWidth * 0.5;
             el.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
         }
     };
 
-    const limitedItems = itemLimit ? items.slice(0, itemLimit) : items;
-
-    if (limitedItems.length === 0) {
+    if (items.length === 0) {
         return <p className="text-neutral-500 text-center py-4 col-span-full">No items found in this collection.</p>;
     }
 
@@ -322,8 +298,8 @@ const ProductScroller = memo(({ items, ItemComponent, renderPrice, replaceText, 
             </button>
 
             <div ref={scrollerRef} className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory py-1" style={{ scrollbarWidth: 'none', 'msOverflowStyle': 'none', WebkitOverflowScrolling: 'touch' }}>
-                {limitedItems.filter(item => item?.data?.pictureUrl).map((item, idx) => (
-                    <div key={`${item.data.id}-${idx}`} className={`${itemBaseClassName} flex-shrink-0 snap-start p-0.5 md:p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 2xl:w-1/6`}>
+                {items.filter(item => item?.data?.pictureUrl).map((item, idx) => (
+                    <div key={`${item.data.id}-${idx}`} className={`${itemBaseClassName} flex-shrink-0 snap-start p-0.5 md:p-1`}>
                         <ItemComponent item={item} renderPrice={renderPrice} replaceText={replaceText} priority={idx < priorityStartIndex} />
                     </div>
                 ))}
@@ -337,43 +313,32 @@ const ProductScroller = memo(({ items, ItemComponent, renderPrice, replaceText, 
 });
 ProductScroller.displayName = 'ProductScroller';
 
-
 // --- Main Home Component ---
 const Home = () => {
   const [sectionItems, setSectionItems] = useState<{ [title: string]: Item[] }>({});
   const [categoryData, setCategoryData] = useState<ProcessedSanityCategory[]>([]);
-  const [collections, setCollections] = useState<CollectionDoc[]>([]);
+  const [collections, setCollections] = useState<SanityCollectionDoc[]>([]);
   const [mntRate, setMntRate] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { setPageData } = useProductContext();
   const sectionRefs = useRef<SectionRefs>({});
   const fetchedSections = useRef(new Set<string>());
-  const [itemLimit, setItemLimit] = useState(18);
-  const [skeletonCount, setSkeletonCount] = useState(6); // To match grid columns
+  const [skeletonCount, setSkeletonCount] = useState(6);
 
-  // --- NEW: Combined useEffect for screen-size-dependent variables ---
   useEffect(() => {
     const updateLayoutConfig = () => {
       const screenWidth = window.innerWidth;
       
-      // Set item limit for product scrollers
-      if (screenWidth >= 1024) { 
-        setItemLimit(18); 
-      } else { 
-        setItemLimit(12); 
-      }
-      
-      // Set skeleton count to match visible columns for a responsive placeholder
-      if (screenWidth >= 1536) {      // 2xl: 6 cols
+      if (screenWidth >= 1536) {
         setSkeletonCount(6);
-      } else if (screenWidth >= 1024) { // lg/xl: 5 cols
+      } else if (screenWidth >= 1024) {
         setSkeletonCount(5);
-      } else if (screenWidth >= 768) {  // md: 4 cols
+      } else if (screenWidth >= 768) {
         setSkeletonCount(4);
-      } else if (screenWidth >= 640) {  // sm: 3 cols
+      } else if (screenWidth >= 640) {
         setSkeletonCount(3);
-      } else {                          // base: 2 cols
+      } else {
         setSkeletonCount(2);
       }
     };
@@ -392,12 +357,12 @@ const Home = () => {
     }
   }, []);
 
-  const renderPrice = (priceCents: number): string => {
+  const renderPrice = useCallback((priceCents: number): string => {
     if (priceCents === 0 || priceCents === 9999) return 'Unavailable';
     if (mntRate === null) return '...';
     const price = (priceCents * mntRate) / 100;
     return `₮${Math.ceil(price).toLocaleString('en-US')}`;
-  };
+  }, [mntRate]);
 
   const processCategoryData = useCallback((sanityDocs: SanityProductCategoryUrlDoc[]): ProcessedSanityCategory[] => {
     const allProcessedCategories: ProcessedSanityCategory[] = [];
@@ -425,107 +390,135 @@ const Home = () => {
     return allProcessedCategories;
   }, []);
 
-  useEffect(() => {
-    const fetchAllInitialData = async () => {
-      setIsLoading(true);
-      setError(null);
-      fetchedSections.current.clear();
-
-      if (isCacheValid(homeCache.timestamp) && homeCache.collections && homeCache.mntRate && homeCache.sanityCategoryDocs) {
-        console.log("Using cached initial data.");
-        const { collections: cachedCollections, mntRate: cachedMntRate, sanityCategoryDocs: cachedSanityCategoryDocs } = homeCache;
-        setCollections(cachedCollections!);
-        setMntRate(cachedMntRate);
-        const initialSectionItems: { [key: string]: Item[] } = {};
-        cachedCollections!.forEach((collection, index) => {
-          const sectionId = `${collection.name}-${index}`;
-          if (collection.products) {
-            initialSectionItems[sectionId] = collection.products
-              .filter(p => p.pictureUrl)
-              .map(p => ({ data: p, category: p.category || collection.name, categoryUrl: `/collections/${(p.category || collection.name).toLowerCase().replace(/\s+/g, '-')}`, collection: collection.name }));
-          }
-        });
-        setSectionItems(initialSectionItems);
-        if (cachedSanityCategoryDocs) {
-            setCategoryData(processCategoryData(cachedSanityCategoryDocs));
-        }
-        if (setPageData && cachedCollections!.length > 0) {
-          const firstId = `${cachedCollections![0].name}-0`;
-          if (initialSectionItems[firstId]) {
-            setPageData({ [firstId]: initialSectionItems[firstId] });
-          }
-        }
-        setIsLoading(false);
-        return;
+  // NEW: Function to fetch individual collection
+  const fetchCollectionData = useCallback(async (collectionSlug: string): Promise<Item[]> => {
+    try {
+      console.log(`Fetching collection: ${collectionSlug}`);
+      const response = await fetch(`/api/collections/${collectionSlug}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch collection ${collectionSlug}: ${response.status}`);
+      }
+      
+      const data: ApiResponse = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
       }
 
-      console.log("Fetching all essential initial data...");
+      // Transform API products to Item format
+      const items: Item[] = data.products.map(product => ({
+        data: {
+          id: product.id,
+          slug: product.slug,
+          pictureUrl: product.image,
+          title: product.name,
+          category: product.collection,
+          price: product.price,
+          inStock: true, // Assuming all Sanity products are in stock
+        },
+        category: product.collection || data.collectionName,
+        categoryUrl: `/collections/${collectionSlug}`,
+        collection: data.collectionName,
+      }));
+
+      return items;
+    } catch (error) {
+      console.error(`Error fetching collection ${collectionSlug}:`, error);
+      return [];
+    }
+  }, []);
+
+  // NEW: Initial data fetching
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      setIsLoading(true);
+      setError(null);
+
       try {
-        const [productCollectionsRes, categoryUrlsRes, currencyRes] = await Promise.all([
-          fetch(`/api/payload/collections?sort=order`).then(res => res.ok ? res.json() : Promise.reject(`Product Collections fetch failed: ${res.status}`)),
-          fetch(`/api/payload/categories`).then(res => res.ok ? res.json() : Promise.reject(`Category URLs fetch failed: ${res.status}`)),
+        console.log("Fetching initial data...");
+        
+        // Fetch list of collections and other initial data
+        const [collectionsListRes, categoryUrlsRes, currencyRes] = await Promise.all([
+          // Get list of collection metadata from Sanity
+          client.fetch<SanityCollectionDoc[]>(`
+            *[_type == "productCollection"] | order(order asc) {
+              _id,
+              name,
+              "slug": slug.current,
+              order
+            }
+          `),
+          // Still fetch categories from your existing API
+          fetch(`/api/payload/categories`).then(res => res.ok ? res.json() : []),
+          // Fetch currency rate
           fetch('https://hexarate.paikama.co/api/rates/latest/USD?target=MNT').then(res => res.ok ? res.json() : Promise.reject(`Currency fetch failed: ${res.status}`))
         ]);
 
-        const collectionsArray: CollectionDoc[] = productCollectionsRes;
-        const sortedCollections = collectionsArray
-          .filter(c => !!c.url && !!c.name && typeof c.order === 'number')
-          .sort((a, b) => a.order - b.order);
-
         const rate = currencyRes.data?.mid;
         if (!rate) throw new Error('MNT currency rate not available.');
-
-        setCollections(sortedCollections);
         setMntRate(rate);
 
-        const initialSectionItems: { [key: string]: Item[] } = {};
-        sortedCollections.forEach((collection, index) => {
-          const sectionId = `${collection.name}-${index}`;
-          if (collection.products) {
-            initialSectionItems[sectionId] = collection.products
-              .filter(p => p.pictureUrl)
-              .map(p => ({ data: p, category: p.category || collection.name, categoryUrl: `/collections/${(p.category || collection.name).toLowerCase().replace(/\s+/g, '-')}`, collection: collection.name }));
-          } else {
-            initialSectionItems[sectionId] = [];
-          }
-        });
-        setSectionItems(initialSectionItems);
+        setCollections(collectionsListRes);
 
+        // Process categories
         if (categoryUrlsRes.length > 0) {
           setCategoryData(processCategoryData(categoryUrlsRes));
         }
 
-        if (setPageData && sortedCollections.length > 0) {
-          const firstId = `${sortedCollections[0].name}-0`;
+        // Fetch the first few collections' products
+        const initialSectionItems: { [key: string]: Item[] } = {};
+        const collectionsToFetch = collectionsListRes.slice(0, 3); // Load first 3 collections initially
+        
+        for (let index = 0; index < collectionsToFetch.length; index++) {
+          const collection = collectionsToFetch[index];
+          const sectionId = `${collection.name}-${index}`;
+          const items = await fetchCollectionData(collection.slug);
+          initialSectionItems[sectionId] = items;
+          fetchedSections.current.add(sectionId);
+        }
+
+        setSectionItems(initialSectionItems);
+
+        if (setPageData && collectionsListRes.length > 0) {
+          const firstId = `${collectionsListRes[0].name}-0`;
           if (initialSectionItems[firstId]) {
             setPageData({ [firstId]: initialSectionItems[firstId] });
           }
         }
-        
-        homeCache = { collections: sortedCollections, sanityCategoryDocs: categoryUrlsRes, mntRate: rate, timestamp: Date.now() };
-        console.log("Initial data fetched and processed.");
+
+        console.log("Initial data fetched successfully.");
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : String(err);
-        console.error("Critical error fetching initial data:", errorMessage);
+        console.error("Error fetching initial data:", errorMessage);
         setError(`Failed to load page. ${errorMessage}`);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchAllInitialData();
-  }, [processCategoryData, setPageData]);
 
+    fetchInitialData();
+  }, [processCategoryData, setPageData, fetchCollectionData]);
+
+  // NEW: Intersection observer for lazy loading collections
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+      entries.forEach(async (entry) => {
         if (entry.isIntersecting) {
           const sectionIndex = Number(entry.target.getAttribute('data-section-index'));
           const collection = collections[sectionIndex];
           if (collection) {
-            // --- FIX: Changed `index` to `sectionIndex` ---
             const sectionId = `${collection.name}-${sectionIndex}`;
             if (!fetchedSections.current.has(sectionId)) {
+              console.log(`Lazy loading collection: ${collection.slug}`);
               fetchedSections.current.add(sectionId);
+              
+              // Fetch the collection data
+              const items = await fetchCollectionData(collection.slug);
+              setSectionItems(prev => ({
+                ...prev,
+                [sectionId]: items
+              }));
             }
           }
         }
@@ -537,13 +530,13 @@ const Home = () => {
     });
 
     return () => observer.disconnect();
-  }, [collections]);
+  }, [collections, fetchCollectionData]);
 
   const handleRetry = () => {
-    homeCache = { collections: null, sanityCategoryDocs: null, mntRate: null, timestamp: null };
     setCollections([]);
     setSectionItems({});
     setCategoryData([]);
+    fetchedSections.current.clear();
   };
 
   if (error) {
@@ -561,34 +554,34 @@ const Home = () => {
     return (
       <div className="p-4 text-center text-neutral-400 bg-neutral-900 min-h-screen flex flex-col justify-center items-center">
         <h2 className="text-2xl font-bold mb-4 text-white">No Content Available</h2>
-        <p className="text-neutral-500 mb-6">We couldn‘t find any content to display.</p>
+        <p className="text-neutral-500 mb-6">We couldn&apos;t find any content to display.</p>
         <button onClick={handleRetry} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-150">Refresh Page</button>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-hidden"> {/* Prevents horizontal scrollbar on the body */}
+    <div className="overflow-x-hidden">
       {collections.length > 0 ? collections.map((collection, index) => {
         const sectionId = `${collection.name}-${index}`;
         const title = collection.name;
         const items = sectionItems[sectionId] || [];
-        const categoriesToRender = categoryData;
+        const categoriesToRender = index === 0 ? categoryData : []; // Only show categories in first section
+        
         if (!sectionRefs.current[sectionId]) {
           sectionRefs.current[sectionId] = React.createRef<HTMLDivElement>();
         }
+        
         return (
           <section key={sectionId} ref={sectionRefs.current[sectionId]} data-section-index={index} className="mb-20 md:mb-24" aria-label={replaceText(title)}>
             <header className="flex justify-between items-center mb-4 md:mb-6 px-4">
               <h2 className="font-extrabold text-white text-xl md:text-3xl relative truncate pr-4">{replaceText(title)}</h2>
-              {(isLoading || items.length > 0) && (
-                <Link className="text-neutral-300 hover:text-white font-semibold text-xs md:text-sm underline whitespace-nowrap flex-shrink-0" href={`/collections/${collection.name.toLowerCase().replace(/\s+/g, '-')}`} aria-label={`View all ${replaceText(title)}`}>View All</Link>
-              )}
+              <Link className="text-neutral-300 hover:text-white font-semibold text-xs md:text-sm underline whitespace-nowrap flex-shrink-0" href={`/collections/${collection.slug}`} aria-label={`View all ${replaceText(title)}`}>View All</Link>
             </header>
             
             <div>
                 <div className="block lg:hidden">
-                    {isLoading ? (
+                    {(!fetchedSections.current.has(sectionId) || items.length === 0) && !error ? (
                         <div className="flex overflow-hidden pl-4">
                             {[...Array(skeletonCount)].map((_, i) => (
                                 <div key={`loading-prod-mob-${sectionId}-${i}`} className="w-1/2 sm:w-1/3 flex-shrink-0 p-1.5 md:p-2">
@@ -602,7 +595,7 @@ const Home = () => {
                 </div>
 
                 <div className="hidden lg:block">
-                    {isLoading ? (
+                    {(!fetchedSections.current.has(sectionId) || items.length === 0) && !error ? (
                         <div className="flex overflow-hidden pl-4">
                             {[...Array(skeletonCount)].map((_, i) => (
                                 <div key={`loading-prod-desk-${sectionId}-${i}`} className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 2xl:w-1/6 flex-shrink-0 p-1.5 md:p-2">
@@ -611,29 +604,22 @@ const Home = () => {
                             ))}
                         </div>
                     ) : (
-                        <ProductScroller items={items} ItemComponent={DesktopItem} renderPrice={renderPrice} replaceText={replaceText} itemLimit={itemLimit} itemBaseClassName="lg:w-1/4 xl:w-1/5 2xl:w-1/6" priorityStartIndex={5} />
+                        <ProductScroller items={items} ItemComponent={DesktopItem} renderPrice={renderPrice} replaceText={replaceText} itemBaseClassName="lg:w-1/4 xl:w-1/5 2xl:w-1/6" priorityStartIndex={5} />
                     )}
                 </div>
             </div>
 
-            {isLoading && categoriesToRender.length === 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 mt-8 mb-8">
-                {[...Array(4)].map((_, i) => <SkeletonCategoryCard key={`loading-cat-${sectionId}-${i}`} />)}
+            {categoriesToRender.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 mt-16 mb-8">
+                {categoriesToRender.map((category, idx) => (
+                  <CategoryCard key={`${category.id}-${idx}`} label={category.label} images={category.images} categoryUrl={category.categoryUrl} replaceText={replaceText} priority={idx < 4} />
+                ))}
               </div>
-            ) : (
-              categoriesToRender.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 mt-16 mb-8">
-                  {categoriesToRender.map((category, idx) => (
-                    <CategoryCard key={`${category.id}-${idx}`} label={category.label} images={category.images} categoryUrl={category.categoryUrl} replaceText={replaceText} priority={idx < 4} />
-                  ))}
-                </div>
-              ) : null
             )}
           </section>
         );
       }) : (
         isLoading && (
-          // --- UPDATED: Simplified single initial loading section ---
           <section className="mb-12 md:mb-16">
             <header className="flex justify-between items-center mb-6 md:mb-8 px-4">
               <div className="h-7 md:h-8 w-1/2 md:w-1/3 bg-neutral-700 rounded-lg animate-pulse"></div>

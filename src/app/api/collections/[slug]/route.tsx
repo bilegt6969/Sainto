@@ -1,38 +1,35 @@
 // File: app/api/collections/[slug]/route.ts
 import { type NextRequest, NextResponse } from 'next/server.js';
-
-// --- Environment Variable Setup ---
-// Ensure these are in your .env.local and added to .gitignore
-// CONSTRUCT_API_KEY=key_XT7bjdbvjgECO5d8
-// CONSTRUCT_CLIENT_ID=c1a92cc3-02a4-4244-8e70-bee6178e8209
-
-const apiKey = process.env.CONSTRUCT_API_KEY || "key_XT7bjdbvjgECO5d8";
-const clientId = process.env.CONSTRUCT_CLIENT_ID || "c1a92cc3-02a4-4244-8e70-bee6178e8209";
-const instanceId = process.env.CONSTRUCT_INSTANCE_ID || "c1d97a88-ed1d-4eff-bf4c-d2d9caa488c0";
+import { client, getProductCollectionQuery } from '../../../../../lib/sanity';
 
 // --- Interfaces ---
 
-// Structure from the external Construct API
-interface ExternalProductData {
-    id: string;
-    image_url: string;
-    gp_lowest_price_cents_223?: number; // Price in cents
-    gp_instant_ship_lowest_price_cents_223?: number; // Optional instant ship price in cents
-    product_condition: string;
-    box_condition: string;
-    slug?: string; // Product's own slug from the API
+// Structure of individual products from Sanity's rawProductJson
+interface SanityProductData {
+    pictureUrl: string;
+    title: string;
+    slug: string;
+    price: number;
+    collection?: string;
 }
 
-interface ExternalProduct {
-    data: ExternalProductData;
-    value: string; // Product name
+// Structure of the parsed JSON from Sanity
+interface SanityRawData {
+    // ✅ FIXED: Replaced `any` with `unknown` for better type safety.
+    // `unknown` is a safer alternative when the type isn't known beforehand.
+    summary?: unknown;
+    products: SanityProductData[];
 }
 
-interface ExternalApiResponse {
-    response: {
-        results: ExternalProduct[];
-        total_num_results: number;
+// Structure of the Sanity document
+interface SanityCollection {
+    _id: string;
+    name: string;
+    slug: {
+        current: string;
     };
+    rawProductJson: string;
+    order: number;
 }
 
 // Define the expected structure for the *resolved* params (after awaiting)
@@ -45,16 +42,16 @@ export interface ApiProduct {
     id: string;
     name: string;
     image: string;
-    price: number; // Price converted to DOLLARS
-    instantShipPrice: number | null; // Price converted to DOLLARS, or null
-    productCondition: string;
-    boxCondition: string;
     slug: string; // Product-specific slug for linking
+    price: number;
+    collection?: string;
 }
 
 // Structure of the overall response THIS API route returns (exported for frontend use)
 export interface ApiResponse {
     products: ApiProduct[];
+    collectionName: string;
+    collectionSlug: string;
     hasMore: boolean;
     total: number;
     currentPage: number;
@@ -64,116 +61,59 @@ export interface ApiResponse {
 
 // --- Constants ---
 const RESULTS_PER_PAGE = 24;
-const SEARCH_TYPE = '16'; // Based on your original URL
-const CACHE_REVALIDATE_SECONDS = 300; // Cache for 5 minutes
-const CLIENT_VERSION = 'ciojs-client-2.54.0';
+
+// ✅ FIXED: Exporting this constant as `revalidate` tells Next.js
+// how often to cache this route (in seconds). This fixes the "unused variable"
+// error and correctly implements caching.
+export const revalidate = 300; // Cache for 5 minutes
 
 // --- Helper Functions ---
-
-/**
- * Constructs the external API URL with proper parameters
- */
-function buildApiUrl(slug: string, page: number): string {
-    const baseUrl = 'https://ac.cnstrc.com/browse/collection_id';
-    
-    // URL parameters extracted from your original API call
-    const params = new URLSearchParams({
-        'c': CLIENT_VERSION,
-        'key': apiKey,
-        'i': instanceId,
-        's': SEARCH_TYPE,
-        'page': page.toString(),
-        'num_results_per_page': RESULTS_PER_PAGE.toString(),
-        'sort_by': 'relevance',
-        'sort_order': 'descending',
-        'fmt_options[hidden_fields]': 'gp_lowest_price_cents_223',
-        'fmt_options[hidden_facets]': 'gp_lowest_price_cents_223',
-        '_dt': Date.now().toString()
-    });
-
-    // Add the complex variations_map parameter
-    const variationsMap = {
-        "group_by": [
-            {
-                "name": "product_condition",
-                "field": "data.product_condition"
-            },
-            {
-                "name": "box_condition",
-                "field": "data.box_condition"
-            }
-        ],
-        "values": {
-            "min_regional_price": {
-                "aggregation": "min",
-                "field": "data.gp_lowest_price_cents_223"
-            },
-            "min_regional_instant_ship_price": {
-                "aggregation": "min",
-                "field": "data.gp_instant_ship_lowest_price_cents_223"
-            }
-        },
-        "dtype": "object"
-    };
-
-    const queryString = {
-        "features": {
-            "display_variations": true
-        },
-        "feature_variants": {
-            "display_variations": "matched"
-        }
-    };
-
-    params.append('variations_map', JSON.stringify(variationsMap));
-    params.append('qs', JSON.stringify(queryString));
-
-    // Add multiple hidden fields for instant ship pricing
-    params.append('fmt_options[hidden_fields]', 'gp_instant_ship_lowest_price_cents_223');
-    params.append('fmt_options[hidden_facets]', 'gp_instant_ship_lowest_price_cents_223');
-
-    return `${baseUrl}/${slug}?${params.toString()}`;
-    console.log(baseUrl + slug + params.toString())
-}
 
 /**
  * Validates and sanitizes the page number
  */
 function validatePageNumber(pageQuery: string | null): number {
     if (!pageQuery) return 1;
-    
+
     const pageNum = parseInt(pageQuery, 10);
     if (isNaN(pageNum) || pageNum < 1) {
         console.warn(`Invalid page parameter received: "${pageQuery}". Defaulting to page 1.`);
         return 1;
     }
-    
+
     return pageNum;
 }
 
 /**
- * Converts external product data to our API format
+ * Converts Sanity product data to our API format
  */
-function transformProduct(item: ExternalProduct): ApiProduct {
-    // Convert price from cents to DOLLARS, default to 0 if missing/invalid
-    const priceInDollars = typeof item.data.gp_lowest_price_cents_223 === 'number'
-        ? item.data.gp_lowest_price_cents_223 / 100
-        : 0;
+function transformSanityProduct(item: SanityProductData, index: number): ApiProduct {
+    return {
+        id: item.slug || `product-${index}`, // Use slug as ID, fallback to index-based ID
+        name: item.title,
+        image: item.pictureUrl,
+        slug: item.slug,
+        price: item.price || 0,
+        collection: item.collection,
+    };
+}
 
-    // Convert instant ship price to DOLLARS, null if missing/invalid
-    const instantShipPriceInDollars = typeof item.data.gp_instant_ship_lowest_price_cents_223 === 'number'
-        ? item.data.gp_instant_ship_lowest_price_cents_223 / 100
-        : null;
+/**
+ * Paginates an array of products
+ */
+function paginateProducts(products: ApiProduct[], page: number, perPage: number) {
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedProducts = products.slice(startIndex, endIndex);
+
+    const totalPages = Math.ceil(products.length / perPage);
+    const hasMore = page < totalPages;
 
     return {
-        id: item.data.id,
-        name: item.value,
-        image: item.data.image_url,
-        price: priceInDollars,
-        instantShipPrice: instantShipPriceInDollars,
-        productCondition: item.data.product_condition,
-        boxCondition: item.data.box_condition,
-        slug: item.data.slug || item.data.id,
+        products: paginatedProducts,
+        hasMore,
+        totalPages,
+        total: products.length
     };
 }
 
@@ -195,24 +135,13 @@ export async function GET(
         const pageQuery = searchParams.get('page');
         pageNum = validatePageNumber(pageQuery);
 
-        // 2. Validate Credentials
-        if (!apiKey || !clientId || !instanceId) {
-            console.error('Missing API credentials in environment variables.');
-            return NextResponse.json({
-                products: [],
-                hasMore: false,
-                total: 0,
-                currentPage: pageNum,
-                totalPages: 0,
-                error: 'Server configuration error: Missing API credentials.'
-            }, { status: 500 });
-        }
-
-        // 3. Validate Slug
+        // 2. Validate Slug
         if (!slug || typeof slug !== 'string') {
             console.error('Invalid or missing slug parameter:', slug);
             return NextResponse.json({
                 products: [],
+                collectionName: '',
+                collectionSlug: '',
                 hasMore: false,
                 total: 0,
                 currentPage: pageNum,
@@ -221,74 +150,79 @@ export async function GET(
             }, { status: 400 });
         }
 
-        // 4. Build API URL
-        const apiUrl = buildApiUrl(slug, pageNum);
-        console.log(apiUrl)
-        console.log(`Fetching collection "${slug}", page ${pageNum}...`);
+        console.log(`Fetching collection "${slug}" from Sanity, page ${pageNum}...`);
 
-        // 5. Fetch from External API
-        const res = await fetch(apiUrl, {
-            next: { revalidate: CACHE_REVALIDATE_SECONDS },
-            headers: {
-                'Accept': 'application/json',
-                'User-Agent': `NextJS-App/${CLIENT_VERSION}`
-            }
-        });
+        // 3. Fetch from Sanity
+        const collection: SanityCollection = await client.fetch(
+            getProductCollectionQuery,
+            { slug }
+        );
 
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error(`External API Error for slug "${slug}" (Page: ${pageNum}): Status ${res.status}`, errorText.substring(0, 200));
-            
+        // 4. Check if collection exists
+        if (!collection) {
+            console.warn(`Collection with slug "${slug}" not found in Sanity`);
             return NextResponse.json({
                 products: [],
+                collectionName: '',
+                collectionSlug: slug,
                 hasMore: false,
                 total: 0,
                 currentPage: pageNum,
                 totalPages: 0,
-                error: `External API failed with status: ${res.status}`
-            }, { status: res.status >= 500 ? res.status : 502 });
+                error: `Collection "${slug}" not found`
+            }, { status: 404 });
         }
 
-        const data: ExternalApiResponse = await res.json();
-
-        // 6. Validate Response Structure
-        if (!data.response || !Array.isArray(data.response.results)) {
-            console.warn(`Invalid data structure received for slug "${slug}" (Page: ${pageNum})`);
+        // 5. Parse the rawProductJson
+        let parsedProducts: SanityProductData[] = [];
+        try {
+            const rawData: SanityRawData = JSON.parse(collection.rawProductJson);
+            if (rawData && Array.isArray(rawData.products)) {
+                parsedProducts = rawData.products;
+            } else {
+                throw new Error('Invalid product data structure');
+            }
+        } catch (parseError) {
+            console.error(`Failed to parse rawProductJson for collection "${slug}":`, parseError);
             return NextResponse.json({
                 products: [],
+                collectionName: collection.name,
+                collectionSlug: collection.slug.current,
                 hasMore: false,
                 total: 0,
                 currentPage: pageNum,
                 totalPages: 0,
-                error: 'Received invalid data structure from external API.'
+                error: 'Invalid product data format in collection'
             }, { status: 422 });
         }
 
-        // 7. Transform Products
-        const products: ApiProduct[] = data.response.results.map(transformProduct);
+        // 6. Transform Products
+        const allProducts: ApiProduct[] = parsedProducts.map(transformSanityProduct);
 
-        // 8. Calculate Pagination
-        const totalResults = data.response.total_num_results || 0;
-        const totalPages = Math.ceil(totalResults / RESULTS_PER_PAGE);
-        const hasMore = pageNum < totalPages;
+        // 7. Apply Pagination
+        const paginationResult = paginateProducts(allProducts, pageNum, RESULTS_PER_PAGE);
 
-        console.log(`Successfully fetched ${products.length} products for "${slug}" (Page: ${pageNum}/${totalPages})`);
+        console.log(`Successfully fetched ${paginationResult.products.length} products for "${slug}" (Page: ${pageNum}/${paginationResult.totalPages})`);
 
-        // 9. Return Success Response
+        // 8. Return Success Response
         return NextResponse.json({
-            products,
-            hasMore,
-            total: totalResults,
+            products: paginationResult.products,
+            collectionName: collection.name,
+            collectionSlug: collection.slug.current,
+            hasMore: paginationResult.hasMore,
+            total: paginationResult.total,
             currentPage: pageNum,
-            totalPages,
+            totalPages: paginationResult.totalPages,
         });
 
     } catch (error: unknown) {
         console.error(`Error in API route handler for slug [${slug ?? 'unknown'}] (Page: ${pageNum}):`, error);
         const message = error instanceof Error ? error.message : 'An unknown server error occurred';
-        
+
         return NextResponse.json({
             products: [],
+            collectionName: '',
+            collectionSlug: slug || '',
             hasMore: false,
             total: 0,
             currentPage: pageNum,
@@ -298,7 +232,7 @@ export async function GET(
     }
 }
 
-// Health check endpoint (optional)
+// Health check endpoint
 export async function HEAD(
     request: NextRequest,
     { params }: { params: Promise<ResolvedParams> }

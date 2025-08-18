@@ -30,3 +30,35 @@ const builder = imageUrlBuilder(client)
 export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
+
+// GROQ query to fetch a single product collection by slug
+export const getProductCollectionQuery = `
+  *[_type == "productCollection" && slug.current == $slug][0] {
+    _id,
+    name,
+    slug,
+    rawProductJson,
+    order
+  }
+`;
+
+// GROQ query to fetch all product collections metadata (for listing)
+export const getAllProductCollectionsQuery = `
+  *[_type == "productCollection"] | order(order asc) {
+    _id,
+    name,
+    "slug": slug.current,
+    order
+  }
+`;
+
+// GROQ query to fetch all product collections with full data (for reference)
+export const getAllProductCollectionsWithDataQuery = `
+  *[_type == "productCollection"] | order(order asc) {
+    _id,
+    name,
+    slug,
+    rawProductJson,
+    order
+  }
+`;
