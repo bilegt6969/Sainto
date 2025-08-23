@@ -376,10 +376,22 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState(''); // State for search query in Navbar
+    const [isVisible, setIsVisible] = useState(false); // Ghost animation state
     const isLargeScreen = useMediaQuery('(min-width:1024px)');
     const isMobile = !isLargeScreen;
     const cart = useCartStore((state) => state.cart);
     const itemCount = cart.reduce((total: number, item: { quantity: number }) => total + item.quantity, 0);
+
+    // Ghost animation effect - appears after 0.5 seconds
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsVisible(true);
+        }, 5);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, []);
 
     // Close mobile menu if screen size changes to large
     useEffect(() => {
@@ -400,117 +412,144 @@ const Navbar = () => {
         };
     }, [isOpen, isMobile]);
 
+    // Framer Motion variants for smooth top-to-position animation
+    const navbarVariants = {
+        hidden: { 
+             y: -100
+        },
+        show: {
+             y: 0,
+            transition: {
+                type: 'spring',
+                stiffness: 400,
+                damping: 40,
+                mass: 1,
+                duration: 1.2
+            },
+        },
+    };
+
     return (
         <div className="relative w-full text-neutral-400">
             {/* Spacer for fixed header */}
             <div className="z-[99] fixed pointer-events-none inset-x-0 h-[88px]"></div>
-            <header
-                className={cn(
-                    'fixed top-4 inset-x-0 mx-auto max-w-6xl px-2 md:px-12 z-[100]',
-                    'h-12'
-                )}
-            >
-                <Wrapper
-                    className={cn(
-                        'relative backdrop-blur-lg backdrop-brightness-40 rounded-3xl lg:rounded-3xl border border-[rgba(124,124,124,0.2)] px-1 md:px-2 flex items-center justify-start h-full'
-                    )}
-                >
-                    <div className="flex items-center mx-1 sm:mx-0 justify-between w-full">
-                        <div className="flex items-center gap-4 flex-shrink-0">
-                            {/* Logo */}
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Link
-                                    href="/"
-                                    className="text-lg font-semibold transition-colors text-foreground bg-[#232323] hover:bg-neutral-900 py-0 px-[5px] rounded-full border border-neutral-700 flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                                    aria-label="Homepage"
-                                >
-                                    <Image
-                                        height={60}
-                                        width={60}
-                                        src={Logo}
-                                        alt="saintoLogo"
-                                        priority
-                                        className="transition-transform duration-300 transform px-1"
-                                    />
-                                </Link>
-                            </motion.div>
-                            {/* Desktop Menu */}
-                            <div className="items-center hidden lg:flex">
-                                <Menu />
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 lg:gap-4">
-                            {/* Search Button */}
-                            <motion.div whileHover={{ y: -1 }} whileTap={{ y: 1 }}  >
-                                <Button
-                                    size="sm"
-                                    variant="tertiary"
-                                    onClick={() => setIsSearchOpen(true)}
-                                    className="rounded-full text-white transition-all items-center duration-200 px-3 py-2 glossy-button-effect hover:brightness-125 hover:scale-105 active:scale-95"
-                                    aria-label="Хайх"
-                                >
-                                    <Search className="w-4 h-4 relative z-10" />
-                                    <span className="ml-0 sm:ml-2 hidden sm:inline relative z-10">Хайх</span>
-                                </Button>
-                            </motion.div>
-                            {/* Shopping Bag Button */}
-                            <motion.div whileHover={{ y: -1 }} whileTap={{ y: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
-                                <Link
-                                    href="/bag"
-                                    className="relative flex items-center  duration-300 transition-all ease-soft-spring text-neutral-400 hover:text-white p-1.5 rounded-full hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                                    aria-label={`Shopping bag with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
-                                >
-                                    <ShoppingBag className="w-6 h-6" />
-                                    <AnimatePresence>
-                                        {itemCount > 0 && (
-                                            <motion.span
-                                                initial={{ scale: 0, y: 5 }}
-                                                animate={{ scale: 1, y: 0 }}
-                                                exit={{ scale: 0 }}
-                                                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                                                className="absolute -top-1 -right-1 bg-white text-black text-[10px] font-medium rounded-full px-1.5 leading-tight flex items-center justify-center min-w-[16px] h-[16px]"
-                                                aria-hidden="true"
+            
+            <AnimatePresence>
+                {isVisible && (
+                    <motion.header
+                        variants={navbarVariants}
+                        initial="hidden"
+                        animate="show"
+                        exit="hidden"
+                        className={cn(
+                            'fixed top-4 inset-x-0 mx-auto max-w-6xl px-2 md:px-12 z-[100]',
+                            'h-12'
+                        )}
+                    >
+                        <Wrapper
+                            className={cn(
+                                'relative backdrop-blur-lg backdrop-brightness-40 rounded-3xl lg:rounded-3xl border border-[rgba(124,124,124,0.2)] px-1 md:px-2 flex items-center justify-start h-full'
+                            )}
+                        >
+                                <div className="flex items-center mx-1 sm:mx-0 justify-between w-full">
+                                    <div className="flex items-center gap-4 flex-shrink-0">
+                                        {/* Logo */}
+                                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                            <Link
+                                                href="/"
+                                                className="text-lg font-semibold transition-colors text-foreground bg-[#232323] hover:bg-neutral-900 py-0 px-[5px] rounded-full border border-neutral-700 flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                                                aria-label="Homepage"
                                             >
-                                                {itemCount > 9 ? '9+' : itemCount}
-                                            </motion.span>
-                                        )}
-                                    </AnimatePresence>
-                                </Link>
-                            </motion.div>
-                            {/* AuthButton */}
-                            <motion.div className='hidden sm:inline' whileHover={{ y: -3 }} whileTap={{ y: -3 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
-                                <AuthButton />
-                            </motion.div>
-                            {/* Mobile Menu Toggle Button */}
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="lg:hidden">
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => setIsOpen((prev) => !prev)}
-                                    className="p-2 w-8 h-8 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full"
-                                    aria-label={isOpen ? 'Close menu' : 'Open menu'}
-                                    aria-expanded={isOpen}
-                                    aria-controls="mobile-menu-content"
-                                >
-                                    <AnimatePresence initial={false} mode="wait">
-                                        <motion.div
-                                            key={isOpen ? 'x' : 'menu'}
-                                            initial={{ rotate: isOpen ? 90 : -90, opacity: 0, scale: 0.5 }}
-                                          animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                                            exit={{ rotate: isOpen ? -90 : 90, opacity: 0, scale: 0.5 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
-                                            {isOpen ? <XIcon className="w-4 h-4" /> : <Icons.menu className="w-3.5 h-3.5" />}
+                                                <Image
+                                                    height={60}
+                                                    width={60}
+                                                    src={Logo}
+                                                    alt="saintoLogo"
+                                                    priority
+                                                    className="transition-transform duration-300 transform px-1"
+                                                />
+                                            </Link>
                                         </motion.div>
-                                    </AnimatePresence>
-                                </Button>
-                            </motion.div>
-                        </div>
-                    </div>
-                    {/* Mobile Menu Content */}
-                    {!isLargeScreen && <MobileMenu isOpen={isOpen} setIsOpen={setIsOpen} authButton={<AuthButton />} />}
-                </Wrapper>
-            </header>
+                                        {/* Desktop Menu */}
+                                        <div className="items-center hidden lg:flex">
+                                            <Menu />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 lg:gap-4">
+                                        {/* Search Button */}
+                                        <motion.div whileHover={{ y: -1 }} whileTap={{ y: 1 }}  >
+                                            <Button
+                                                size="sm"
+                                                variant="tertiary"
+                                                onClick={() => setIsSearchOpen(true)}
+                                                className="rounded-full text-white transition-all items-center duration-200 px-3 py-2 glossy-button-effect hover:brightness-125 hover:scale-105 active:scale-95"
+                                                aria-label="Хайх"
+                                            >
+                                                <Search className="w-4 h-4 relative z-10" />
+                                                <span className="ml-0 sm:ml-2 hidden sm:inline relative z-10">Хайх</span>
+                                            </Button>
+                                        </motion.div>
+                                        {/* Shopping Bag Button */}
+                                        <motion.div whileHover={{ y: -1 }} whileTap={{ y: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
+                                            <Link
+                                                href="/bag"
+                                                className="relative flex items-center  duration-300 transition-all ease-soft-spring text-neutral-400 hover:text-white p-1.5 rounded-full hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                                                aria-label={`Shopping bag with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+                                            >
+                                                <ShoppingBag className="w-6 h-6" />
+                                                <AnimatePresence>
+                                                    {itemCount > 0 && (
+                                                        <motion.span
+                                                            initial={{ scale: 0, y: 5 }}
+                                                            animate={{ scale: 1, y: 0 }}
+                                                            exit={{ scale: 0 }}
+                                                            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                                                            className="absolute -top-1 -right-1 bg-white text-black text-[10px] font-medium rounded-full px-1.5 leading-tight flex items-center justify-center min-w-[16px] h-[16px]"
+                                                            aria-hidden="true"
+                                                        >
+                                                            {itemCount > 9 ? '9+' : itemCount}
+                                                        </motion.span>
+                                                    )}
+                                                </AnimatePresence>
+                                            </Link>
+                                        </motion.div>
+                                        {/* AuthButton */}
+                                        <motion.div className='hidden sm:inline' whileHover={{ y: -3 }} whileTap={{ y: -3 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
+                                            <AuthButton />
+                                        </motion.div>
+                                        {/* Mobile Menu Toggle Button */}
+                                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="lg:hidden">
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                onClick={() => setIsOpen((prev) => !prev)}
+                                                className="p-2 w-8 h-8 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full"
+                                                aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                                                aria-expanded={isOpen}
+                                                aria-controls="mobile-menu-content"
+                                            >
+                                                <AnimatePresence initial={false} mode="wait">
+                                                    <motion.div
+                                                        key={isOpen ? 'x' : 'menu'}
+                                                        initial={{ rotate: isOpen ? 90 : -90, opacity: 0, scale: 0.5 }}
+                                                        animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                                                        exit={{ rotate: isOpen ? -90 : 90, opacity: 0, scale: 0.5 }}
+                                                        transition={{ duration: 0.2 }}
+                                                    >
+                                                        {isOpen ? <XIcon className="w-4 h-4" /> : <Icons.menu className="w-3.5 h-3.5" />}
+                                                    </motion.div>
+                                                </AnimatePresence>
+                                            </Button>
+                                        </motion.div>
+                                    </div>
+                                </div>
+                                {/* Mobile Menu Content */}
+                                {!isLargeScreen && <MobileMenu isOpen={isOpen} setIsOpen={setIsOpen} authButton={<AuthButton />} />}
+                            </Wrapper>
+                    </motion.header>
+                )}
+            </AnimatePresence>
+            
             {/* SearchModal Component */}
             <SearchModal
                 isOpen={isSearchOpen}

@@ -5,6 +5,9 @@ import './(frontend)/styles.css';
 import { Analytics } from "@vercel/analytics/next";
 import { ProductProvider } from './context/ProductContext';
 import NextTopLoader from 'nextjs-toploader';
+import InvestButton from '../components/InvestButton';
+ 
+
 // Removed headers import as it's no longer needed for this logic
 
 // Import the new Client Component wrapper
@@ -127,6 +130,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </LayoutClientWrapper>
           </div>
           <Analytics /> {/* Analytics can remain here if it's fine being a direct child of body in server component */}
+          <InvestButton />
         </ProductProvider>
       </body>
     </html>
