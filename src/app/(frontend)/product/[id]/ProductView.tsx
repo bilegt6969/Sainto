@@ -11,10 +11,12 @@ import {
   TruckIcon,
   ShieldCheckIcon,
   ArrowPathIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { toast, Toaster } from 'sonner';
 import useCartStore from '../../../store/cartStore'; // Assuming this path is correct
+import { useRecentlyViewed } from '../../../../hooks/useRecentlyViewed';
 
 //--- Interfaces ---//
 interface PriceData {
@@ -55,12 +57,14 @@ interface Product {
   };
 }
 
+
 // Props for the ProductView component, passed from the server component
 interface ProductViewProps {
   product: Product;
   priceData: PriceData[];
   recommendedProducts: Product[];
 }
+
 
 //--- Skeleton Loading Component ---//
 const ProductPageSkeleton = () => {
@@ -201,6 +205,150 @@ const AccordionItem = ({
   );
 };
 
+
+
+//--- Image Zoom Modal Component ---//
+const ImageZoomModal = ({ 
+  images, 
+  initialIndex, 
+  onClose 
+}: { 
+  images: string[], 
+  initialIndex: number, 
+  onClose: () => void 
+}) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(initialIndex);
+
+  // Helper function to convert image URL to high-res version
+  const getHighResImageUrl = (url: string) => {
+    return url.replace(/width=\d+/, 'width=1000');
+  };
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEsc);
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'unset';
+    };
+  }, [onClose]);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-white flex flex-col"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-60 p-2 rounded-full bg-black/10 hover:bg-black/20 transition-all duration-200"
+        aria-label="Close zoom view"
+      >
+        <XMarkIcon className="h-6 w-6 text-black" />
+      </button>
+
+      {/* Navigation arrows for multiple images */}
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              prevImage();
+            }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-black/10 hover:bg-black/20 transition-all duration-200"
+            aria-label="Previous image"
+          >
+            <ArrowLeftIcon className="h-6 w-6 text-black" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              nextImage();
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-black/10 hover:bg-black/20 transition-all duration-200"
+            aria-label="Next image"
+          >
+            <ArrowRightIcon className="h-6 w-6 text-black" />
+          </button>
+        </>
+      )}
+
+      {/* Desktop: Vertical scroll layout */}
+      <div className="hidden md:flex flex-col items-center w-full h-full overflow-y-auto">
+        {images.map((img, index) => (
+          <div
+            key={index}
+            className="w-full flex justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={getHighResImageUrl(img)}
+              alt={`Product image ${index + 1}`}
+              width={1000}
+              height={1000}
+              className="object-contain max-w-full h-auto"
+              unoptimized
+              onError={(e) => (e.currentTarget.src = '/placeholder.png')}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile: Single image with swipe navigation */}
+      <div className="md:hidden flex items-center justify-center w-full h-full relative">
+        <div 
+          className="w-full h-full flex items-center justify-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Image
+            src={getHighResImageUrl(images[currentImageIndex])}
+            alt={`Product image ${currentImageIndex + 1}`}
+            fill
+            className="object-contain"
+            unoptimized
+            onError={(e) => (e.currentTarget.src = '/placeholder.png')}
+          />
+        </div>
+        
+        {/* Mobile pagination dots */}
+        {images.length > 1 && (
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentImageIndex(index);
+                }}
+                className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                  currentImageIndex === index
+                    ? 'bg-black/70 scale-125'
+                    : 'bg-black/30 hover:bg-black/50'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
 //--- Main Client Component ---//
 export default function ProductView({
   product: initialProduct,
@@ -218,7 +366,23 @@ export default function ProductView({
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [mntRate, setMntRate] = useState<number | null>(null);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const [showImageZoom, setShowImageZoom] = useState(false);
   const addToCart = useCartStore((state) => state.addToCart);
+  const { recentlyViewed, addToRecentlyViewed } = useRecentlyViewed(); // ADD THIS LINE
+
+
+  // Track product view
+  useEffect(() => {
+    if (product) {
+      addToRecentlyViewed({
+        id: product.id,
+        name: product.name,
+        mainPictureUrl: product.mainPictureUrl,
+        slug: product.slug,
+        brandName: product.brandName,
+      });
+    }
+  }, [product?.id]); 
 
   // Helper function to get lowest price data
   const getLowestPriceData = () => {
@@ -247,6 +411,8 @@ export default function ProductView({
       data: lowestPriceItem,
     };
   };
+
+ 
 
   //--- Effects ---//
   useEffect(() => {
@@ -281,6 +447,7 @@ export default function ProductView({
     setSelectedImageIndex(0);
     setDirection(0);
     setOpenAccordion(null);
+    setShowImageZoom(false);
   }, [initialProduct, initialPriceData, initialRecommendedProducts]);
 
   //--- Event Handlers ---//
@@ -293,6 +460,14 @@ export default function ProductView({
 
   const handleAccordionToggle = (accordionId: string) => {
     setOpenAccordion(openAccordion === accordionId ? null : accordionId);
+  };
+
+  const handleImageClick = () => {
+    setShowImageZoom(true);
+  };
+
+  const handleCloseZoom = () => {
+    setShowImageZoom(false);
   };
 
   const paginate = (newDirection: number) => {
@@ -398,7 +573,10 @@ export default function ProductView({
         <div className="h-fit w-full flex flex-col lg:flex-row gap-8">
           {/* Left Column: Product Image with Swipe */}
           <div className="flex flex-col items-center relative w-full lg:w-1/2">
-            <div className="relative h-[500px] sm:h-[600px] md:h-[700px] w-full flex items-center justify-center bg-white backdrop-blur-sm rounded-4xl overflow-hidden group cursor-grab active:cursor-grabbing border border-white/20 shadow-xl">
+            <div 
+              className="relative h-[500px] sm:h-[600px] md:h-[700px] w-full flex items-center justify-center bg-white backdrop-blur-sm rounded-4xl overflow-hidden group cursor-zoom-in border border-white/20 shadow-xl"
+              onClick={handleImageClick}
+            >
               {imagesForPagination.length > 0 ? (
                 <AnimatePresence initial={false} custom={direction}>
                   <motion.div
@@ -434,17 +612,32 @@ export default function ProductView({
               )}
               {imagesForPagination.length > 1 && (
                 <>
-                  <button onClick={() => paginate(-1)} aria-label="Previous image" className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 backdrop-blur-md text-white/80 hover:bg-black/40 hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 border border-white/20 shadow-lg">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      paginate(-1);
+                    }} 
+                    aria-label="Previous image" 
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 backdrop-blur-md text-white/80 hover:bg-black/40 hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 border border-white/20 shadow-lg"
+                  >
                     <ArrowLeftIcon className="h-5 w-5" />
                   </button>
-                  <button onClick={() => paginate(1)} aria-label="Next image" className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 backdrop-blur-md text-white/80 hover:bg-black/40 hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 border border-white/20 shadow-lg">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      paginate(1);
+                    }} 
+                    aria-label="Next image" 
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 backdrop-blur-md text-white/80 hover:bg-black/40 hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 border border-white/20 shadow-lg"
+                  >
                     <ArrowRightIcon className="h-5 w-5" />
                   </button>
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10 p-2 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 shadow-lg">
                     {imagesForPagination.map((_, index) => (
                       <button
                         key={index}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           const newDirection = index > selectedImageIndex ? 1 : index < selectedImageIndex ? -1 : 0;
                           setDirection(newDirection);
                           setSelectedImageIndex(index);
@@ -497,21 +690,27 @@ export default function ProductView({
 
           {/* Right Column: Product Info */}
           <div className="text-white flex flex-col justify-start items-start w-full lg:w-1/2 lg:p-4">
-            <span className="flex space-x-1 text-sm text-white/70 mb-2">
-              <Link href={`/category/${product.productCategory.toLowerCase()}`} className="hover:underline hover:text-white transition-colors duration-200">
+            <span className="flex space-x-1 text-xs text-white/70 mb-2">
+            <Link href={`/`} className="hover:underline hover:text-white transition-colors duration-200">
+                Home
+              </Link>
+            <p className="text-white/50">/</p>
+              <Link href={`/category/${product.productCategory.toLowerCase()}`} className="hover:underline capitalize hover:text-white transition-colors duration-200">
                 {product.productCategory}
               </Link>
               <p className="text-white/50">/</p>
-              <Link href={`/type/${product.productType.toLowerCase()}`} className="hover:underline hover:text-white transition-colors duration-200">
+              <Link href={`/type/${product.productType.toLowerCase()}`} className="hover:underline capitalize hover:text-white transition-colors duration-200">
                 {product.productType}
               </Link>
+              <p className="text-white/50">/</p>
+              <Link href={`/type/${product.brandName.toLowerCase()}`} className="hover:underline capitalize hover:text-white transition-colors duration-200">
+                {product.brandName}
+              </Link>
             </span>
-            <h1 className="text-3xl md:text-4xl lg:text-[30px] tracking-tight leading-tight font-bold mb-4 text-white drop-shadow-lg">
+            <h1 className="text-3xl md:text-4xl lg:text-[30px] tracking-tight leading-tight font-semibold mb-4 text-white drop-shadow-lg">
               {product.name}
             </h1>
-            <p className="text-lg text-white/80 mb-6 bg-white/5 backdrop-blur-sm px-3 py-1">
-              {product.brandName}
-            </p>
+            
             <div className="flex items-center gap-2 mt-2">
                 <TruckIcon className="h-4 w-4 text-white"/>
                 <span className="text-sm text-neutral-100"><span className='font-semibold'>XpressShip</span> Delivery in 2 weeks. Up to 1 extra week in rare cases.</span>
@@ -519,71 +718,76 @@ export default function ProductView({
             <div className="bg-white/20 backdrop-blur-sm w-full h-[1px] my-6 md:my-10"></div>
 
             {/* Size selection */}
-            <div className="relative text-left w-full space-y-4 mt-4">
-                <div className="flex w-full items-center justify-between">
-                    <label htmlFor="size-select-button" className="block text-lg font-semibold text-white mb-2">
-                        Size: <span className="font-bold">{selectedSize || (getLowestPriceData() ? 'All' : 'All')}</span>
-                    </label>
-                    <a href="/resources/size-guide" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
-                        <h1 className="font-medium cursor-pointer underline">Size Guide</h1>
-                    </a>
-                </div>
-              <button
-                id="size-select-button"
-                onClick={toggleDropdown}
-                disabled={sizeOptions.length === 0}
-                className={`w-full bg-black/30 backdrop-blur-xl flex border border-white/20 justify-between font-semibold text-white px-2 py-2 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-opacity-50 transition-all duration-300 ease-in-out items-center hover:bg-black/50 hover:border-white/40 ${
-                  sizeOptions.length === 0 ? 'opacity-60 cursor-not-allowed' : ''
-                }`}
-                aria-haspopup="listbox"
-                aria-expanded={isOpen}
-              >
-                <div className="flex w-full justify-between px-4 py-3 items-center">
-                    <span className={`${selectedSize ? 'text-white' : 'text-white/60'}`}>
-                        {selectedSize ? `US ${selectedSize}` : (sizeOptions.length > 0 ? 'Select a size' : 'No sizes available')}
-                    </span>
-                    <ChevronDownIcon className={`h-5 w-5 text-white/60 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-                </div>
-              </button>
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
+{/* Size selection */}
+<div className="relative text-left w-full space-y-4 mt-4">
+    <div className="flex w-full items-center justify-between">
+        <label htmlFor="size-select-button" className="block text-lg font-semibold text-white mb-2">
+            Size: <span className="font-bold">{selectedSize || (getLowestPriceData() ? 'All' : 'All')}</span>
+        </label>
+        <a href="/resources/size-guide" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+            <h1 className="font-medium cursor-pointer underline">Size Guide</h1>
+        </a>
+    </div>
+    <div className="relative">
+        <button
+            id="size-select-button"
+            onClick={toggleDropdown}
+            disabled={sizeOptions.length === 0}
+            className={`w-full bg-black/30 backdrop-blur-xl flex border border-white/20 justify-between font-semibold text-white px-2 py-2 ${
+                isOpen ? 'rounded-t-4xl bg-black/30' : 'rounded-4xl bg-black/30'
+            } shadow-lg focus:outline-none focus:ring-1 focus:ring-white/30 focus:ring-opacity-50 transition-all duration-300 ease-in-out items-center hover:bg-black/50 hover:border-white/40 ${
+                sizeOptions.length === 0 ? 'opacity-60 cursor-not-allowed' : ''
+            }`}
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
+        >
+            <div className="flex w-full justify-between px-4 py-3 items-center">
+                <span className={`${selectedSize ? 'text-white' : 'text-white/60'}`}>
+                    {selectedSize ? `US ${selectedSize}` : (sizeOptions.length > 0 ? 'Select a size' : 'No sizes available')}
+                </span>
+                <ChevronDownIcon className={`h-5 w-5 text-white/60 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            </div>
+        </button>
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="origin-top absolute left-0 mt-1 w-full max-h-60 overflow-y-auto rounded-1xl shadow-2xl bg-black/50 backdrop-blur-xl border border-white/20 z-20"
+                    transition={{ duration: 0.1, ease: "easeInOut" }}
+                    className="absolute left-0 top-full w-full focus:ring-1 focus:ring-white/30 focus:ring-opacity-50 bg-black/50 backdrop-blur-xl border-x border-b border-white/20 rounded-b-3xl shadow-4xl z-20 overflow-hidden"
                     style={{ transformOrigin: 'top' }}
                     role="listbox"
-                  >
+                >
                     <div className="grid grid-cols-3 gap-2 p-4">
-                      {sizeOptions.length > 0 ? (
-                        sizeOptions.map((size) => {
-                            const usSizeNum = parseFloat(size);
-                            const euSize = !isNaN(usSizeNum) ? Math.round((usSizeNum + 33) * 1.0) : null;
-                            return (
-                                <button
-                                    key={size}
-                                    onClick={() => handleSizeSelect(size)}
-                                    role="option"
-                                    aria-selected={selectedSize === size}
-                                    className={`block w-full px-2 py-3 text-sm bg-black/30 backdrop-blur-sm border border-white/20 rounded-sm text-center text-white transition-all duration-300 hover:bg-black/50 hover:border-white/40 hover:scale-105 ${
-                                    selectedSize === size ? 'ring-2 ring-white/50 bg-white/10 shadow-lg' : ''
-                                    }`}
-                                >
-                                    {euSize && <div className="font-semibold">EU {euSize}</div>}
-                                    <div className={`text-xs ${euSize ? 'text-white/70' : 'font-semibold'}`}>US {size}</div>
-                                </button>
-                            );
-                        })
-                      ) : (
-                        <p className="col-span-3 text-center text-white/60 py-4">No sizes available.</p>
-                      )}
+                        {sizeOptions.length > 0 ? (
+                            sizeOptions.map((size) => {
+                                const usSizeNum = parseFloat(size);
+                                const euSize = !isNaN(usSizeNum) ? Math.round((usSizeNum + 33) * 1.0) : null;
+                                return (
+                                    <button
+                                        key={size}
+                                        onClick={() => handleSizeSelect(size)}
+                                        role="option"
+                                        aria-selected={selectedSize === size}
+                                        className={`block w-full px-2 py-3 text-sm bg-black/30 backdrop-blur-sm border border-white/20 rounded-sm text-center text-white transition-all duration-300 hover:bg-black/50 hover:border-white/40 hover:scale-105 ${
+                                            selectedSize === size ? 'ring-2 ring-white/50 bg-white/10 shadow-lg' : ''
+                                        }`}
+                                    >
+                                        {euSize && <div className="font-semibold">EU {euSize}</div>}
+                                        <div className={`text-xs ${euSize ? 'text-white/70' : 'font-semibold'}`}>US {size}</div>
+                                    </button>
+                                );
+                            })
+                        ) : (
+                            <p className="col-span-3 text-center text-white/60 py-4">No sizes available.</p>
+                        )}
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </div>
+</div>
             
             {/* MNT Rate Loading/Error message for Buy Box */}
             {mntRate === null && !error?.includes('Failed to fetch currency') && (
@@ -914,10 +1118,13 @@ export default function ProductView({
                       </p>
                     </div>
                     {recProduct.localizedSpecialDisplayPriceCents?.amountUsdCents && mntRate && (
-                      <div className="mt-2 pt-2 border-t border-white/10">
-                        <span className="text-sm md:text-base font-bold text-white/90 group-hover:text-white transition-colors duration-300">
-                          ₮{((recProduct.localizedSpecialDisplayPriceCents.amountUsdCents * mntRate) / 100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
-                        </span>
+                      <div className="mt-2">
+                        <p className="text-white font-semibold text-sm md:text-base">
+                          ₮{((recProduct.localizedSpecialDisplayPriceCents.amountUsdCents * mntRate) / 100).toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                          })}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -926,41 +1133,75 @@ export default function ProductView({
             </div>
           </div>
         )}
+        
+      </div>
+      <div className="">
+      {recentlyViewed.length > 1 && (
+          <div className="mt-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 drop-shadow-lg">Recently Viewed</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+              {recentlyViewed
+                .filter(item => item.id !== product?.id)
+                .slice(0, 5)
+                .map((recentProduct) => (
+                  <Link
+                    key={recentProduct.id}
+                    href={`/product/${recentProduct.slug}`}
+                    className="group text-white bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg relative h-full flex flex-col transition-all duration-300 hover:bg-black/50 hover:border-white/30 hover:scale-105 hover:shadow-xl"
+                  >
+                    <div className="overflow-hidden rounded-t-lg relative bg-white/95 backdrop-blur-sm group-hover:bg-white transition-all duration-300" style={{ aspectRatio: '1 / 1' }}>
+                      <Image
+                        src={recentProduct.mainPictureUrl || '/placeholder.png'}
+                        alt={recentProduct.name}
+                        fill
+                        style={{ objectFit: 'contain' }}
+                        className="w-full h-full transition-transform duration-300 group-hover:scale-110"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                        unoptimized
+                        onError={(e) => (e.currentTarget.src = '/placeholder.png')}
+                      />
+                    </div>
+                    <div className="w-full border-t p-3 md:p-4 border-white/20 mt-auto flex-grow flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-bold text-sm md:text-base leading-tight mb-2 line-clamp-2 group-hover:text-white/90 transition-colors duration-300">
+                          {recentProduct.name}
+                        </h3>
+                        <p className="text-xs md:text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300">
+                          {recentProduct.brandName}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Toast Container */}
-      <Toaster
-        position="top-center"
+      {/* Image Zoom Modal */}
+      <AnimatePresence>
+        {showImageZoom && (
+          <ImageZoomModal 
+            images={imagesForPagination}
+            initialIndex={selectedImageIndex}
+            onClose={handleCloseZoom}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Toast notifications */}
+      <Toaster 
+        position="top-right"
         toastOptions={{
-          duration: 3000,
           style: {
             background: 'rgba(0, 0, 0, 0.8)',
             backdropFilter: 'blur(12px)',
             color: 'white',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
             borderRadius: '12px',
           },
         }}
       />
-      <div className="w-1/2 h-[40vh] bg-black border border-neutral-700 shadow-2xl flex mt-8 justify-center mx-auto rounded-3xl flex">
-  <div className="relative w-1/2 p-4 h-full">
-    <Image
-      src="/images/dog.jpg"
-      alt="Dog"
-      fill
-      className="object-cover p-4"
-    />
-  </div>
-  <div className="w-1/2 flex flex-col items-start pt-8 justify-start text-white">
-    <h1 className="text-3xl font-bold text-neutral-300">Very Orignall<br/>shiiiiit</h1>
-
-    <p className="text-neutral-300 text-lg mb-8 leading-relaxed">
-              Every item undergoes rigorous multi-point authentication by our expert team. 
-               
-            </p>
-  </div>
-  
-</div>
     </div>
   );
 }

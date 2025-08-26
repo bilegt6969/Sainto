@@ -448,7 +448,7 @@ const Navbar = () => {
                     >
                         <Wrapper
                             className={cn(
-                                'relative backdrop-blur-lg backdrop-brightness-40 rounded-3xl lg:rounded-3xl border border-[rgba(124,124,124,0.2)] px-1 md:px-2 flex items-center justify-start h-full'
+                                'relative backdrop-blur-lg backdrop-brightness-40 rounded-3xl lg:rounded-3xl border border-[rgba(124,124,124,0.3)] px-1 md:px-2 flex items-center justify-start h-full'
                             )}
                         >
                                 <div className="flex items-center mx-1 sm:mx-0 justify-between w-full">
