@@ -217,12 +217,16 @@ const ImageZoomModal = ({
   initialIndex: number, 
   onClose: () => void 
 }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(initialIndex);
+  const [currentImageIndex] = useState(initialIndex);
 
   // Helper function to convert image URL to high-res version
   const getHighResImageUrl = (url: string) => {
-    return url.replace(/width=\d+/, 'width=1000');
-  };
+    return url
+        .replace(/width=\d+/, 'width=1500')
+        .replace(/medium/, 'original')
+        .replace(/(\.)?(jpg)(\.)?jpeg/, '$1jpg.jpeg?action=crop&width=1500') // Handles both cases
+        .replace(/\/attachments/, '/transform/v1/attachments');
+};
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -237,13 +241,9 @@ const ImageZoomModal = ({
     };
   }, [onClose]);
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
+ 
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+ 
 
   return (
     <motion.div
@@ -263,45 +263,22 @@ const ImageZoomModal = ({
       </button>
 
       {/* Navigation arrows for multiple images */}
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              prevImage();
-            }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-black/10 hover:bg-black/20 transition-all duration-200"
-            aria-label="Previous image"
-          >
-            <ArrowLeftIcon className="h-6 w-6 text-black" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              nextImage();
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-black/10 hover:bg-black/20 transition-all duration-200"
-            aria-label="Next image"
-          >
-            <ArrowRightIcon className="h-6 w-6 text-black" />
-          </button>
-        </>
-      )}
+ 
 
       {/* Desktop: Vertical scroll layout */}
-      <div className="hidden md:flex flex-col items-center w-full h-full overflow-y-auto">
+      <div className="hidden md:flex flex-col items-center w-full h-full overflow-y-auto ">
         {images.map((img, index) => (
           <div
             key={index}
-            className="w-full flex justify-center"
+            className="w-full flex justify-center "
             onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={getHighResImageUrl(img)}
               alt={`Product image ${index + 1}`}
-              width={1000}
-              height={1000}
-              className="object-contain max-w-full h-auto"
+              width={1500}
+              height={1500}
+              className="object-contain max-w-full  "
               unoptimized
               onError={(e) => (e.currentTarget.src = '/placeholder.png')}
             />
@@ -326,24 +303,7 @@ const ImageZoomModal = ({
         </div>
         
         {/* Mobile pagination dots */}
-        {images.length > 1 && (
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentImageIndex(index);
-                }}
-                className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                  currentImageIndex === index
-                    ? 'bg-black/70 scale-125'
-                    : 'bg-black/30 hover:bg-black/50'
-                }`}
-              />
-            ))}
-          </div>
-        )}
+ 
       </div>
     </motion.div>
   );
@@ -725,7 +685,7 @@ export default function ProductView({
             Size: <span className="font-bold">{selectedSize || (getLowestPriceData() ? 'All' : 'All')}</span>
         </label>
         <a href="/resources/size-guide" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
-            <h1 className="font-medium cursor-pointer underline">Size Guide</h1>
+            <h1 className="text-sm font-semibold cursor-pointer underline">Size Guide</h1>
         </a>
     </div>
     <div className="relative">

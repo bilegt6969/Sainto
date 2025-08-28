@@ -57,28 +57,32 @@ export async function GET(request: NextRequest) {
   const page = searchParams.get('page') || '1';
   const limit = searchParams.get('page_limit') || String(RESULTS_PER_PAGE);
 
-  // Base URL for Kicks.dev GOAT products API
-  const apiURL = new URL('https://api.kicks.dev/v3/goat/products/');
+  // Base URL for Kicks.dev GOAT products API (removed trailing slash)
+  const apiURL = new URL('https://api.kicks.dev/v3/goat/products');
 
   // Add query parameters
   if (query) {
     apiURL.searchParams.set('query', query);
   }
   apiURL.searchParams.set('limit', limit);
-  apiURL.searchParams.set('page', String(parseInt(page) - 1)); // Kicks.dev is 0-indexed
+  apiURL.searchParams.set('page', page); // Kicks.dev uses 1-indexed pages
   apiURL.searchParams.set('currency', 'USD');
 
   try {
     console.log('Fetching from Kicks.dev:', apiURL.toString());
 
-    const res = await fetch(apiURL.toString(), {
+    // Updated headers to match the working fetch example
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", KICKS_DEV_API_KEY);
+
+    const requestOptions: RequestInit = {
       method: 'GET',
-      headers: {
-        Authorization: KICKS_DEV_API_KEY,
-        'Accept': 'application/json',
-      },
+      headers: myHeaders,
+      redirect: 'follow',
       cache: 'no-store',
-    });
+    };
+
+    const res = await fetch(apiURL.toString(), requestOptions);
 
     if (!res.ok) {
       const errorBodyText = await res.text();

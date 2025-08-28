@@ -77,6 +77,14 @@ interface SanityProductCategoryUrlDoc {
   el4?: { url1: string; url2?: string; url3?: string; label: string };
 }
 
+// NEW: Interface for banner images
+interface BannerImage {
+  _id: string;
+  rectangleImageUrl: string;
+  squareImageUrl: string;
+  order: number;
+}
+
 interface ProductScrollerProps {
     items: Item[];
     ItemComponent: React.ElementType;
@@ -110,7 +118,182 @@ const SkeletonCategoryCard = () => (
   </div>
 );
 
-// --- Item Components (simplified - no price logic since Sanity data doesn't have prices) ---
+// NEW: Banner skeleton component
+// const SkeletonBanner = ({ isRectangle }: { isRectangle: boolean }) => (
+//   <div className={`bg-neutral-700 animate-pulse rounded-lg ${isRectangle ? 'h-32 md:h-40' : 'aspect-square h-32 md:h-40'}`}></div>
+// );
+
+// NEW: Banner Image Component
+interface BannerImageProps {
+  imageUrl: string;
+  isRectangle: boolean;
+  priority?: boolean;
+}
+
+const BannerImageComponent = memo(({ imageUrl, isRectangle, priority = false }: BannerImageProps) => {
+  return (
+    <div className={`relative overflow-hidden -mt-16 rounded-4xl transition-all duration-300 hover:shadow-lg group ${isRectangle ? 'aspect-video' : 'aspect-square'}`}>
+      <Image
+        src={imageUrl}
+        alt="Banner image"
+        fill
+        className="object-contain transition-transform duration-500"
+        unoptimized
+        priority={priority}
+        sizes={isRectangle ? "(max-width: 768px) 75vw, 50vw" : "(max-width: 768px) 75vw, 25vw"}
+      />
+    </div>
+  );
+});
+BannerImageComponent.displayName = 'BannerImageComponent';
+
+// NEW: Alternating Banner Section Component
+interface BannerSectionProps {
+  bannerData: BannerImage;
+  isEvenSection: boolean;
+  isLoading?: boolean;
+}
+
+ 
+// Replace your existing BannerSection component with this updated version
+
+// Replace your existing BannerSection component with this solution
+
+const BannerSection = memo(({ bannerData, isEvenSection, isLoading = false }: BannerSectionProps) => {
+  if (isLoading) {
+    return (
+      <section className="mb-6 md:mb-8 px-4">
+        <div className="max-w-[60%] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ height: '300px' }}>
+            {isEvenSection ? (
+              <>
+                <div className="md:col-span-2 h-full">
+                  <div className="bg-neutral-700 animate-pulse rounded-4xl w-full h-full"></div>
+                </div>
+                <div className="md:col-span-1 h-full">
+                  <div className="bg-neutral-700 animate-pulse rounded-4xl w-full h-full"></div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="md:col-span-1 h-full">
+                  <div className="bg-neutral-700 animate-pulse rounded-4xl w-full h-full"></div>
+                </div>
+                <div className="md:col-span-2 h-full">
+                  <div className="bg-neutral-700 animate-pulse rounded-4xl w-full h-full"></div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!bannerData.rectangleImageUrl || !bannerData.squareImageUrl) return null;
+
+  return (
+    <section className="mb-6 md:mb-8 px-4" aria-label="Featured banners">
+      <div className="max-w-[90%] mx-auto">
+        {/* Mobile: Stack vertically with original aspect ratios */}
+        <div className="grid grid-cols-1 gap-6 md:hidden">
+          <div className="relative overflow-hidden -mt-16 rounded-4xl transition-all duration-300 hover:shadow-lg group aspect-video">
+            <Image
+              src={bannerData.rectangleImageUrl}
+              alt="Banner image"
+              fill
+              className="object-cover transition-transform duration-500"
+              unoptimized
+              priority={bannerData.order === 0}
+              sizes="75vw"
+            />
+          </div>
+          <div className="relative overflow-hidden -mt-16 rounded-4xl transition-all duration-300 hover:shadow-lg group aspect-square">
+            <Image
+              src={bannerData.squareImageUrl}
+              alt="Banner image"
+              fill
+              className="object-contain transition-transform duration-500"
+              unoptimized
+              priority={bannerData.order === 0}
+              sizes="75vw"
+            />
+          </div>
+        </div>
+
+        {/* Desktop: Fixed height grid for matching heights */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-3 gap-6" style={{ height: '320px' }}>
+            {isEvenSection ? (
+              // Layout: Rectangle + Square (xy)
+              <>
+                <div className="col-span-2 h-full">
+                  <div className="relative overflow-hidden -mt-16 rounded-4xl transition-all duration-300 hover:shadow-lg group w-full h-full">
+                    <Image
+                      src={bannerData.rectangleImageUrl}
+                      alt="Banner image"
+                      fill
+                      className="object-cover transition-transform duration-500"
+                      unoptimized
+                      priority={bannerData.order === 0}
+                      sizes="50vw"
+                    />
+                  </div>
+                </div>
+                <div className="col-span-1 h-full">
+                  <div className="relative overflow-hidden -mt-16 rounded-4xl transition-all duration-300 hover:shadow-lg group w-full h-full bg-black">
+                    <Image
+                      src={bannerData.squareImageUrl}
+                      alt="Banner image"
+                      fill
+                      className="object-contain transition-transform duration-500"
+                      unoptimized
+                      priority={bannerData.order === 0}
+                      sizes="25vw"
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              // Layout: Square + Rectangle (yx)
+              <>
+                <div className="col-span-1 h-full">
+                  <div className="relative overflow-hidden -mt-16 rounded-4xl transition-all duration-300 hover:shadow-lg group w-full h-full bg-black">
+                    <Image
+                      src={bannerData.squareImageUrl}
+                      alt="Banner image"
+                      fill
+                      className="object-contain transition-transform duration-500"
+                      unoptimized
+                      priority={false}
+                      sizes="25vw"
+                    />
+                  </div>
+                </div>
+                <div className="col-span-2 h-full">
+                  <div className="relative overflow-hidden -mt-16 rounded-4xl transition-all duration-300 hover:shadow-lg group w-full h-full bg-black">
+                    <Image
+                      src={bannerData.rectangleImageUrl}
+                      alt="Banner image"
+                      fill
+                      className="object-contain transition-transform duration-500"
+                      unoptimized
+                      priority={false}
+                      sizes="50vw"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+});
+BannerSection.displayName = 'BannerSection';
+
+// --- Item Components ---
 interface DesktopItemProps {
   item: Item;
   renderPrice: (priceCents: number) => string;
@@ -118,10 +301,6 @@ interface DesktopItemProps {
   priority: boolean;
 }
 
-
- 
-
- 
 const DesktopItem = memo(({ item, renderPrice, replaceText, priority }: DesktopItemProps) => {
    return (
     <Link href={`/product/${item.data.slug}`} passHref target="_blank" rel="noopener noreferrer">
@@ -318,6 +497,7 @@ const Home = () => {
   const [sectionItems, setSectionItems] = useState<{ [title: string]: Item[] }>({});
   const [categoryData, setCategoryData] = useState<ProcessedSanityCategory[]>([]);
   const [collections, setCollections] = useState<SanityCollectionDoc[]>([]);
+  const [bannerImages, setBannerImages] = useState<BannerImage[]>([]); // NEW: Banner images state
   const [mntRate, setMntRate] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -390,7 +570,7 @@ const Home = () => {
     return allProcessedCategories;
   }, []);
 
-  // NEW: Function to fetch individual collection
+  // Function to fetch individual collection
   const fetchCollectionData = useCallback(async (collectionSlug: string): Promise<Item[]> => {
     try {
       console.log(`Fetching collection: ${collectionSlug}`);
@@ -429,7 +609,26 @@ const Home = () => {
     }
   }, []);
 
-  // NEW: Initial data fetching
+  // NEW: Function to fetch banner images from Sanity
+  const fetchBannerImages = useCallback(async (): Promise<BannerImage[]> => {
+    try {
+      const bannerData = await client.fetch<BannerImage[]>(`
+        *[_type == "bannerImage"] | order(order asc) {
+          _id,
+          "rectangleImageUrl": rectangleImage.asset->url,
+          "squareImageUrl": squareImage.asset->url,
+          order
+        }
+      `);
+      
+      return bannerData || [];
+    } catch (error) {
+      console.error('Error fetching banner images:', error);
+      return [];
+    }
+  }, []);
+
+  // Initial data fetching
   useEffect(() => {
     const fetchInitialData = async () => {
       setIsLoading(true);
@@ -439,7 +638,7 @@ const Home = () => {
         console.log("Fetching initial data...");
         
         // Fetch list of collections and other initial data
-        const [collectionsListRes, categoryUrlsRes, currencyRes] = await Promise.all([
+        const [collectionsListRes, categoryUrlsRes, currencyRes, bannersRes] = await Promise.all([
           // Get list of collection metadata from Sanity
           client.fetch<SanityCollectionDoc[]>(`
             *[_type == "productCollection"] | order(order asc) {
@@ -452,7 +651,9 @@ const Home = () => {
           // Still fetch categories from your existing API
           fetch(`/api/payload/categories`).then(res => res.ok ? res.json() : []),
           // Fetch currency rate
-          fetch('https://hexarate.paikama.co/api/rates/latest/USD?target=MNT').then(res => res.ok ? res.json() : Promise.reject(`Currency fetch failed: ${res.status}`))
+          fetch('https://hexarate.paikama.co/api/rates/latest/USD?target=MNT').then(res => res.ok ? res.json() : Promise.reject(`Currency fetch failed: ${res.status}`)),
+          // NEW: Fetch banner images
+          fetchBannerImages()
         ]);
 
         const rate = currencyRes.data?.mid;
@@ -460,6 +661,7 @@ const Home = () => {
         setMntRate(rate);
 
         setCollections(collectionsListRes);
+        setBannerImages(bannersRes); // NEW: Set banner images
 
         // Process categories
         if (categoryUrlsRes.length > 0) {
@@ -498,9 +700,9 @@ const Home = () => {
     };
 
     fetchInitialData();
-  }, [processCategoryData, setPageData, fetchCollectionData]);
+  }, [processCategoryData, setPageData, fetchCollectionData, fetchBannerImages]);
 
-  // NEW: Intersection observer for lazy loading collections
+  // Intersection observer for lazy loading collections
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(async (entry) => {
@@ -532,10 +734,37 @@ const Home = () => {
     return () => observer.disconnect();
   }, [collections, fetchCollectionData]);
 
+  // NEW: Function to determine if a banner should be shown at this position
+  const shouldShowBanner = useCallback((index: number, totalCollections: number): boolean => {
+    if (totalCollections <= 1 || bannerImages.length === 0) return false;
+    
+    // Calculate 25% position
+    const bannerPosition = Math.floor(totalCollections * 0.25);
+    
+    // Show banner at 25% position and then every few sections after
+    return index === bannerPosition || (index > bannerPosition && (index - bannerPosition) % 4 === 0);
+  }, [bannerImages.length]);
+
+  // NEW: Function to get banner data based on section position
+  const getBannerData = useCallback((sectionIndex: number, totalCollections: number): BannerImage | null => {
+    const bannerPosition = Math.floor(totalCollections * 0.25);
+    
+    let bannerIndex = 0;
+    if (sectionIndex === bannerPosition) {
+      bannerIndex = 0; // First banner
+    } else {
+      // Calculate which banner to show for subsequent positions
+      bannerIndex = Math.floor((sectionIndex - bannerPosition) / 4);
+    }
+    
+    return bannerImages[bannerIndex] || null;
+  }, [bannerImages]);
+
   const handleRetry = () => {
     setCollections([]);
     setSectionItems({});
     setCategoryData([]);
+    setBannerImages([]);
     fetchedSections.current.clear();
   };
 
@@ -567,73 +796,99 @@ const Home = () => {
         const title = collection.name;
         const items = sectionItems[sectionId] || [];
         const categoriesToRender = index === 0 ? categoryData : []; // Only show categories in first section
+        const showBanner = shouldShowBanner(index, collections.length);
+        const bannerData = getBannerData(index, collections.length);
+        const isEvenBanner = Math.floor((index - Math.floor(collections.length * 0.25)) / 4) % 2 === 0;
         
         if (!sectionRefs.current[sectionId]) {
           sectionRefs.current[sectionId] = React.createRef<HTMLDivElement>();
         }
         
         return (
-          <section key={sectionId} ref={sectionRefs.current[sectionId]} data-section-index={index} className="mb-20 md:mb-24" aria-label={replaceText(title)}>
-            <header className="flex justify-between items-center mb-4 md:mb-6 px-4">
-              <h2 className="font-extrabold text-white text-xl md:text-3xl relative truncate pr-4">{replaceText(title)}</h2>
-              <Link className="text-neutral-300 hover:text-white font-semibold text-xs md:text-sm underline whitespace-nowrap flex-shrink-0" href={`/collections/${collection.slug}`} aria-label={`View all ${replaceText(title)}`}>View All</Link>
-            </header>
-            
-            <div>
-                <div className="block lg:hidden">
-                    {(!fetchedSections.current.has(sectionId) || items.length === 0) && !error ? (
-                        <div className="flex overflow-hidden pl-4">
-                            {[...Array(skeletonCount)].map((_, i) => (
-                                <div key={`loading-prod-mob-${sectionId}-${i}`} className="w-1/2 sm:w-1/3 flex-shrink-0 p-1.5 md:p-2">
-                                    <SkeletonCard />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <ProductScroller items={items} ItemComponent={MobileItem} renderPrice={renderPrice} replaceText={replaceText} itemBaseClassName="w-1/2 sm:w-[45%]" priorityStartIndex={2} />
-                    )}
-                </div>
-
-                <div className="hidden lg:block">
-                    {(!fetchedSections.current.has(sectionId) || items.length === 0) && !error ? (
-                        <div className="flex overflow-hidden pl-4">
-                            {[...Array(skeletonCount)].map((_, i) => (
-                                <div key={`loading-prod-desk-${sectionId}-${i}`} className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 2xl:w-1/6 flex-shrink-0 p-1.5 md:p-2">
-                                    <SkeletonCard />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <ProductScroller items={items} ItemComponent={DesktopItem} renderPrice={renderPrice} replaceText={replaceText} itemBaseClassName="lg:w-1/4 xl:w-1/5 2xl:w-1/6" priorityStartIndex={5} />
-                    )}
-                </div>
-            </div>
-
-            {categoriesToRender.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 mt-16 mb-8">
-                {categoriesToRender.map((category, idx) => (
-                  <CategoryCard key={`${category.id}-${idx}`} label={category.label} images={category.images} categoryUrl={category.categoryUrl} replaceText={replaceText} priority={idx < 4} />
-                ))}
-              </div>
+          <React.Fragment key={sectionId}>
+            {/* NEW: Show banner before product section if needed */}
+            {showBanner && bannerData && (
+              <BannerSection 
+                bannerData={bannerData}
+                isEvenSection={isEvenBanner}
+                isLoading={isLoading}
+              />
             )}
-          </section>
+
+            {/* Product Section */}
+            <section ref={sectionRefs.current[sectionId]} data-section-index={index} className="mb-20 md:mb-24" aria-label={replaceText(title)}>
+              <header className="flex justify-between items-center mb-4 md:mb-6 px-4">
+                <h2 className="font-extrabold text-white text-xl md:text-3xl relative truncate pr-4">{replaceText(title)}</h2>
+                <Link className="text-neutral-300 hover:text-white font-semibold text-xs md:text-sm underline whitespace-nowrap flex-shrink-0" href={`/collections/${collection.slug}`} aria-label={`View all ${replaceText(title)}`}>View All</Link>
+              </header>
+              
+              <div>
+                  <div className="block lg:hidden">
+                      {(!fetchedSections.current.has(sectionId) || items.length === 0) && !error ? (
+                          <div className="flex overflow-hidden pl-4">
+                              {[...Array(skeletonCount)].map((_, i) => (
+                                  <div key={`loading-prod-mob-${sectionId}-${i}`} className="w-1/2 sm:w-1/3 flex-shrink-0 p-1.5 md:p-2">
+                                      <SkeletonCard />
+                                  </div>
+                              ))}
+                          </div>
+                      ) : (
+                          <ProductScroller items={items} ItemComponent={MobileItem} renderPrice={renderPrice} replaceText={replaceText} itemBaseClassName="w-1/2 sm:w-[45%]" priorityStartIndex={2} />
+                      )}
+                  </div>
+
+                  <div className="hidden lg:block">
+                      {(!fetchedSections.current.has(sectionId) || items.length === 0) && !error ? (
+                          <div className="flex overflow-hidden pl-4">
+                              {[...Array(skeletonCount)].map((_, i) => (
+                                  <div key={`loading-prod-desk-${sectionId}-${i}`} className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 2xl:w-1/6 flex-shrink-0 p-1.5 md:p-2">
+                                      <SkeletonCard />
+                                  </div>
+                              ))}
+                          </div>
+                      ) : (
+                          <ProductScroller items={items} ItemComponent={DesktopItem} renderPrice={renderPrice} replaceText={replaceText} itemBaseClassName="lg:w-1/4 xl:w-1/5 2xl:w-1/6" priorityStartIndex={5} />
+                      )}
+                  </div>
+              </div>
+
+              {/* Categories - only show in first section */}
+              {categoriesToRender.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 mt-16 mb-8">
+                  {categoriesToRender.map((category, idx) => (
+                    <CategoryCard key={`${category.id}-${idx}`} label={category.label} images={category.images} categoryUrl={category.categoryUrl} replaceText={replaceText} priority={idx < 4} />
+                  ))}
+                </div>
+              )}
+            </section>
+          </React.Fragment>
         );
       }) : (
         isLoading && (
-          <section className="mb-12 md:mb-16">
-            <header className="flex justify-between items-center mb-6 md:mb-8 px-4">
-              <div className="h-7 md:h-8 w-1/2 md:w-1/3 bg-neutral-700 rounded-lg animate-pulse"></div>
-              <div className="h-5 md:h-6 w-1/4 md:w-1/6 bg-neutral-700 rounded-lg animate-pulse"></div>
-            </header>
-           
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-2 px-4">
-              {[...Array(skeletonCount)].map((_, i) => <SkeletonCard key={`initial-skel-prod-${i}`} />)}
-            </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 mt-8 mb-8">
-              {[...Array(4)].map((_, i) => <SkeletonCategoryCard key={`initial-skel-cat-${i}`} />)}
-            </div>
-          </section>
+          <>
+            {/* Loading skeleton for banner */}
+            <BannerSection 
+              bannerData={{ _id: '', rectangleImageUrl: '', squareImageUrl: '', order: 0 }}
+              isEvenSection={true}
+              isLoading={true}
+            />
+
+            {/* Loading skeleton for products */}
+            <section className="mb-6 md:mb-8">
+              <header className="flex justify-between items-center mb-6 md:mb-8 px-4">
+                <div className="h-7 md:h-8 w-1/2 md:w-1/3 bg-neutral-700 rounded-lg animate-pulse"></div>
+                <div className="h-5 md:h-6 w-1/4 md:w-1/6 bg-neutral-700 rounded-lg animate-pulse"></div>
+              </header>
+             
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-2 px-4">
+                {[...Array(skeletonCount)].map((_, i) => <SkeletonCard key={`initial-skel-prod-${i}`} />)}
+              </div>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 px-4 mt-8 mb-8">
+                {[...Array(4)].map((_, i) => <SkeletonCategoryCard key={`initial-skel-cat-${i}`} />)}
+              </div>
+            </section>
+          </>
         )
       )}
     </div>
