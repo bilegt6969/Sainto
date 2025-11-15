@@ -1,15 +1,16 @@
+// app/api/search/route.ts
 import { type NextRequest, NextResponse } from 'next/server';
-import { Product } from '../../../../types/product'; // Import the Product interface
+import { Product } from '../../../../types/product';
 
 const RESULTS_PER_PAGE = 24;
-const KICKS_DEV_API_KEY = 'sd_j2g1pZeImx1tptjgIwpFhQE6vn2AhqG1'; // Your Kicks.dev API Key
+const KICKS_DEV_API_KEY = 'sd_S84Wy3gqTlWfDIMtiIvSuiAHyWRfcQ67	';
 
 // Updated interface for Kicks.dev GOAT API Product
 interface KicksDevProduct {
   id: number;
   sku: string;
   slug: string;
-  name: string; // Corresponds to 'title' in Product interface
+  name: string;
   brand: string;
   model: string;
   description: string;
@@ -17,12 +18,12 @@ interface KicksDevProduct {
   season: string;
   category: string;
   product_type: string;
-  image_url: string; // Corresponds to 'pictureUrl'
-  release_date: string; // e.g., "20250121"
+  image_url: string;
+  release_date: string;
   release_date_year: string;
   retail_prices: {
-    retail_price_cents_usd?: number; // Price in USD cents
-    [key: string]: number | undefined; // Other currencies
+    retail_price_cents_usd?: number;
+    [key: string]: number | undefined;
   };
   link: string;
   sizes: Array<{
@@ -32,7 +33,7 @@ interface KicksDevProduct {
   variants?: Array<{
     product_id: number;
     size: string;
-    lowest_ask: number; // In USD, not cents
+    lowest_ask: number;
     available: boolean;
     currency: string;
     updated_at: string;
@@ -40,7 +41,7 @@ interface KicksDevProduct {
 }
 
 interface KicksDevApiResponse {
-  status: string; // "success" or "error"
+  status: string;
   query?: { query: string };
   data?: KicksDevProduct[];
   meta: {
@@ -48,7 +49,7 @@ interface KicksDevApiResponse {
     per_page: number;
     total: number;
   };
-  error?: string; // For error responses
+  error?: string;
 }
 
 export async function GET(request: NextRequest) {
@@ -57,21 +58,32 @@ export async function GET(request: NextRequest) {
   const page = searchParams.get('page') || '1';
   const limit = searchParams.get('page_limit') || String(RESULTS_PER_PAGE);
 
-  // Base URL for Kicks.dev GOAT products API (removed trailing slash)
+  // Base URL for Kicks.dev GOAT products API
   const apiURL = new URL('https://api.kicks.dev/v3/goat/products');
 
-  // Add query parameters
+  // Add base query parameters
   if (query) {
     apiURL.searchParams.set('query', query);
   }
   apiURL.searchParams.set('limit', limit);
-  apiURL.searchParams.set('page', page); // Kicks.dev uses 1-indexed pages
+  apiURL.searchParams.set('page', page);
   apiURL.searchParams.set('currency', 'USD');
+
+  // --- SAFE FILTER FORWARDING ---
+  // Define which additional filters are supported by Kicks.dev API
+  const SUPPORTED_FILTERS = ['brand', 'category', 'gender', 'product_type', 'colorway'];
+  
+  SUPPORTED_FILTERS.forEach(filterKey => {
+    const filterValue = searchParams.get(filterKey);
+    if (filterValue) {
+      apiURL.searchParams.set(filterKey, filterValue);
+    }
+  });
+  // --- END FILTER FORWARDING ---
 
   try {
     console.log('Fetching from Kicks.dev:', apiURL.toString());
 
-    // Updated headers to match the working fetch example
     const myHeaders = new Headers();
     myHeaders.append("Authorization", KICKS_DEV_API_KEY);
 

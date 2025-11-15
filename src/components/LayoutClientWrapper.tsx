@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Navbar from '@/components/Heading/Navbar'; // Adjust path if needed
 import Footer from '@/components/Footer';     // Adjust path if needed
+import Faq from '@/components/faq';
 
 interface LayoutClientWrapperProps {
   children: React.ReactNode;
@@ -31,7 +32,7 @@ export default function LayoutClientWrapper({ children }: LayoutClientWrapperPro
   // Determine if the current page is an authentication page
   const isAuthPage = pathname.includes('/auth/login') || pathname.includes('/auth/signup');
   
-  // Hide navbar/footer on auth pages OR 404 pages
+  // Hide navbar/footer/faq on auth pages OR 404 pages
   const shouldHideNavAndFooter = isAuthPage || isNotFound;
   
   return (
@@ -48,9 +49,14 @@ export default function LayoutClientWrapper({ children }: LayoutClientWrapperPro
         {children}
       </main>
       
+      {/* FAQ - Only show if not on auth/404 pages */}
+      {!shouldHideNavAndFooter && (
+        <Faq />
+      )}
+      
       {/* Footer - Only show if not on auth/404 pages */}
       {!shouldHideNavAndFooter && (
-        <Footer variant="dark" />
+        <Footer variant=" " />
       )}
     </>
   );

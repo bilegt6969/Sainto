@@ -85,7 +85,7 @@ const InvestButton = () => {
           Developed by {" "}
           <span className="underline">
             <Link href="https://bytecode-smoky.vercel.app/" target="_blank">bytecode</Link>
-             </span>®
+             </span>🅁
         </span>
       </div>
     </div>

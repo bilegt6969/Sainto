@@ -3,13 +3,14 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSwipeable } from 'react-swipeable';
-import { urlFor } from '../../lib/sanity';
+import { urlFor } from '../../lib/sanity'; // Ensure this path is correct
 
 const getImageUrl = (source) => {
   if (!source?.asset) {
     return null;
   }
-  return urlFor(source).auto('format').fit('max').url();
+  // No need for .auto('format').fit('max') here as urlFor already includes it
+  return urlFor(source).url(); 
 };
 
 const HeroSection = ({ heroData }) => {
@@ -102,7 +103,7 @@ const HeroSection = ({ heroData }) => {
 
   if (!slides || slides.length === 0) {
     return (
-      <section className="relative flex items-center justify-center h-[80vh] max-h-[800px] w-full overflow-hidden rounded-[2rem] bg-neutral-900 border border-neutral-700 shadow-2xl">
+      <section className="relative flex items-center justify-center w-full overflow-hidden rounded-[2rem] bg-neutral-900 border border-neutral-700 shadow-2xl aspect-[16/9]">
         <div className="text-center text-neutral-400 p-8">
           <h2 className="text-3xl font-semibold text-white mb-2">Welcome to Sainto</h2>
           <p className="text-lg font-light">No hero slides have been configured yet. Please add content to showcase your products.</p>
@@ -112,8 +113,10 @@ const HeroSection = ({ heroData }) => {
   }
 
   return (
+    // MODIFIED: Use padding-bottom for aspect ratio, remove fixed height
     <section
-      className="relative h-[80vh] max-h-[800px] w-full overflow-hidden rounded-[2rem] bg-black border border-neutral-800 shadow-2xl shadow-neutral-950/50 flex items-center justify-center"
+      className="relative w-full overflow-hidden rounded-[2rem]  ] shadow-2xl shadow-neutral-950/50 flex items-center justify-center
+                 aspect-[16/9]" // <-- ADDED: Tailwind's aspect ratio utility
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       {...swipeHandlers}
@@ -128,7 +131,10 @@ const HeroSection = ({ heroData }) => {
           exit="exit"
           className="absolute inset-0"
         >
-          <SlideContent slide={slides[currentSlide]} isPriority={currentSlide === 0} />
+          <SlideContent 
+            slide={slides[currentSlide]} 
+            isPriority={currentSlide === 0} 
+          />
         </motion.div>
       </AnimatePresence>
 
@@ -139,7 +145,7 @@ const HeroSection = ({ heroData }) => {
           <>
             <button
               onClick={prevSlide}
-              className="relative left-4 p-3 rounded-full bg-white/5 backdrop-blur-lg border border-white/10 text-white shadow-xl transition-all duration-300 ease-in-out hover:bg-white/15 hover:scale-105 active:scale-95 pointer-events-auto"
+              className="relative left-4 p-3 rounded-full bg-white/5 backdrop-blur-lg border border-white/10 text-white shadow-xl transition-all duration-300 ease-in-out hover:bg-white/15 hover:scale-105 active:scale-95 pointer-events-auto hidden lg:block"
               aria-label="Previous slide"
             >
               <svg
@@ -158,7 +164,7 @@ const HeroSection = ({ heroData }) => {
             </button>
             <button
               onClick={nextSlide}
-              className="relative right-4 p-3 rounded-full bg-white/5 backdrop-blur-lg border border-white/10 text-white shadow-xl transition-all duration-300 ease-in-out hover:bg-white/15 hover:scale-105 active:scale-95 pointer-events-auto"
+              className="relative right-4 p-3 rounded-full bg-white/5 backdrop-blur-lg border border-white/10 text-white shadow-xl transition-all duration-300 ease-in-out hover:bg-white/15 hover:scale-105 active:scale-95 pointer-events-auto hidden lg:block"
               aria-label="Next slide"
             >
               <svg
@@ -179,7 +185,7 @@ const HeroSection = ({ heroData }) => {
         )}
 
         {showPagination && slides.length > 1 && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 p-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg pointer-events-auto">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 p-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg pointer-events-auto hidden lg:flex">
             {slides.map((_, index) => (
               <button
                 key={index}
@@ -197,13 +203,10 @@ const HeroSection = ({ heroData }) => {
 };
 
 const SlideContent = ({ slide, isPriority }) => {
-  const { images } = slide;
+  const { backgroundImage } = slide;
+  const imageUrl = getImageUrl(backgroundImage);
 
-  const desktopUrl = getImageUrl(images?.desktop);
-  const tabletUrl = getImageUrl(images?.tablet) || desktopUrl;
-  const mobileUrl = getImageUrl(images?.mobile) || tabletUrl;
-
-  if (!mobileUrl) {
+  if (!imageUrl) {
     return (
       <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
         <p className="text-neutral-500 text-lg">Image not available for this slide.</p>
@@ -212,18 +215,15 @@ const SlideContent = ({ slide, isPriority }) => {
   }
 
   return (
-    <picture>
-      <source media="(min-width: 1024px)" srcSet={desktopUrl} />
-      <source media="(min-width: 768px)" srcSet={tabletUrl} />
-      <Image
-        src={mobileUrl}
-        alt="Hero background image"
-        fill
-        priority={isPriority}
-        className="object-cover object-center"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-      />
-    </picture>
+    <Image
+      src={imageUrl}
+      alt="Hero background image"
+      fill
+      priority={isPriority}
+      // MODIFIED: Changed object-cover to object-contain to show full image
+      className="object-contain object-center" // <-- CHANGED from object-cover
+      sizes="100vw"
+    />
   );
 };
 

@@ -8,7 +8,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'bitcount': ['Bitcount Grid Double', 'system-ui'],
+
+        sans: ['var(--font-inter)', 'sans-serif'],
+        
         'inter': ['Inter', 'sans-serif'],
         'sf': [
           '-apple-system',
@@ -25,5 +27,7 @@ module.exports = {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/aspect-ratio'),
+  ],
 }

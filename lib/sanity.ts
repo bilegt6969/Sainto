@@ -28,9 +28,8 @@ const builder = imageUrlBuilder(client)
  * @returns A URL builder instance for the given image source.
  */
 export function urlFor(source: SanityImageSource) {
-  return builder.image(source)
+  return builder.image(source).auto('format').quality(90) // <-- Added .quality(90) for better image quality
 }
-
 // GROQ query to fetch a single product collection by slug
 export const getProductCollectionQuery = `
   *[_type == "productCollection" && slug.current == $slug][0] {

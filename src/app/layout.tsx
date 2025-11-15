@@ -1,17 +1,21 @@
 // app/layout.tsx (your RootLayout)
 import React from 'react';
 import './(frontend)/styles.css';
-// Removed Navbar and Footer imports from here
 import { Analytics } from "@vercel/analytics/next";
 import { ProductProvider } from './context/ProductContext';
 import NextTopLoader from 'nextjs-toploader';
 import InvestButton from '../components/InvestButton';
- 
-
-// Removed headers import as it's no longer needed for this logic
+import {Inter_Tight } from 'next/font/google';
 
 // Import the new Client Component wrapper
-import LayoutClientWrapper from '@/components/LayoutClientWrapper'; // Adjust path if needed
+import LayoutClientWrapper from '@/components/LayoutClientWrapper';
+
+// Configure Inter font
+const inter = Inter_Tight({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata = {
   title: {
@@ -60,7 +64,7 @@ export const metadata = {
   },
   icons: {
     icon: [
-      '/favico/favicon.ico?v=4',
+      '/favicon.ico',
       { url: '/favico/favicon-16x16.png?v=4', sizes: '16x16', type: 'image/png' },
       { url: '/favico/favicon-32x32.png?v=4', sizes: '32x32', type: 'image/png' },
     ],
@@ -82,7 +86,7 @@ export const metadata = {
       }
     ]
   },
-  manifest: '/site.webmanifest',
+  manifest: '/favico/site.webmanifest',
   verification: {
     google: '9LAxenlZQeQyX_2239qDfra5qM_EITEwMSfpRGvlNRw',
   },
@@ -98,11 +102,9 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // headers() logic is no longer needed here for the Navbar/Footer conditional rendering
-
   return (
-    <html lang="en" className="antialiased">
-      <body className="bg-black text-white selection:bg-gold selection:text-black">
+    <html lang="en" className={`antialiased ${inter.variable}`}>
+      <body className="bg-black text-white selection:bg-gold selection:text-black font-sans">
         <ProductProvider>
           {/* Loading Bar */}
           <div className="z-[1000]">
@@ -123,13 +125,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
 
           {/* Page Container with Flexbox Layout */}
-          <div className="min-h-screen flex flex-col">
+          <div className={`min-h-screen flex flex-col antialiased ${inter.className}`}>
             {/* Wrap the children with the new client component */}
             <LayoutClientWrapper>
               {children}
             </LayoutClientWrapper>
           </div>
-          <Analytics /> {/* Analytics can remain here if it's fine being a direct child of body in server component */}
+          <Analytics />
           <InvestButton />
         </ProductProvider>
       </body>

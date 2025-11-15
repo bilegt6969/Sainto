@@ -1162,6 +1162,22 @@ export default function ProductView({
           },
         }}
       />
+      <style>{`
+        body {
+          background-color: #191919;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        .font-playfair-display {
+          font-family: 'Playfair Display', serif;
+        }
+        .font-inter {
+          font-family: 'Inter', sans-serif;
+        }
+      `}</style>
     </div>
   );
 }

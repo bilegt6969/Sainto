@@ -39,7 +39,8 @@ export async function GET(req) {
   }
 
   // --- KicksDB API URL and Options ---
-  const kicksDbUrl = `https://api.kicks.dev/v3/goat/products/${slug}`;
+  const encodedSlug = encodeURIComponent(slug) // <-- ADD THIS LINE
+  const kicksDbUrl = `https://api.kicks.dev/v3/goat/products/${encodedSlug}`; // <-- USE THE ENCODED SLUG
   const options = {
       method: 'GET',
       headers: {
