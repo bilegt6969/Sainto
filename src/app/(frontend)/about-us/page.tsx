@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+// Import 'Variants' from framer-motion
+import { motion, Variants } from 'framer-motion';
 
 // --- ENGLISH-ONLY CONTENT OBJECT ---
 const content = {
@@ -41,7 +42,8 @@ const content = {
 };
 
 // Define animation variants
-const sectionVariants = {
+// Add the ': Variants' type to sectionVariants
+const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
     opacity: 1,
@@ -54,7 +56,8 @@ const sectionVariants = {
   },
 };
 
-const textVariants = {
+// Add the ': Variants' type to textVariants
+const textVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
 };

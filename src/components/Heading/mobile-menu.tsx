@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/accordion'
 import { cn } from '@/functions'
 import { useClickOutside } from '@/hooks'
-import { motion, AnimatePresence } from 'framer-motion'
+ import { motion, AnimatePresence, Variants } from 'framer-motion'
 import {
   TrendingUp,
   ShoppingBag,
@@ -76,20 +76,20 @@ const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
 
   const handleClose = () => setIsOpen(false)
 
-  const menuVariants = {
-    hidden: {
-      opacity: 0,
-      y: -20,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: "easeInOut" }
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.3, ease: "easeOut" }
-    },
-  }
+const menuVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: -20,
+    scale: 0.95,
+    transition: { duration: 0.2, ease: "easeInOut" }
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.3, ease: "easeOut" }
+  },
+}
 
   const contentVariants = {
     hidden: { opacity: 0 },

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/functions';                     // Assuming this utility is correctly defined
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion'
 import {
   Search,
   XIcon,          // Used by Navbar
@@ -37,7 +37,8 @@ const springTransition = {
   stiffness: 350,
   damping: 30,
   mass: 0.8,
-};
+  
+}as const;
 
 // --- NEW SEARCH MODAL DATA ---
 // Mock data for fashion resale platform
@@ -146,7 +147,7 @@ const SearchModal = ({
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 8 },
     show: {
       opacity: 1,
@@ -155,7 +156,7 @@ const SearchModal = ({
     },
   };
 
-  const desktopPanelVariants = {
+  const desktopPanelVariants: Variants = {
     hidden: { opacity: 0.8, y: -20, scale: 0.98 },
     show: {
       opacity: 1,
@@ -573,7 +574,7 @@ const Navbar = () => {
   }, [isOpen, isMobile, isSearchOpen, isMdScreen]);
 
   // Framer Motion variants for navbar
-  const navbarVariants = {
+  const navbarVariants: Variants = {
     hidden: { y: -50 },
     show: {
       y: 0,
