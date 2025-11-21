@@ -6,26 +6,27 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { cn } from '@/functions'
-import { useClickOutside } from '@/hooks'
- import { motion, AnimatePresence, Variants } from 'framer-motion'
+import { cn } from '../../../lib/utils' // Assuming standard utils path, adjust if needed
+import { useClickOutside } from '@/hooks/use-click-outside'
+import { motion, AnimatePresence, Variants } from 'framer-motion'
 import {
-  TrendingUp,
   ShoppingBag,
-  Tags,
-  Layers3,
-  CircleHelp,
-  ChevronRight,
-  X,
-  Ruler,
-  BookOpen,
   Hash,
-  Users,
+  Users, 
   Calendar,
+  CircleHelp,
+  BookOpen,
+  Ruler,
+  X,
+  ArrowUpRight,
+  Plus,
+  Minus,
 } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom' // <--- IMPORT THIS
 
+// --- Types ---
 interface Props {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -33,22 +34,23 @@ interface Props {
 }
 
 interface MenuItemWithIcon {
-  title: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  title: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 interface MenuItemLink {
-  title: string;
-  href: string;
+  title: string
+  href: string
 }
 
 interface MenuData {
-  categories: MenuItemWithIcon[];
-  brands: MenuItemLink[];
-  resources: MenuItemWithIcon[];
+  categories: MenuItemWithIcon[]
+  brands: MenuItemLink[]
+  resources: MenuItemWithIcon[]
 }
 
+// --- Data ---
 const menuItems: MenuData = {
   categories: [
     { title: "Shop All Categories", href: "/shop-all", icon: ShoppingBag },
@@ -71,221 +73,193 @@ const menuItems: MenuData = {
   ],
 }
 
+// --- Component ---
 const MobileMenu = ({ isOpen, setIsOpen, authButton }: Props) => {
   const ref = useClickOutside(() => setIsOpen(false))
+  const [mounted, setMounted] = useState(false)
+
+  // 1. Wait for mount to avoid hydration mismatch with Portal
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const overlayVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.2 } }
+  }
+
+  const menuVariants: Variants = {
+    hidden: { 
+      y: '100%', 
+      opacity: 0,
+      transition: { type: "spring", stiffness: 300, damping: 30 }
+    },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 30 }
+    },
+    exit: { 
+      y: '100%', 
+      opacity: 0, 
+      transition: { duration: 0.3, ease: "easeInOut" }
+    }
+  }
 
   const handleClose = () => setIsOpen(false)
 
-const menuVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: -20,
-    scale: 0.95,
-    transition: { duration: 0.2, ease: "easeInOut" }
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.3, ease: "easeOut" }
-  },
-}
+  // If not mounted on client yet, return null
+  if (!mounted) return null
 
-  const contentVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { delay: 0.1, duration: 0.2 }
-    },
-  }
-
-  return (
-    <AnimatePresence>
+  // 2. Wrap the entire output in createPortal(..., document.body)
+  // This moves the HTML div to the bottom of the <body> tag, outside the Navbar.
+  return createPortal(
+    <AnimatePresence mode="wait">
       {isOpen && (
-        <>
+        <div className="fixed inset-0 z-[9999] flex flex-col justify-end md:hidden">
+          {/* Backdrop */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 md:hidden"
-            onClick={handleClose}
-          />
-
-          <motion.div
-            ref={ref}
             initial="hidden"
             animate="visible"
-            exit="hidden"
-            variants={menuVariants}
-            className="fixed top-4 left-4 right-4 z-50 md:hidden"
+            exit="exit"
+            variants={overlayVariants}
+            onClick={handleClose}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          />
+
+          {/* Close Button */}
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ delay: 0.1 }}
+            onClick={handleClose}
+            className="absolute top-6 left-6 z-[10000] p-3 bg-white rounded-full shadow-lg active:scale-95 transition-transform"
           >
-            <div className="bg-neutral-800 rounded-2xl shadow-2xl overflow-hidden border border-neutral-700">
-              <motion.div variants={contentVariants}>
-                <div className="flex items-center justify-between p-4 border-b border-neutral-700">
-                  <h2 className="text-lg font-semibold text-neutral-100">
-                    Menu
-                  </h2>
-                  <button
+            <X className="w-6 h-6 text-black" />
+          </motion.button>
+
+          {/* Main Card Container */}
+          <motion.div
+            ref={ref}
+            variants={menuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="relative z-[10000] w-full h-[85vh] bg-white rounded-t-[32px] overflow-hidden flex flex-col"
+          >
+            <div className="flex-1 overflow-y-auto px-6 pt-12 pb-8">
+              
+              {/* Accordion Group: Categories */}
+              <Accordion type="single" collapsible className="w-full mb-2" defaultValue="categories">
+                <CustomAccordionItem 
+                  value="categories" 
+                  title="Categories" 
+                  items={menuItems.categories} 
+                  onClick={handleClose}
+                />
+              </Accordion>
+
+              {/* Direct Links Group */}
+              <div className="border-t border-gray-200">
+                 <DirectLinkItem href="/for-you" title="For You" onClick={handleClose} />
+                 <div className="border-t border-gray-200" />
+                 <DirectLinkItem href="/brands" title="Brands Index" onClick={handleClose} />
+              </div>
+
+              {/* Accordion Group: Brands */}
+              <div className="border-t border-gray-200 mb-6">
+                <Accordion type="single" collapsible className="w-full">
+                  <CustomAccordionItem 
+                    value="brands" 
+                    title="Featured Brands" 
+                    items={menuItems.brands} 
                     onClick={handleClose}
-                    className="p-2 rounded-full hover:bg-neutral-700 transition-colors"
-                    aria-label="Close menu"
-                  >
-                    <X className="w-5 h-5 text-neutral-400 hover:text-neutral-200" />
-                  </button>
-                </div>
+                  />
+                  <CustomAccordionItem 
+                    value="resources" 
+                    title="Resources" 
+                    items={menuItems.resources} 
+                    onClick={handleClose}
+                  />
+                </Accordion>
+              </div>
 
-                {authButton && (
-                  <div className="p-4 border-b border-neutral-700">
+              {/* Auth / Custom Button Area */}
+              {authButton && (
+                 <div className="mb-8 px-2">
                     {authButton}
-                  </div>
-                )}
+                 </div>
+              )}
 
-                <nav className="max-h-[70vh] overflow-y-auto">
-                  <div className="py-2">
-                    <MenuItem
-                      href="/for-you"
-                      icon={TrendingUp}
-                      label="For You"
-                      onClick={handleClose}
-                    />
-
-                    <AccordionSection
-                      title="Categories"
-                      icon={ShoppingBag}
-                      items={menuItems.categories}
-                      onItemClick={handleClose}
-                      renderItem={(item: MenuItemWithIcon) => (
-                        <MenuItem
-                          key={item.title}
-                          href={item.href}
-                          icon={item.icon}
-                          label={item.title}
-                          onClick={handleClose}
-                          isSubItem
-                        />
-                      )}
-                    />
-
-                    <AccordionSection
-                      title="Brands"
-                      icon={Tags}
-                      items={menuItems.brands}
-                      onItemClick={handleClose}
-                      renderItem={(brand: MenuItemLink) => (
-                        <MenuItem
-                          key={brand.title}
-                          href={brand.href}
-                          label={brand.title}
-                          onClick={handleClose}
-                          isSubItem
-                        />
-                      )}
-                      footer={
-                        <MenuItem
-                          href="/brands"
-                          label="View all brands"
-                          onClick={handleClose}
-                          isSubItem
-                          isAction
-                        />
-                      }
-                    />
-
-                    <AccordionSection
-                      title="Resources"
-                      icon={Layers3}
-                      items={menuItems.resources}
-                      onItemClick={handleClose}
-                      renderItem={(item: MenuItemWithIcon) => (
-                        <MenuItem
-                          key={item.title}
-                          href={item.href}
-                          icon={item.icon}
-                          label={item.title}
-                          onClick={handleClose}
-                          isSubItem
-                        />
-                      )}
-                    />
-
-                    <MenuItem
-                      href="/help"
-                      icon={CircleHelp}
-                      label="Help"
-                      onClick={handleClose}
-                    />
-                  </div>
-                </nav>
-              </motion.div>
+              {/* Footer Links */}
+              <div className="mt-auto pt-4 space-y-3 px-1">
+                <FooterLink href="/careers" label="Careers" onClick={handleClose} />
+                <FooterLink href="/media" label="Media" onClick={handleClose} />
+                <FooterLink href="/contact" label="Contact" onClick={handleClose} />
+                <FooterLink href="/lang" label="Français" onClick={handleClose} />
+              </div>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body // <--- Target DOM Node
   )
 }
 
-interface MenuItemProps {
-  href: string
-  icon?: React.ComponentType<{ className?: string }>
-  label: string
-  onClick: () => void
-  isSubItem?: boolean
-  isAction?: boolean
-}
+// --- Sub-Components ---
 
-const MenuItem = ({ href, icon: Icon, label, onClick, isSubItem, isAction }: MenuItemProps) => (
-  <Link
-    href={href}
-    onClick={onClick}
-    className={cn(
-      "flex items-center w-full px-4 py-3 text-left transition-colors hover:bg-neutral-700/70 group",
-      isSubItem && "pl-12",
-      isAction && "text-blue-400 hover:text-blue-300 font-medium"
-    )}
-  >
-    {Icon && (
-      <Icon className={cn(
-        "w-5 h-5 mr-3 text-neutral-400 group-hover:text-neutral-200",
-        isSubItem && "w-4 h-4",
-        isAction && "text-blue-400 group-hover:text-blue-300"
-      )} />
-    )}
-    <span className="text-neutral-100 group-hover:text-white">{label}</span>
-    {isAction && <ChevronRight className="w-4 h-4 ml-auto text-blue-400 group-hover:text-blue-300" />}
-  </Link>
-)
-
-interface AccordionSectionProps<TItem> {
-  title: string;
-  icon: React.ComponentType<{ className?: string }>;
-  items: TItem[];
-  onItemClick: () => void;
-  renderItem: (item: TItem) => React.ReactNode;
-  footer?: React.ReactNode;
-}
-
-const AccordionSection = <TItem,>({
-  title,
-  icon: Icon,
-  items,
-  renderItem,
-  footer,
-}: AccordionSectionProps<TItem>) => (
-  <Accordion type="single" collapsible className="w-full">
-    <AccordionItem value={title.toLowerCase()} className="border-none">
-      <AccordionTrigger className="flex items-center w-full px-4 py-3 text-left hover:bg-neutral-700/70 hover:no-underline [&[data-state=open]>svg:last-child]:rotate-90 group">
-        <Icon className="w-5 h-5 mr-3 text-neutral-400 group-hover:text-neutral-200" />
-        <span className="flex-1 text-neutral-100 group-hover:text-white font-medium">{title}</span>
+const CustomAccordionItem = ({ value, title, items, onClick }: any) => {
+  return (
+    <AccordionItem value={value} className="border-none">
+      <AccordionTrigger className="py-5 hover:no-underline group [&[data-state=open]>div>div>.plus]:hidden [&[data-state=open]>div>div>.minus]:block [&[data-state=closed]>div>div>.plus]:block [&[data-state=closed]>div>div>.minus]:hidden">
+        <div className="flex items-center justify-between w-full">
+          <span className="text-3xl font-bold text-black tracking-tight">{title}</span>
+          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors group-hover:bg-gray-200">
+            <Plus className="w-5 h-5 text-black plus" />
+            <Minus className="w-5 h-5 text-black minus hidden" />
+          </div>
+        </div>
       </AccordionTrigger>
-      <AccordionContent className="pb-0">
-        <div className="bg-neutral-900/30">
-          {items.map(renderItem)}
-          {footer}
+      <AccordionContent className="pb-6">
+        <div className="flex flex-col space-y-4 pl-1">
+          {items.map((item: any, idx: number) => (
+            <Link
+              key={idx}
+              href={item.href}
+              onClick={onClick}
+              className="text-xl text-gray-800 hover:text-black transition-colors font-medium"
+            >
+              {item.title}
+            </Link>
+          ))}
         </div>
       </AccordionContent>
     </AccordionItem>
-  </Accordion>
+  )
+}
+
+const DirectLinkItem = ({ href, title, onClick }: { href: string, title: string, onClick: () => void }) => (
+  <Link 
+    href={href} 
+    onClick={onClick}
+    className="flex items-center justify-between w-full py-5 group"
+  >
+    <span className="text-3xl font-bold text-black tracking-tight">{title}</span>
+    <ArrowUpRight className="w-6 h-6 text-black transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+  </Link>
+)
+
+const FooterLink = ({ href, label, onClick }: { href: string, label: string, onClick: () => void }) => (
+  <Link 
+    href={href} 
+    onClick={onClick} 
+    className="block text-base font-medium text-gray-900 hover:text-gray-600"
+  >
+    {label}
+  </Link>
 )
 
 export default MobileMenu

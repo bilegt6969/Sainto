@@ -19,25 +19,25 @@ const inter = Inter_Tight({
 
 export const metadata = {
   title: {
-    default: 'SAINTO® | Curated Luxury for the Discerning',
-    template: '%s | SAINTO Mongolia'
+    default: 'Sainto - Buy & Sell Authentic Fashion in Mongolia',
+    template: '%s | Sainto'
   },
-  description: 'Mongolia\'s premier destination for authenticated rare sneakers, avant-garde streetwear, and timeless designer pieces. Experience curation at the intersection of culture and craftsmanship.',
+  description: 'Buy, sell and discover authenticated pieces from top brands. Shop sneakers, streetwear, designer fashion and more. Mongolia\'s trusted fashion marketplace.',
   metadataBase: new URL('https://sainto.vercel.app'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'SAINTO® | Beyond Fashion — A Cultural Movement',
-    description: 'Where Mongolia\'s elite discover the extraordinary. Each piece undergoes our 47-point verification process, representing the pinnacle of streetwear and luxury fashion.',
+    title: 'Sainto | Mongolia\'s Fashion Marketplace',
+    description: 'Buy, sell and discover authenticated pieces from top brands. Shop sneakers, streetwear, designer fashion and more.',
     url: 'https://sainto.vercel.app',
-    siteName: 'sainto MONGOLIA',
+    siteName: 'SAINTO',
     images: [
       {
         url: 'https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg',
         width: 1200,
         height: 630,
-        alt: 'SAINTO® Mongolia - Black background with minimalist gold logo and curated product display',
+        alt: 'Sainto - Mongolia\'s Fashion Marketplace',
       },
     ],
     type: 'website',
@@ -46,8 +46,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SAINTO® | The Art of Wearable Distinction',
-    description: 'We don\'t sell products — we offer entry into an exclusive world where every stitch tells a story. Your journey into elevated style begins here.',
+    title: 'Sainto | Buy & Sell Authentic Fashion in Mongolia',
+    description: 'Buy, sell and discover authenticated pieces from top brands. Shop sneakers, streetwear, designer fashion and more.',
     creator: '@saintomongolia',
     images: ['https://sainto.vercel.app/_next/static/media/Logo.bbf2dc13.svg'],
   },
@@ -92,7 +92,7 @@ export const metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: 'sainto Mongolia',
+    title: 'SAINTO',
     statusBarStyle: 'black-translucent',
   },
   other: {
